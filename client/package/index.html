@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bombz</title>
+
+    <meta name="viewport" content="user-scalable = no, initial-scale = 1.0, minimum-scale = 1.0, maximum-scale = 1.0" />
+
+    <link href="css/style.css" rel="stylesheet" />
+
+    <script src="js/socket.io.js"></script>
+    <script src="js/crafty-0.4.9.min.js"></script>
+    <script src="js/jquery-1.8.2.min.js"></script>
+    <script src="js/sprites.js"></script>
+    <script src="js/game.js"></script>
+
+    <script>
+      // prevents scrolling
+      window.document.addEventListener( 'touchmove', function( event )
+      {
+        event.preventDefault();
+        window.scroll( 0, 0 );
+        return false;
+      }, false );
+    </script>
+
+    <script>
+      var socket = io.connect( 'http://localhost' );
+
+      /*
+      // TIME
+      socket.on( 'sntp', function( data )
+      {
+        console.log( data );
+        var time = ( new Date() ).getTime();
+        var RTT = time - data.clientTime;
+        var delta = data.serverTime - time + parseInt( RTT / 2 );
+        console.log( "Wall Clock Time: " + ( new Date() ).getTime() + delta );
+      });
+	  
+      socket.emit( 'sntp', { clientTime: ( new Date() ).getTime() } );
+      */
+
+      // CHAT
+      socket.on( 'chat', function( data )
+      {
+        console.log( data );
+      });
+      socket.emit( 'chat', "test" );
+	  
+      // CRAFTY DEBUGGER
+      Crafty.modules( { 'crafty-debug-bar': 'DEV' }, function()
+      {
+        Crafty.debugBar.show();
+      });
+    </script>
+  </head>
+  <body></body>
+</html>

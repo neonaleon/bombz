@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget xmlns="http://www.w3.org/ns/widgets"
+        xmlns:rim="http://www.blackberry.com/ns/widgets"
+        version="2.0.0.0">
+ 
+  <author href="http://www.example.com/">Leon, Eldwin, Natalie</author>
+ 
+  <name>Bombz</name>
+ 
+  <description>CS4344 Final Project</description>
+ 
+  <rim:orientation mode="landscape"/>
+<!-- 
+  <rim:loadingScreen backgroundImage="background.png"
+                     foregroundImage="foreground.gif"
+                     onLocalPageLoad="true">
+    <rim:transitionEffect type="zoomIn"/>
+  </rim:loadingScreen>
+-->         
+  <rim:category name="games"/>    
+ 
+  <rim:permissions>
+    <rim:permit>run_when_backgrounded</rim:permit>
+  </rim:permissions>
+ 
+  <icon src="icn/icon.png" />
+ 
+  <content src="index.html" />
+ 
+</widget>
