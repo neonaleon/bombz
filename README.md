@@ -7,7 +7,7 @@ CS4344 Networked and Mobile Gaming Final Project
 
 ### Directory
 * bin - packaged files will be output here
-* src - contains only files to be packaged & deployed
+* package - contains only/all files to be packaged & deployed
 * deploy.sh - script to deploy application to the device
 
 ### Setup
