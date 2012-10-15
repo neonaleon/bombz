@@ -3,9 +3,9 @@
 ## Intro
 CS4344 Networked and Mobile Gaming Final Project
 
-## Client
+## Client (./server/client)
 
-### Directory
+### Directory structure
 * bin - packaged files will be output here
 * package - contains only/all files to be packaged & deployed
 * deploy.sh - script to deploy application to the device
@@ -15,7 +15,7 @@ CS4344 Networked and Mobile Gaming Final Project
 * configure variables in deploy.sh
 * deploy to device with ./deploy.sh
 
-## Server
+## Server (./server)
 
 ### Setup
 * sudo npm link

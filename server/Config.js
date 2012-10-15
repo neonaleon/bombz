@@ -1,14 +1,11 @@
-/*=====================================================
-  Declared as literal object (All variables are static)	  
-  =====================================================*/
-var Config =
-{
-  WIDTH: 600,			// width of game window
-  HEIGHT: 1000,			// height of game window
+var Config = {};
+module.exports = Config;
 
-  PORT: 8000,			// port of game
-  FRAME_RATE: 60,		// frame rate of game
-  SERVER_NAME: "localhost",	// server name of game
-};
+// Game
+Config.Game = {};
+Config.Game.WIDTH = 1000;
+Config.Game.HEIGHT = 600;
 
-global.Config = Config;
+// Server
+Config.Server = {};
+Config.Server.PORT = 8000;
