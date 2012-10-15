@@ -9,12 +9,12 @@ function Server()
 {
 //// PRIVATE VARIABLES
   this._count = 0;    // int - client count
-  this._rooms = {};   // Room[] - list of game rooms
-  this._clients = {}; // int->Players{}, socket_id -> Player
+  this._rooms = [];   // Room[] - list of game rooms
+  this._clients = []; // int->Players{}, socket_id -> Player
 
   // currently only support 1 room so just create at the start, supposed to only make when new rooms are requested for
   this._pid = 0;
-  //this._rooms[ 0 ] = new Room( 0 );
+  this._rooms[ 0 ] = new Room( 0 );
 }
 
 
@@ -35,6 +35,8 @@ Server.prototype.SendWelcomeMessage = function( client )
 // start server
 Server.prototype.Start = function()
 {
+  var server = this;
+
   try
   {
     // PRODUCTION
@@ -62,7 +64,7 @@ Server.prototype.Start = function()
     // socket events
     SocketIO.sockets.on( 'connection', function( socket )
     {
-      if ( this._count >= Room.MAX )
+      if ( server._count >= Room.MAX )
       {
         socket.emit( 'welcome', { msg: "Unable to join. Maximum players reached." } );
         socket.disconnect();
@@ -70,29 +72,29 @@ Server.prototype.Start = function()
       else
       {
         socket.emit( 'welcome', { msg: "Entered game. Welcome!" } );
-/*
-        var player = new Player( this._pid, socket );
-        this._pid++;
-        this._count++;
-        //this._clients[ socket.id ] = player;
+
+        var player = new Player( server._pid, socket );
+        server._pid++;
+        server._count++;
+        server._clients[ socket.id ] = player;
 
         // currently only has one room, add client to it
-        var room = this._rooms[ 0 ];
+        var room = server._rooms[ 0 ];
         socket.emit( 'room', { id: 0 } );
-        room.AddPlayer( player );*/
+        room.AddPlayer( player );
       }
 
       // client closes the connection to the server/closes the window
       socket.on( 'disconnect', function()
       {
-  /*      this._count--;
+        server._count--;
 
         // currently only has one room, otherwise must lookup room client is in
-        var room = this._rooms[ 0 ];
-        var player = this._clients[ socket.id ];
+        var room = server._rooms[ 0 ];
+        var player = server._clients[ socket.id ];
         room.RemovePlayer( player );
 
-        delete this._clients[ socket.id ];*/
+        delete server._clients[ socket.id ];
       });
 
     });
