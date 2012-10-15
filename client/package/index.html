@@ -11,6 +11,8 @@
     <script src="js/crafty-0.4.9.min.js"></script>
     <script src="js/jquery-1.8.2.min.js"></script>
     <script src="js/sprites.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/player.js"></script>
     <script src="js/game.js"></script>
 
     <script>
@@ -48,10 +50,10 @@
       socket.emit( 'chat', "test" );
 	  
       // CRAFTY DEBUGGER
-      Crafty.modules( { 'crafty-debug-bar': 'DEV' }, function()
-      {
-        Crafty.debugBar.show();
-      });
+      // Crafty.modules( { 'crafty-debug-bar': 'DEV' }, function()
+      // {
+      //   Crafty.debugBar.show();
+      // });
     </script>
   </head>
   <body></body>

@@ -13,14 +13,20 @@
 Sprites = {
 	'tileset': {
 		'file': '/img/sprite.png',
-		'tile': 25,
+		'tile': 16,
 		'tileh': undefined,
 		'elements': {
-			tileI: [0, 0],
-			tileD: [1, 0],
-			player1: [0, 1],
-			floor: [2, 0],
-			bomb: [3, 0]
+			grass1: [0, 0],
+			grass2: [1, 0],
+			grass3: [2, 0],
+			grass4: [3, 0],
+			flower: [0, 1],
+			bush1: [0, 2],
+			bush2: [1, 2],
+			player: [0, 3],
+			enemy: [0, 3],
+			banana: [4, 0],
+			empty: [4, 0],
 		}
 	}
 };
