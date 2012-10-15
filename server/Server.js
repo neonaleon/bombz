@@ -50,7 +50,7 @@ Server.prototype.Start = function()
     http.listen( Config.Server.PORT );
     http.configure( function()
     {
-      http.use( express.static( __dirname + '/client/package' ) );
+      http.use( express.static( __dirname + '/../client/package' ) );
       http.use( http.router );
     });
     http.all( '*', function( request, response )
