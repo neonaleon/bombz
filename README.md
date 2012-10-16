@@ -3,7 +3,7 @@
 ## Intro
 CS4344 Networked and Mobile Gaming Final Project
 
-## Client (./server/client)
+## Client (./client)
 
 ### Directory structure
 * bin - packaged files will be output here

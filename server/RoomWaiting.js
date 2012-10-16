@@ -70,7 +70,7 @@ RoomWaiting.prototype.AddPlayer = function( player )
 
   this._room._players.push( player );
 
-  CreatePlayerListeners( player );
+  this.CreatePlayerListeners( player );
 }
 
 // callback upon removing player from room
@@ -84,7 +84,7 @@ RoomWaiting.prototype.RemovePlayer = function( player )
   this._room._players.splice( index, 1 );
 
   // DO SOMETHING
-  RemovePlayerListeners( player );
+  this.RemovePlayerListeners( player );
 }
 
 // representation
