@@ -1,21 +1,8 @@
-﻿window.onload = function()
+window.onload = function()
 {
-  Crafty.init( 1024, 600 );
+  Crafty.init(1024, 600);
 
   Sprites.create('tileset');
-	
-  Crafty.c( "Controls",
-  {
-    init: function()
-    {
-      this.requires( 'Multiway' );
-    },
-    controls: function( speed )
-    {
-      this.multiway( speed, { UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180 } );
-      return this;
-    }
-  });
 
   //the loading screen that will display while our assets load
   Crafty.scene( "loading", function()
@@ -47,6 +34,9 @@
       Map.generateWorld();
 
       Player.spawn(1);
+      // Player.spawn(2);
+      // Player.spawn(3);
+      // Player.spawn(4);
     });
   });
 
