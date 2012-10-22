@@ -1,6 +1,10 @@
+// GUI.js
+// @author: Leon Ho
+// This file contains factory methods for generating GUI entities
 
 var GUI = {};
 
+// Creates a button with buttonText, which invokes handler(this) when clicked
 GUI.Button = function(buttonText, handler)
 {
 	return Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse")
@@ -29,6 +33,31 @@ GUI.Button = function(buttonText, handler)
 					}
 				});
 };
+
+// Creates a joystick at posx, posy which moves the entity obj with speed
+GUI.Joystick = function (posx, posy, obj, speed)
+{
+	// INCOMPLETE, NEED TO SET X, Y, W, H, according to image we are going to use
+	var stick = Crafty.e(Properties.RENDERER + ", 2D, Image").attr({
+                x: posx+5,
+                y: posy+5,
+                w: 50,
+                h: 50,
+                z: 1              
+    }).image("http://cdn1.iconfinder.com/data/icons/function_icon_set/circle_green.png");
+
+    var track = Crafty.e(Properties.RENDERER + ", 2D, Image, Joystick, Text").attr({
+        x: posx,
+        y: posy,
+        w: 64,
+        h: 64       
+    }).image("http://cdn1.iconfinder.com/data/icons/softwaredemo/PNG/64x64/Circle_Grey.png")
+    .joystick(stick, {mouseSupport: true, range: 20});
+    
+    obj.addComponent("Keyboard, Multiway").multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
+    
+    return track;
+}
 
 GUI.RoomButton = function(data)
 {

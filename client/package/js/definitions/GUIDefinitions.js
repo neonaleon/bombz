@@ -1,5 +1,6 @@
 // GUIDefinitions.js
 // @author Leon Ho
+// This file contains definitions for various GUI elements
 
 var GUIDefinitions = 
 {
@@ -9,6 +10,14 @@ var GUIDefinitions =
 	BUTTON_HEIGHT : 60,
 	BUTTON_DOWNCOLOR : "#FF0000",
 	BUTTON_UPCOLOR : "#0000FF",
+	
+	// BUTTON_UP_BASE:
+	// BUTTON_DOWN_BASE:
+	// BUTTON_UP_OVERLAY:
+	// BUTTON_DOWN_OVERLAY:
+	
+	//JOYSTICK_BASE:
+	//JOYSTICK_STICK:
 	
 	// ICON_HEART : 'filename'
 	// ICON_POWERUP_<TYPE> : 'filename'

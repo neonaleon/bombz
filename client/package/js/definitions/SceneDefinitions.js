@@ -1,5 +1,6 @@
 // SceneDefinitions.js
 // @author Leon Ho
+// This file contains definitions for the scenes we will use in the game
 
 function Scene(sceneName, initializer)
 {
@@ -49,13 +50,15 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	
 	console.log("waiting room scene running");
 	var buttons = ["Ready", "Change", "Settings"];
+	var e; // FOR TESTING JOYSTICK
 	for (var i = 0; i < 3; i++)
 	{
-		GUI.Button(buttons[i], eval("handler_"+buttons[i]))
+		e = GUI.Button(buttons[i], eval("handler_"+buttons[i]))
 				.attr({	x:(i+1)*Properties.DEVICE_WIDTH/4 - GUIDefinitions.BUTTON_WIDTH/2, 
 						y:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_HEIGHT/2});
 	}
 	// change scene to game scene
+	GUI.Joystick(100, 100, e, 5);
 });
 var handler_Connect = function()
 {
@@ -65,6 +68,7 @@ var handler_Connect = function()
 var handler_JoinRoom = function (data)
 {
 	console.log(data);
+	// read from data, initialize game data
 };
 var handler_Ready = function(obj)
 {

@@ -1,5 +1,6 @@
 // Properties.js
 // @author Leon Ho
+// This file contains the properties for the game
 
 var Properties = 
 {

@@ -11,7 +11,7 @@ SceneManager._debugScene = function (sceneName, initializer)
 {
 	return function() 
 	{
-		Crafty.e("2D, " + Properties.RENDERER + ", Text").attr({x:0, y:0}).textColor("#FF0000").text(sceneName);
+		Crafty.e(Properties.RENDERER + ", 2D, Text").attr({x:0, y:0}).textColor("#FF0000").text(sceneName);
 		initializer();
 	};
 };
