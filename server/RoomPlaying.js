@@ -16,7 +16,6 @@ function RoomPlaying( room )
   this._map;
   this._time;
   this._powerups; // start with full list here
-
 }
 
 
@@ -43,7 +42,14 @@ RoomPlaying.prototype.CreatePlayerListeners = function( player )
   // player shoots a fireball
   socket.on( 'fireball', function( data )
   {
-    console.log( 'onReady' );
+    console.log( 'onFireball' );
+  });
+
+  // player kicks a bomb
+  socket.on( 'kickbomb', function( data )
+  {
+    // CHECK If PLAYER HAS ABILITY
+    console.log( 'onKickBomb' );
   });
 }
 
@@ -54,6 +60,7 @@ RoomPlaying.prototype.RemovePlayerListeners = function( player )
   socket.removeAllListeners( 'move' );
   socket.removeAllListeners( 'bomb' );
   socket.removeAllListeners( 'fireball' );
+  socket.removeAllListeners( 'kickbomb' );
 }
 
 //// STATE PATTERN FUNCTIONS

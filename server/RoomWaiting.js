@@ -7,7 +7,12 @@ function RoomWaiting( room )
   this._room = room;
 
 /// PRIVATE VARIABLES
-  this._ready = [];
+  this._ready = []; // list of players who are ready?
+
+  this._settings =
+  {
+    length: 300,    // duration of game before sudden death occurs
+  };
 }
 
 
@@ -25,15 +30,15 @@ RoomWaiting.prototype.CreatePlayerListeners = function( player )
   });
 
   // client requests a color change
-  socket.on( 'color', function( data )
+  socket.on( 'change', function( data )
   {
-    console.log( 'onColorMessage' );
+    console.log( 'onChangeMessage' );
   });
 
-  // client leaves room
-  socket.on( 'leave', function( data )
+  // client requests a change in game settings
+  socket.on( 'settings', function( data )
   {
-    console.log( 'onReadyMessage' );
+    console.log( 'onSettingsMessage' );
   });
 }
 
@@ -42,8 +47,8 @@ RoomWaiting.prototype.RemovePlayerListeners = function( player )
 {
   var socket = player.GetSocket();
   socket.removeAllListeners( 'ready' );
-  socket.removeAllListeners( 'color' );
-  socket.removeAllListeners( 'leave' );
+  socket.removeAllListeners( 'change' );
+  socket.removeAllListeners( 'settings' );
 }
 
 //// STATE PATTERN FUNCTIONS

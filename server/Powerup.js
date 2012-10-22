@@ -14,9 +14,10 @@ function Powerup( x, y, type )
 //// CONSTANTS
 Powerup.Type =
 {
-  INCREASE_SPEED: 0,
-  INCREASE_RANGE: 1,
-  INCREASE_CAPACITY: 2
+  BUFF_SPEED: 0,
+  BUFF_RANGE: 1,
+  BUFF_CAPACITY: 2,
+  ABILITY_KICKBOMB: 3
 };
 
 
@@ -25,8 +26,36 @@ Powerup.Type =
 // applies effect of powerup to target player
 Powerup.prototype.ApplyEffect = function( player )
 {
+  switch ( this._type )
+  {
+    case Powerup.Type.BUFF_SPEED:
+      player.SetSpeed( player.GetSpeed() + 5 );
+      break;
 
+    case Powerup.Type.BUFF_RANGE:
+      player.SetBombRange( player.GetBombRange() + 5 );
+      break;
+  
+    case Powerup.Type.BUFF_CAPACITY:
+      player.SetBombLimit( player.GetBombLimit() + 5 );
+      break;
+
+    case Powerup.Type.ABILITY_KICKBOMB:
+      player.SetAbilityKickBomb( true );
+      break;
+
+    default:
+      console.log( 'Powerup is of unknown type.' );
+      break;
+  }
 };
+
+
+Powerup.prototype.GetType = function()
+{
+  return this._type;
+};
+
 
 // representation
 Powerup.prototype.Serialize = function()
