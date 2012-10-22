@@ -1,12 +1,12 @@
-// Main.js
+// main.js
 // @author Leon Ho
 
 window.onload = function()
 {
 	Crafty.init(Properties.DEVICE_WIDTH, Properties.DEVICE_HEIGHT);
-	Crafty.background("#000");
+	Crafty.background("#FFFFFF");
 	
-	SceneManager.RunWithScene(SceneDefinitions.LobbyScene); //SceneManager.RunWithScene(SceneDefinitions.SplashScene);
+	SceneManager.RunWithScene(SceneDefinitions.WaitingRoomScene); //SceneManager.RunWithScene(SceneDefinitions.SplashScene);
 };
 
 

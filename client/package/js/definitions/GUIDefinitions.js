@@ -12,6 +12,7 @@ var GUIDefinitions =
 	
 	// ICON_HEART : 'filename'
 	// ICON_POWERUP_<TYPE> : 'filename'
+	// ICON_DRAGON_COLOR : 'filename'
 };
 
 
