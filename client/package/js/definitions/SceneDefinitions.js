@@ -58,7 +58,8 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 						y:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_HEIGHT/2});
 	}
 	// change scene to game scene
-	GUI.Joystick(100, 100, e, 5);
+	var stick = GUI.Joystick(100, 100, e, 5);
+	stick.shift(100, 100);
 });
 var handler_Connect = function()
 {

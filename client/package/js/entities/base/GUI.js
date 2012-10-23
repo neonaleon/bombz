@@ -34,6 +34,11 @@ GUI.Button = function(buttonText, handler)
 				});
 };
 
+GUI.TexturedButton = function ()
+{
+	
+};
+
 // Creates a joystick at posx, posy which moves the entity obj with speed
 GUI.Joystick = function (posx, posy, obj, speed)
 {
@@ -52,7 +57,8 @@ GUI.Joystick = function (posx, posy, obj, speed)
         w: 64,
         h: 64       
     }).image("http://cdn1.iconfinder.com/data/icons/softwaredemo/PNG/64x64/Circle_Grey.png")
-    .joystick(stick, {mouseSupport: true, range: 20});
+    .joystick(stick, {mouseSupport: true, range: 20})
+    .attach(stick);
     
     obj.addComponent("Keyboard, Multiway").multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
     
