@@ -3,7 +3,7 @@
 * @category Controls
 * @requires Canvas or DOM
 * Component to create joystick. 
-* 
+* @credits radzikowski @ https://github.com/flywithmonkey/Crafty-joystick
 */
 Crafty.c('Joystick', {      
   _stick : null, 
@@ -165,14 +165,22 @@ Crafty.c('Joystick', {
       var x = (this.isTouchScreenAvailable() ? event.touches[ 0 ].pageX : event.clientX ),
         y = (this.isTouchScreenAvailable() ? event.touches[ 0 ].pageY : event.clientY ),
         pos = Crafty.DOM.translate(x, y);
-
+		
       if (this.isAt(pos.x, pos.y)) {
         this._stick.x = pos.x - this._stick.w/2;
         this._stick.y = pos.y - this._stick.h/2;
-      } 
-      //else {
-        //this._onUp();
-      //}   
+      }
+      // TODO: IMPROVE THIS
+      else
+      {
+      	this._stick.x = pos.x - this._stick.w/2;
+      	this._stick.y = pos.y - this._stick.h/2;
+      }
+      /*
+      else {
+        this._onUp();
+      }
+      	*/
     }
   },
     /**@
@@ -196,7 +204,7 @@ Crafty.c('Joystick', {
   _interpretPosition: function(){
     var joystick = this;
 
-      if (joystick.isUp() && (!Crafty.keydown[ joystick._keys['up'] ])){
+      	if (joystick.isUp() && (!Crafty.keydown[ joystick._keys['up'] ])){
             Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : joystick._keys['up'] });
         } else if (Crafty.keydown[ joystick._keys['up'] ]){
             Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : joystick._keys['up'] });
@@ -208,7 +216,7 @@ Crafty.c('Joystick', {
             Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : joystick._keys['down']});
         }
 
-    if (joystick.isRight() && (!Crafty.keydown[ joystick._keys['right'] ])){
+    	if (joystick.isRight() && (!Crafty.keydown[ joystick._keys['right'] ])){
             Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : joystick._keys['right'] });
         } else if (Crafty.keydown[ joystick._keys['right'] ]){
             Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : joystick._keys['right'] });
