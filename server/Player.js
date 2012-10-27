@@ -1,19 +1,23 @@
 //// IMPORTS
+var Bomb = require( './Bomb' );
 
 
-
-function Player( id, socket )
+function Player( socket )
 {
 //// PRIVATE VARIABLES
-  this._id = id;			// int - identifier
+  this._id;	      		    // int - identifier - [0 to Room.MAX - 1]
   this._socket = socket;	// socket
 
-  this._color = 0;			                   	// str - player avatar color
-  // this._speed = Player.Default.SPEED;				// int - movement speed
-  // this._bomb_range = Player.Default.BOMB_RANGE;		// int - number of grids bomb explodes
-  // this._bomb_limit = Player.Default.BOMB_LIMIT;		// int - number of bombs user can use at once
-  // this._powerups = Player.Default.POWERUPS.slice();   // Powerup[] - powerups player has - starts with none
-  // this._ability_kickbomb = Player.Default.ABILITY_KICKBOMB; // bool - whether player has ability to kick bombs
+  
+  // this._x;                // int - player's x co-ordinates in pixels
+  // this._y;                // int - player's y co-ordinates in pixels
+  // this._speed;            // int - movement speed
+  // this._color;            // Player.color - player avatar color
+  // this._bombs;            // Bomb[] - bombs currently active in game map
+  // this._bomb_range;       // int - number of grids bomb explodes
+  // this._bomb_limit;       // int - number of bombs user can use at once
+  // this._powerups;         // Powerup[] - powerups player has - starts with none
+  // this._ability_kickbomb; // bool - whether player has ability to kick bombs
   this.Reset();
 }
 
@@ -25,15 +29,18 @@ Player.Color =
   GREEN: 1,
   RED: 2,
   PINK: 3,
+  NONE: 4,
 };
 
 Player.Default =
 {
   SPEED: 1,
+  BOMBS: [],
   POWERUPS: [],
   BOMB_RANGE: 1,
   BOMB_LIMIT: 1,
   ABILITY_KICKBOMB: false,
+  COLOR: Player.Color.NONE,
 };
 
 
@@ -103,7 +110,11 @@ Player.prototype.DropAllPowerups = function()
 // called when player gets killed, resets all stats except color
 Player.prototype.Reset = function()
 {
+  this._x = 0;
+  this._y = 0;
+  this._color = Player.Default.COLOR;
   this._speed = Player.Default.SPEED;
+  this._bombs = Player.Default.BOMBS.slice();
   this._bomb_range = Player.Default.BOMB_RANGE;
   this._bomb_limit = Player.Default.BOMB_LIMIT;
   this._powerups = Player.Default.POWERUPS.slice();
@@ -114,8 +125,9 @@ Player.prototype.Reset = function()
 // returns Bomb object
 Player.prototype.Bomb = function()
 {
-  //var bomb = new Bomb( );
-  //return bomb;
+  // var bomb = new Bomb( 0, 0, this._bomb_range );
+  // this._bombs.push( bomb );
+  // return bomb;
 }
 
 // representation

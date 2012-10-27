@@ -7,15 +7,15 @@ var Powerup = require( './Powerup' );
 
 function RoomPlaying( room )
 {
-  var _room = room;
+  this._room = room;
 
 
 //// PRIVATE VARIABLES
 
   // game related
-  this._map;
-  this._time;
-  this._powerups; // start with full list here
+  // this._map;
+  // this._time;
+  // this._pending_powerups; // Powerup.Type[], list of available powerups server has yet to give out , start with full list here
 }
 
 
@@ -69,16 +69,16 @@ RoomPlaying.prototype.RemovePlayerListeners = function( player )
 // start listening for events
 RoomPlaying.prototype.Enter = function()
 {
-  for ( var index in _room._players )
-    this.CreatePlayerListeners( _room._players[ index ] );
+  for ( var index in this._room._players )
+    this.CreatePlayerListeners( this._room._players[ index ] );
 }
 
 // leaving state
 // stop listening for events
 RoomPlaying.prototype.Leave = function()
 {
-  for ( var index in _room._players )
-    this.RemovePlayerListeners( _room._players[ index ] );
+  for ( var index in this._room._players )
+    this.RemovePlayerListeners( this._room._players[ index ] );
 }
 
 // add player to room
@@ -89,16 +89,22 @@ RoomPlaying.prototype.AddPlayer = function( player ) {}
 // this is called when player leaves / disconnects
 RoomPlaying.prototype.RemovePlayer = function( player )
 {
-  var index = _room._players.indexOf( player );
+  var index = this._room._players.indexOf( player );
 
-  if ( _room._players.length < 1 || index  == -1 )
+  if ( _this.room._players.length < 1 || index  == -1 )
     return;
 
-  _room._players.splice( index, 1 );
+  this._room._players.splice( index, 1 );
 
   // DO SOMETHING
 
   // check for any winners!
+}
+
+// update according to a bomb explosion
+RoomPlaying.prototype.BombExplode = function( bomb )
+{
+
 }
 
 // representation

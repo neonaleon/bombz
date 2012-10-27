@@ -15,20 +15,30 @@ function Room( id )
   this._settings;                         // dictionary - represent game's settings
 
   this._states =                          // {} - state
-  {
-    'waiting': new RoomWaiting( this ),   // waiting room state
-    'playing': new RoomPlaying( this )    // playing in-game state
-  };
-  this._state = this._states.waiting;          // current state
-  
+  [
+    new RoomWaiting( this ),   // waiting room state
+    new RoomPlaying( this ),   // playing in-game state
+  ];
+  this._state = this._states[ Room.State.WAITING ];          // current state
 }
 
 
 //// CONSTANTS
 Room.MAX = 4;	// maximum players in room
+Room.State =
+{
+  WAITING: 0,
+  PLAYING: 1,
+};
 
 
 //// PUBLIC FUNCTIONS
+
+// returns id of room
+Room.prototype.GetID = function()
+{
+  return this._id;
+};
 
 // change state
 Room.prototype.SetState = function( state )
@@ -53,10 +63,18 @@ Room.prototype.RemovePlayer = function( player )
   this._state.RemovePlayer( player );
 }
 
+Room.prototype.GetPlayer = function( id )
+{
+  if ( id < 0 || id > this._players.length )
+    console.log( 'Invalid player id.' );
+
+  return this._players[ id ];
+}
+
 // start the game
 Room.prototype.StartGame = function()
 {
-
+  
 };
 
 // end the game

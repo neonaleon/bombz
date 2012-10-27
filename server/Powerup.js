@@ -50,12 +50,20 @@ Powerup.prototype.ApplyEffect = function( player )
   }
 };
 
+Powerup.prototype.GetX = function()
+{
+  return this._x;
+}
+
+Powerup.prototype.GetY = function()
+{
+  return this._y;
+}
 
 Powerup.prototype.GetType = function()
 {
   return this._type;
 };
-
 
 // representation
 Powerup.prototype.Serialize = function()

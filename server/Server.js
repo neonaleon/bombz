@@ -8,12 +8,12 @@ var SocketIO = require( 'socket.io' );
 function Server()
 {
 //// PRIVATE VARIABLES
-  this._count = 0;    // int - client count
-  this._rooms = [];   // Room[] - list of game rooms
-  this._clients = []; // int->Players{}, socket_id -> Player
+  this._count = 0;          // int - client count
+  this._rooms = [];         // Room[] - list of game rooms
+  this._clients = [];       // int->Players[], socket_id -> Player
+  this._clientToRoom = [];  // int->Room[], socket_id -> Room - defined only if client is in a room
 
   // currently only support 1 room so just create at the start, supposed to only make when new rooms are requested for
-  this._pid = 0;
   this._rooms[ 0 ] = new Room( 0 );
 }
 
@@ -30,6 +30,58 @@ Server.prototype.SendRoomMessage = function( client )
 Server.prototype.SendWelcomeMessage = function( client )
 {
   //socket.emit( 'welcome', 'Unable to join.' );
+}
+
+
+
+// add a newly connected client to server
+Server.prototype.AddClient = function( socket )
+{
+  this._count++;
+  this._clients[ socket.id ] = new Player( socket );
+}
+
+// adds a client to room
+Server.prototype.AddClientToRoom = function( socket )
+{
+  var player = this._clients[ socket.id ];
+
+  // currently only has one room, add client to it
+  var room = this._rooms[ 0 ];
+  socket.emit( 'room', { id: room.GetID() } );
+  room.AddPlayer( player );
+  this._clientToRoom[ socket.id ] = room;
+}
+
+// removes a client completely from server
+Server.prototype.RemoveClient = function( socket )
+{
+  this._count--;
+  var player = this._clients[ socket.id ];
+  var room = this._clientToRoom[ socket.id ];
+
+  // Remove player from room
+  if ( room !== undefined )
+  {
+    room.RemovePlayer( player );
+    delete this._clientToRoom[ socket.id ];
+    console.log( 'Server::RemoveClient - Player removed from room.' );
+  }
+  else
+  {
+    console.log( 'Server::RemoveClient - Socket to Room mapping does not exist.' );
+  }
+  
+  // Remove player from server
+  if ( player !== undefined )
+  {
+    delete this._clients[ socket.id ];
+    console.log( 'Server::RemoveClient - Player removed from server.' );
+  }
+  else
+  {
+    console.log( 'Server::RemoveClient - Socket to Player mapping does not exist.' );
+  }
 }
 
 // start server
@@ -73,28 +125,14 @@ Server.prototype.Start = function()
       {
         socket.emit( 'welcome', { msg: "Entered game. Welcome!" } );
 
-        var player = new Player( server._pid, socket );
-        server._pid++;
-        server._count++;
-        server._clients[ socket.id ] = player;
-
-        // currently only has one room, add client to it
-        var room = server._rooms[ 0 ];
-        socket.emit( 'room', { id: 0 } );
-        room.AddPlayer( player );
+        server.AddClient( socket );
+        server.AddClientToRoom( socket ); // normally this only happens when a client requests, it is called directly now because there is only 1 room
       }
 
       // client closes the connection to the server/closes the window
       socket.on( 'disconnect', function()
       {
-        server._count--;
-
-        // currently only has one room, otherwise must lookup room client is in
-        var room = server._rooms[ 0 ];
-        var player = server._clients[ socket.id ];
-        room.RemovePlayer( player );
-
-        delete server._clients[ socket.id ];
+        server.RemoveClient( socket );
       });
 
     });
