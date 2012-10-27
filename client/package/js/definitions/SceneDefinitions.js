@@ -10,7 +10,10 @@ function Scene(sceneName, initializer)
 
 var SceneDefinitions = {};
 
-// Splash an image when the app is started
+/*
+ * SPLASH SCENE
+ * Splash an image when the app is started
+ */
 SceneDefinitions.SplashScene = new Scene("SplashScene", function()
 { 
 	console.log("splash scene running");
@@ -19,8 +22,11 @@ SceneDefinitions.SplashScene = new Scene("SplashScene", function()
 	// some duration later change scene, we might want to use this duration to load assets etc
 	setTimeout(function(){ SceneManager.ChangeScene(SceneDefinitions.WaitingRoomScene) }, Properties.SPLASH_DURATION);
 });
-										 
-// Display a loading image while app loads resources for the next scene
+
+/*
+ * LOAD SCENE
+ * Display a loading image while app loads resources for the next scene
+ */
 SceneDefinitions.LoadScene = new Scene("LoadScene", function()
 { 
 	console.log("load scene running");
@@ -53,13 +59,15 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	var e; // FOR TESTING JOYSTICK
 	for (var i = 0; i < 3; i++)
 	{
-		e = GUI.Button(buttons[i], eval("handler_"+buttons[i]))
+		e = GUI.Button(buttons[i], eval("handler_" + buttons[i]))
 				.attr({	x:(i+1)*Properties.DEVICE_WIDTH/4 - GUIDefinitions.BUTTON_WIDTH/2, 
 						y:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_HEIGHT/2});
 	}
 	// change scene to game scene
 	var stick = GUI.Joystick(100, 100, e, 5);
 	stick.shift(100, 100);
+	
+	Map.generate(SpriteDefinitions.MAP_1);
 });
 var handler_Connect = function()
 {

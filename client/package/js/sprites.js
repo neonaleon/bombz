@@ -1,15 +1,8 @@
-﻿
-/*	Sprite definitions
-*	define as such
-*	'spritename': {
-*		'file': 'filename',
-*		'tile': tileWidth,
-*		'tileh': tileHeight // if undefined, 'tile' tileWidth will be used for tileHeight i.e. tile width and height is equal
-*		'elements': {
-*			element1: [0, 0],
-*		}
-*	}
-*/
+﻿/*	
+ * SpriteDefinitions.js
+ * @author: Leon Ho
+ */
+
 Sprites = {
 	'tileset': {
 		'file': '/img/sprite.png',

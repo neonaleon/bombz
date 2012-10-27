@@ -11,18 +11,21 @@
     <script src="js/socket.io.min.js"></script>
     <script src="js/crafty-min.js"></script>
     <script src="js/jquery-1.8.2.min.js"></script>
-    <script src="js/sprites.js"></script>
     <!-- project specific properties -->
     <script src="js/Properties.js"></script>
     <!-- game specific definitions -->
+    <script src="js/definitions/MessageDefinitions.js"></script>
     <script src="js/definitions/SceneDefinitions.js"></script>
     <script src="js/definitions/GUIDefinitions.js"></script>
-    <script src="js/definitions/MessageDefinitions.js"></script>
+    <script src="js/definitions/SpriteDefinitions.js"></script>
     <!-- game framework -->
     <script src="js/components/Joystick.js"></script>
     <script src="js/entities/base/GUI.js"></script>
     <script src="js/entities/base/SceneManager.js"></script>
     <script src="js/entities/base/NetworkManager.js"></script>
+    <script src="js/entities/base/Sprite.js"></script>
+    <!-- game objects -->
+    <script src="js/entities/Map.js"></script>
     <!-- game entry point -->
     <script src="js/Main.js"></script>
     <!-- natalie testing
@@ -72,6 +75,13 @@
          Crafty.debugBar.show();
       });
     </script>
+    <!--
+    <style>
+	    body, html { margin:0; padding: 0; overflow:hidden; font-family:Arial; font-size:20px }
+	    #cr-stage { border:2px solid black; margin:5px auto; color:white }
+  	</style>
+  	-->
   </head>
-  <body></body>
+  <body>
+  </body>
 </html>

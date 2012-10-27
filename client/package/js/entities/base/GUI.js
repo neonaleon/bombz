@@ -1,6 +1,10 @@
-// GUI.js
-// @author: Leon Ho
-// This file contains factory methods for generating GUI entities
+/*
+ * GUI.js
+ * @author: Leon Ho
+ * This file contains factory methods for generating GUI entities
+ */
+
+
 
 var GUI = {};
 
