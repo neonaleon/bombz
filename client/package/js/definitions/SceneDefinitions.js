@@ -66,8 +66,6 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	// change scene to game scene
 	var stick = GUI.Joystick(100, 100, e, 5);
 	stick.shift(100, 100);
-	
-	Map.generate(SpriteDefinitions.MAP_1);
 });
 var handler_Connect = function()
 {
@@ -95,8 +93,17 @@ var handler_Settings = function(obj)
 	NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
 };
 
-// Game scene is where the game will be played
+/* 
+ * GAME SCENE
+ * Game scene is where the game will be played
+ */
 SceneDefinitions.GameScene = new Scene("GameScene", function()
 { 
 	console.log("game scene running");
+	
+	Map.generate(SpriteDefinitions.MAP_1);
+	
+	var dragon = Map.spawnPlayer(SpriteDefinitions.BLUE_DRAGON, 0, 0);
+	
+	var stick = GUI.Joystick(50, 400, dragon, 5);
 });

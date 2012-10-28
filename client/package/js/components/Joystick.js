@@ -203,30 +203,31 @@ Crafty.c('Joystick', {
     */
   _interpretPosition: function(){
     var joystick = this;
-
+    
       	if (joystick.isUp() && (!Crafty.keydown[ joystick._keys['up'] ])){
             Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : joystick._keys['up'] });
         } else if (Crafty.keydown[ joystick._keys['up'] ]){
             Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : joystick._keys['up'] });
         }
-
+		else
         if (joystick.isDown() && (!Crafty.keydown[ joystick._keys['down'] ])){
             Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : joystick._keys['down']});
         } else if (Crafty.keydown[joystick._keys['down']]){
             Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : joystick._keys['down']});
         }
-
+		else
     	if (joystick.isRight() && (!Crafty.keydown[ joystick._keys['right'] ])){
             Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : joystick._keys['right'] });
         } else if (Crafty.keydown[ joystick._keys['right'] ]){
             Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : joystick._keys['right'] });
         }
-
+		else
         if (joystick.isLeft() && (!Crafty.keydown[ joystick._keys['left'] ])){
             Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : joystick._keys['left'] });
         } else if (Crafty.keydown[ joystick._keys['left'] ]){
             Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : joystick._keys['left'] });
         }
+       
   },
 
     /**@

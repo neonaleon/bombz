@@ -1,18 +1,16 @@
 
 var Map = {
-	MAP_WIDTH: 1000,
+	MAP_WIDTH: 760,
 	MAP_HEIGHT: 600,
-	MAP_HORIZONTAL_TILE_COUNT: 30,
-	MAP_VERTICAL_TILE_COUNT: 24,
-	MAP_TILEWIDTH: 25,
-	MAP_TILEHEIGHT: 25,
+	MAP_HORIZONTAL_TILE_COUNT: 19, // - 2 for border and dodgeball area
+	MAP_VERTICAL_TILE_COUNT: 15,
+	MAP_TILEWIDTH: SpriteDefinitions.TILE_WIDTH,
+	MAP_TILEHEIGHT: SpriteDefinitions.TILE_HEIGHT,
 };
 
 Map.generate = function(map_name)
-{
+{	
 	var map = Sprite.Map(map_name);
-	
-	map.attr( { x: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), y: 0} );
 	
 	for (var dx = 0; dx < Map.MAP_HORIZONTAL_TILE_COUNT; dx++)
 	{
@@ -22,12 +20,12 @@ Map.generate = function(map_name)
 				Crafty.e("2D, DOM, floor")
             		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: 1 }));
 		    // border blocks
-		    if (dx === 0 || dx === (Map.MAP_HORIZONTAL_TILE_COUNT-1) || dy === 0 || dy === (Map.MAP_VERTICAL_TILE_COUNT-1)) {
+		    if (_isBorder(dx, dy)) {
 		    	map.attach(
 		    		Crafty.e("2D, DOM, solid, tileI")
 						.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: 5 }));
 		    }
-		    // indestructible blocks
+		    else // indestructible blocks in every other tile
 		    if ((dx % 2 === 0) && (dy % 2 === 0))
 		    {
 		    	map.attach(
@@ -36,6 +34,23 @@ Map.generate = function(map_name)
 		    }
 		}
 	}
+	// center the map
+	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 	
 	return map;
 };
+
+function _isBorder(x, y){
+	return x === 0 || x === (Map.MAP_HORIZONTAL_TILE_COUNT-1) || y === 0 || y === (Map.MAP_VERTICAL_TILE_COUNT-1);
+};
+
+Map.spawnPlayer = function(type, posx, posy)
+{
+	var player = Sprite.Dragon(type);
+	player.attr({ x: , y: 40, z: 100});
+	return player;
+}
+
+
+
+
