@@ -91,7 +91,7 @@ RoomPlaying.prototype.RemovePlayer = function( player )
 {
   var index = this._room._players.indexOf( player );
 
-  if ( _this.room._players.length < 1 || index  == -1 )
+  if ( this._room._players.length < 1 || index  == -1 )
     return;
 
   this._room._players.splice( index, 1 );

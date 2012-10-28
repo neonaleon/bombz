@@ -1,5 +1,4 @@
 //// IMPORTS
-var Bomb = require( './Bomb' );
 
 
 function Player( socket )

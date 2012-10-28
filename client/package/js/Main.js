@@ -8,5 +8,3 @@ window.onload = function()
 	
 	SceneManager.RunWithScene(SceneDefinitions.WaitingRoomScene); //SceneManager.RunWithScene(SceneDefinitions.SplashScene);
 };
-
-

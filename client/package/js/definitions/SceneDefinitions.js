@@ -67,17 +67,34 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	var stick = GUI.Joystick(100, 100, e, 5);
 	stick.shift(100, 100);
 	
-	Map.generate(SpriteDefinitions.MAP_1);
+	// Map.generate(SpriteDefinitions.MAP_1);
+
 });
 var handler_Connect = function()
 {
 	console.log("NetworkManager connected");
-	NetworkManager.AddListener(MessageDefinitions.ROOM, handler_JoinRoom);
+	NetworkManager.AddListener(MessageDefinitions.ROOM, handler_JoinRoomResponse);
+	NetworkManager.AddListener(MessageDefinitions.READY, handler_ReadyResponse);
+	NetworkManager.AddListener(MessageDefinitions.CHANGE, handler_ChangeResponse);
+	NetworkManager.AddListener(MessageDefinitions.UPDATE_SETTINGS, handler_SettingsResponse);
 };
-var handler_JoinRoom = function (data)
+var handler_JoinRoomResponse = function(data)
 {
-	console.log(data);
+	console.log("handler_JoinRoomResponse: ", data);
 	// read from data, initialize game data
+};
+var handler_ChangeResponse = function(data)
+{
+	console.log( state );
+	console.log("handler_ChangeResponse: ", data);
+};
+var handler_ReadyResponse = function(data)
+{
+	console.log("handler_ReadyResponse: ", data);
+};
+var handler_SettingsResponse = function(data)
+{
+	console.log("handler_SettingsResponse: ", data);
 };
 var handler_Ready = function(obj)
 {

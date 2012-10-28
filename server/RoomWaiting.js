@@ -37,6 +37,7 @@ RoomWaiting.prototype.CreatePlayerListeners = function( player )
   socket.on( 'change', function( data )
   {
     console.log( 'onChangeMessage' );
+    socket.emit( 'change', { msg: 'changeReply' } );
   });
 
   // client requests a change in game settings
