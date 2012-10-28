@@ -21,12 +21,16 @@ function RoomWaiting( room )
 // creates listeners specific to this state for a player
 RoomWaiting.prototype.CreatePlayerListeners = function( player )
 {
+  var room = this._room;
+  
   var socket = player.GetSocket();
 
   // client indicates he is ready to play
   socket.on( 'ready', function( data )
   {
     console.log( 'onReadyMessage' );
+
+    room.SetState( require( './Room' ).State.PLAYING );
   });
 
   // client requests a color change
@@ -39,6 +43,10 @@ RoomWaiting.prototype.CreatePlayerListeners = function( player )
   socket.on( 'settings', function( data )
   {
     console.log( 'onSettingsMessage' );
+    // if ( data.length !== undefined ) {}
+    // else if ( data.length !== undefined ) {}
+    // else if ( data.length !== undefined ) {}
+    // else if ( data.length !== undefined ) {}
   });
 }
 
