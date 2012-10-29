@@ -67,10 +67,16 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	var seats = ["BlueSeat", "GreenSeat", "RedSeat", "PinkSeat"];
 	for (var i = 0; i < seats.length; i++)
 	{
-		e = GUI.Button(seats[i], eval("handler_" + seats[i]))
+		e = GUI.SwitchButton(seats[i], eval("handler_" + seats[i]))
 				.attr({	x:(i+1)*Properties.DEVICE_WIDTH/4 - GUIDefinitions.BUTTON_WIDTH/2, 
 						y:150});
 	}
+
+	var colorButtons = GUI.OneOrNoneRadioButtonGroup(["Blue", "Green"], function( buttonIndex, value ) {
+		console.log( buttonIndex, value );
+	});
+	colorButtons[ Player.Color.BLUE ].attr({ x: 0, y: 50 });
+	colorButtons[ Player.Color.GREEN ].attr({ x: 200, y: 50 });
 
 	// change scene to game scene
 	var stick = GUI.Joystick(100, 100, e, 5);

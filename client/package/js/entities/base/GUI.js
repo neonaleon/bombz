@@ -38,6 +38,58 @@ GUI.Button = function(buttonText, handler)
 				});
 };
 
+// Creates a switch button with buttonText, which invokes handler(this) when clicked
+// button has true (selected) and false (not selected) state
+GUI.SwitchButton = function(buttonText, handler)
+{
+	return Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse")
+				.setName("button_" + buttonText)
+				.attr({	isDown:false, w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
+				.color(GUIDefinitions.BUTTON_UPCOLOR)
+				.text(buttonText)
+				.bind("Click", function()
+				{
+					if (!this.isDown) 
+					{
+						this.isDown = true;
+						this.color(GUIDefinitions.BUTTON_DOWNCOLOR);
+					}
+					else
+					{
+						this.isDown = false;
+						this.color(GUIDefinitions.BUTTON_UPCOLOR);
+					}
+					handler(this, this.isDown);
+				})
+};
+
+GUI.OneOrNoneRadioButtonGroup = function(buttonTextArray, handler)
+{
+	var buttons = [];
+	var selected = undefined;	// current selected button
+	function handler_Group( button, value )
+	{
+		var index = buttons.indexOf( button );
+
+		if ( index !=== selected )
+		{
+			selected = index;
+		}
+		else
+		{
+			selected = undefined;
+		}
+		handler( , value );
+	}
+
+	for ( var i in buttonTextArray )
+	{
+		var buttonText = buttonTextArray[ i ];
+		buttons.push( GUI.SwitchButton(buttonText, handler_Group ) );
+	}
+	return buttons;
+};
+
 GUI.ACTION_BUTTON_A = 'A';
 GUI.ACTION_BUTTON_B = 'B';
 GUI.ActionButton = function(enumButton, handler)
