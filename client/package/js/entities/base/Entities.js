@@ -1,15 +1,15 @@
 /*
- * Sprite.js
+ * Entities.js
  * @author: Leon Ho
  */
 
-var Sprite = {};
+var Entities = {};
 
 /*
  * Creates components for specified sprite_name
  * Returns a Dragon entity
  */
-Sprite.Dragon = function(sprite_name)
+Entities.Dragon = function(sprite_name)
 {
 	var def = SpriteDefinitions[sprite_name];
 	// create Sprite components from SpriteDefinitions given sprite_name
@@ -45,7 +45,13 @@ Sprite.Dragon = function(sprite_name)
 	return dragon;
 };
 
-Sprite.Map = function(map_name)
+Entities.Egg = function()
+{
+	var egg = Crafty.e('egg');
+	return egg;
+};
+
+Entities.Map = function(map_name)
 {
 	var map = Crafty.e("2D");
 	

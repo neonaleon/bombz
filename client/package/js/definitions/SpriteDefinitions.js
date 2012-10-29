@@ -27,6 +27,8 @@ var SpriteDefinitions = {
 	DRAGONS: ['bluedragon', 'greendragon', 'reddragon', 'pinkdragon'],
 	
 	MAP_1: 'map1',
+	
+	GUI: 'gui',
 };
 
 for (var i = 0; i < SpriteDefinitions.DRAGONS.length; i++)
@@ -57,5 +59,15 @@ SpriteDefinitions['map1'] = {
 		floor: [0, 4],
 		tileD: [1, 4],
 		tileI: [2, 4],
+	}
+};
+
+SpriteDefinitions['gui'] = {
+	'file': '/img/sprite40x40.png',
+	'tile': SpriteDefinitions.TILE_WIDTH,
+	'elements': {
+		dpad: [0, 4],
+		buttonA: [1, 4],
+		buttonB: [2, 4],
 	}
 };

@@ -14,7 +14,7 @@ var Map = {
 
 Map.generate = function(map_name)
 {	
-	var map = Sprite.Map(map_name);
+	var map = Entities.Map(map_name);
 	
 	for (var dx = 0; dx < Map.MAP_HORIZONTAL_TILE_COUNT; dx++)
 	{
@@ -52,7 +52,7 @@ function _isBorder(x, y){
 
 Map.spawnPlayer = function(type, posx, posy)
 {
-	var player = Sprite.Dragon(type);
+	var player = Entities.Dragon(type);
 	Map.instance.attach(player);
 	player.attr({ x: Map.instance.x + Map.MAP_TILEWIDTH, y: Map.MAP_TILEHEIGHT, z: 100});
 	return player;

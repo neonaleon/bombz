@@ -143,5 +143,18 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	
 	var dragon2 = Map.spawnPlayer(SpriteDefinitions.PINK_DRAGON, 0, 0);
 	
-	var stick = GUI.Joystick(50, 400, dragon2, 5);
+	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400, z:100});
+	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400, z:100});
+	
+	var pad = GUI.Dpad(dragon2, 5, handler_buttonA, handler_buttonB).attr({x:50, y:400, z:100});
 });
+
+var handler_buttonA = function()
+{
+	console.log("A DOWN");
+}
+
+var handler_buttonB = function()
+{
+	console.log("B DOWN");
+}
