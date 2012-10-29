@@ -19,19 +19,19 @@ Sprite.Dragon = function(sprite_name)
 					.setName(sprite_name);
 					
 	dragon.addComponent("SpriteAnimation, Collision")
-				.animate("walk_up", 0, def['animRow'], 1)
-				.animate("walk_right", 2, def['animRow'], 4)
-				.animate("walk_down", 5, def['animRow'], 6)
-				.animate("walk_left", 7, def['animRow'], 9)
+				.animate("walk_up", def['anim_walk_up'])
+				.animate("walk_right", def['anim_walk_right'])
+				.animate("walk_down", def['anim_walk_down'])
+				.animate("walk_left", def['anim_walk_left'])
 				.bind("NewDirection", function (newdir) {
                     if (newdir.x < 0)
-                        if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 4, -1);
+                        if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 15, -1);
                     if (newdir.x > 0)
-                        if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 4, -1);   
+                        if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 15, -1);   
                     if (newdir.y < 0)
-                        if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
+                        if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 10, -1);
                     if (newdir.y > 0)
-                        if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
+                        if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 10, -1);
 
                     if(!newdir.x && !newdir.y) this.stop();
                 })

@@ -24,56 +24,30 @@ var SpriteDefinitions = {
 	RED_DRAGON: 'reddragon',
 	PINK_DRAGON: 'pinkdragon',
 	
+	DRAGONS: ['bluedragon', 'greendragon', 'reddragon', 'pinkdragon'],
+	
 	MAP_1: 'map1',
 };
 
-SpriteDefinitions['bluedragon'] = {
-	'file': '/img/sprite40x40.png',
-	'tile': SpriteDefinitions.TILE_WIDTH,
-	'tileh': undefined,
-	'animRow': 0,
-	'animCol': undefined,
-	'elements':{
-		bluedragon: [0, 0],
-		egg: [10, 0],
-	}
-};
-
-SpriteDefinitions['greendragon'] = {
-	'file': '/img/sprite40x40.png',
-	'tile': SpriteDefinitions.TILE_WIDTH,
-	'tileh': undefined,
-	'animRow': 1,
-	'animCol': undefined,
-	'elements':{
-		greendragon: [0, 1],
-		egg: [10, 1],
-	}
-};
-
-SpriteDefinitions['reddragon'] = {
-	'file': '/img/sprite40x40.png',
-	'tile': SpriteDefinitions.TILE_WIDTH,
-	'tileh': undefined,
-	'animRow': 2,
-	'animCol': undefined,
-	'elements':{
-		reddragon: [0, 2],
-		egg: [10, 2],
-	}
-};
-
-SpriteDefinitions['pinkdragon'] = {
-	'file': '/img/sprite40x40.png',
-	'tile': SpriteDefinitions.TILE_WIDTH,
-	'tileh': undefined,
-	'animRow': 3,
-	'animCol': undefined,
-	'elements':{
-		pinkdragon: [0, 0],
-		egg: [10, 3],
-	}
-};
+for (var i = 0; i < SpriteDefinitions.DRAGONS.length; i++)
+{
+	var dragon = SpriteDefinitions.DRAGONS[i];
+	SpriteDefinitions[dragon] = {
+		'file': '/img/sprite40x40.png',
+		'tile': SpriteDefinitions.TILE_WIDTH,
+		'tileh': undefined,
+		'elements':(function() {
+			var elements = {};
+			elements[dragon] = [5, i];
+			elements['egg'] = [10, i];
+			return elements;
+		})(),
+		'anim_walk_up':[[0, i], [1, i]],
+		'anim_walk_right':[[2, i], [3, i], [4, i]],
+		'anim_walk_down':[[5, i], [6, i]],
+		'anim_walk_left':[[7, i], [8, i], [9, i]],
+	};
+}
 
 SpriteDefinitions['map1'] = {
 	'file': '/img/sprite40x40.png',
