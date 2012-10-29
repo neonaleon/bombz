@@ -38,6 +38,14 @@ GUI.Button = function(buttonText, handler)
 				});
 };
 
+GUI.ACTION_BUTTON_A = 'A';
+GUI.ACTION_BUTTON_B = 'B';
+GUI.ActionButton = function(enumButton, handler)
+{
+	return Crafty.e(Properties.RENDERER + ", 2D, Color, ActionButton")
+				.setName("actionButton_" + enumButton);
+};
+
 GUI.TexturedButton = function ()
 {
 	
@@ -65,10 +73,9 @@ GUI.Joystick = function (posx, posy, obj, speed)
     .joystick(stick, {mouseSupport: true, range: 20})
     .attach(stick);
     */
+   var joystick = Crafty.e('Controller').attr({x:posx, y:posy});
     //obj.addComponent("Keyboard, Multiway").multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
-   	obj.addComponent("Keyboard, Fourway").fourway(speed);
-    
-    return track;
+   	obj.addComponent("Controllable").setSpeed(speed);
 }
 
 GUI.RoomButton = function(data)

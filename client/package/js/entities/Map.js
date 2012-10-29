@@ -4,8 +4,12 @@ var Map = {
 	MAP_HEIGHT: 600,
 	MAP_HORIZONTAL_TILE_COUNT: 19, // - 2 for border and dodgeball area
 	MAP_VERTICAL_TILE_COUNT: 15,
-	MAP_TILEWIDTH: SpriteDefinitions.TILE_WIDTH,
-	MAP_TILEHEIGHT: SpriteDefinitions.TILE_HEIGHT,
+	
+	// tile width/height should be same as the tile set we use, see SpriteDefinitions.js
+	MAP_TILEWIDTH: 40,
+	MAP_TILEHEIGHT: 40,
+	
+	instance: undefined,
 };
 
 Map.generate = function(map_name)
@@ -37,6 +41,8 @@ Map.generate = function(map_name)
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 	
+	Map.instance = map;
+	
 	return map;
 };
 
@@ -47,7 +53,12 @@ function _isBorder(x, y){
 Map.spawnPlayer = function(type, posx, posy)
 {
 	var player = Sprite.Dragon(type);
+<<<<<<< HEAD
 	player.attr({ x: 200, y: 40, z: 100});
+=======
+	Map.instance.attach(player);
+	player.attr({ x: Map.instance.x + Map.MAP_TILEWIDTH, y: Map.MAP_TILEHEIGHT, z: 100});
+>>>>>>> dbbc1f055fd4e13eb16ae3f350cfd63b7d7f0a86
 	return player;
 }
 

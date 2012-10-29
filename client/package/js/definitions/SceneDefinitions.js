@@ -154,5 +154,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	
 	var dragon = Map.spawnPlayer(SpriteDefinitions.BLUE_DRAGON, 0, 0);
 	
-	var stick = GUI.Joystick(50, 400, dragon, 5);
+	var dragon2 = Map.spawnPlayer(SpriteDefinitions.PINK_DRAGON, 0, 0);
+	
+	var stick = GUI.Joystick(50, 400, dragon2, 5);
 });
