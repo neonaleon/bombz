@@ -86,21 +86,52 @@ RoomController.prototype.EndGame = function()
 // creates listeners specific to this state for a player
 RoomController.prototype.CreatePlayerListeners = function( socket )
 {
-  if ( this._room.GetState() === Room.State.WAITING )
+  var room = this._room;
+  var roomController = this;
+
+  if ( room.GetState() === Room.State.WAITING )
   {
   // client indicates he is ready to play
   socket.on( 'ready', function( data )
   {
-    console.log( 'onReadyMessage' );
+    var start = true;
 
+    // must be full room
+    if ( room.GetPlayerCount() != Room.MAX )
+      start = false;
+
+    // check that everyone has chosen their colors and all different
+    var colors = {};
+    var players = room.GetPlayers();
+    for ( var i in players )
+    {
+      var color = players[ i ].GetColor();
+
+      if ( color === Player.Color.NONE || color in colors )
+      {
+        start = false;
+        break;
+      }
+      else
+      {
+        colors[ color ] = color;
+      }
+    }
+
+    if ( start )
+    {
+      socket.emit( 'ready', "YES" );
+    }
+    else
+    {
+      socket.emit( 'ready', "NO" );
+    }
     //SetState( Room.State.PLAYING );
   });
 
   // client requests a color change
   socket.on( 'seat', function( data )
   {
-    console.log( 'seat', data );
-
     var color;
     switch ( data.color )
     {
@@ -108,15 +139,16 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       case Player.Color.GREEN:
       case Player.Color.RED:
       case Player.Color.PINK:
-      case Player.Color.NONE:
         color = data.color;
-        // set player
         break;
 
       default:
         color = Player.Color.NONE;
         break;
     }
+
+    var player = roomController.GetPlayerFromSocket( socket );
+    player.SetColor( color );
 
     socket.emit( 'seat', { color: color } );
   });
@@ -127,6 +159,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     console.log( 'onSettingsMessage' );
     socket.emit( 'settings', { msg: 'settingsReply' } );
   });
+
   }
   else
   {
