@@ -22,10 +22,8 @@ function RoomPlaying( room )
 //// PUBLIC FUNCTIONS
 
 // creates listeners specific to this state for a player
-RoomPlaying.prototype.CreatePlayerListeners = function( player )
+RoomPlaying.prototype.CreatePlayerListeners = function( socket )
 {
-  var socket = player.GetSocket();
-
   // player moves
   socket.on( 'move', function( data )
   {
@@ -54,9 +52,8 @@ RoomPlaying.prototype.CreatePlayerListeners = function( player )
 }
 
 // removes listeners specific to this state for a player
-RoomPlaying.prototype.RemovePlayerListeners = function( player )
+RoomPlaying.prototype.RemovePlayerListeners = function( socket )
 {
-  var socket = player.GetSocket();
   socket.removeAllListeners( 'move' );
   socket.removeAllListeners( 'bomb' );
   socket.removeAllListeners( 'fireball' );
@@ -83,11 +80,11 @@ RoomPlaying.prototype.Leave = function()
 
 // add player to room
 // shouldn't happen in this state as player can't be added while game is on
-RoomPlaying.prototype.AddPlayer = function( player ) {}
+RoomPlaying.prototype.AddPlayer = function( socket ) {}
 
 // remove player from room
 // this is called when player leaves / disconnects
-RoomPlaying.prototype.RemovePlayer = function( player )
+RoomPlaying.prototype.RemovePlayer = function( socket )
 {
   var index = this._room._players.indexOf( player );
 

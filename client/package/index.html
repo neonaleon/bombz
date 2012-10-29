@@ -15,14 +15,20 @@
     <script src="js/Properties.js"></script>
     <!-- game specific definitions -->
     <script src="js/definitions/MessageDefinitions.js"></script>
-    <script src="js/definitions/SceneDefinitions.js"></script>
-    <script src="js/definitions/GUIDefinitions.js"></script>
     <script src="js/definitions/SpriteDefinitions.js"></script>
+    <script src="js/definitions/GUIDefinitions.js"></script>
+    <script src="js/definitions/SceneDefinitions.js"></script>
     <!-- game state models -->
-    <script src="js/models/Map.js"></script>
+    <!--<script src="js/models/Map.js"></script>-->
+    <script>
+      // to suppress errors from server nodejs code
+      module = {};
+      module.exports = {};
+      function require() {}
+    </script>
     <script src="js/models/Bomb.js"></script>
-    <script src="js/models/Room.js"></script>
     <script src="js/models/Player.js"></script>
+    <script src="js/models/Room.js"></script>
     <script src="js/models/Powerup.js"></script>
     <!-- game framework -->
     <script src="js/components/Joystick.js"></script>
@@ -30,9 +36,9 @@
     <script src="js/entities/base/SceneManager.js"></script>
     <script src="js/entities/base/NetworkManager.js"></script>
     <script src="js/entities/base/Sprite.js"></script>
-    <script src="js/entities/base/State.js"></script>
     <!-- game objects -->
     <script src="js/entities/Map.js"></script>
+    <script src="js/entities/State.js"></script>
     <!-- game entry point -->
     <script src="js/Main.js"></script>
     <!-- natalie testing
@@ -52,10 +58,12 @@
 
     <script>
       // CRAFTY DEBUGGER
+      
       Crafty.modules( { 'crafty-debug-bar': 'DEV' }, function()
       {
          Crafty.debugBar.show();
       });
+      
     </script>
     <!--
     <style>

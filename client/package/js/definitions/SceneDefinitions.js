@@ -55,38 +55,53 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	NetworkManager.Connect(Properties.MASTERSERVER_IP, Properties.MASTERSERVER_PORT, handler_Connect);
 	
 	console.log("waiting room scene running");
-	var buttons = ["Ready", "Change", "Settings"];
+	var buttons = ["Ready", "Settings"];
 	var e; // FOR TESTING JOYSTICK
-	for (var i = 0; i < 3; i++)
+	for (var i = 0; i < buttons.length; i++)
 	{
 		e = GUI.Button(buttons[i], eval("handler_" + buttons[i]))
 				.attr({	x:(i+1)*Properties.DEVICE_WIDTH/4 - GUIDefinitions.BUTTON_WIDTH/2, 
 						y:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_HEIGHT/2});
 	}
+
+	var seats = ["BlueSeat", "GreenSeat", "RedSeat", "PinkSeat"];
+	for (var i = 0; i < seats.length; i++)
+	{
+		e = GUI.Button(seats[i], eval("handler_" + seats[i]))
+				.attr({	x:(i+1)*Properties.DEVICE_WIDTH/4 - GUIDefinitions.BUTTON_WIDTH/2, 
+						y:150});
+	}
+
 	// change scene to game scene
 	var stick = GUI.Joystick(100, 100, e, 5);
 	stick.shift(100, 100);
 	
 	// Map.generate(SpriteDefinitions.MAP_1);
-
 });
 var handler_Connect = function()
 {
 	console.log("NetworkManager connected");
-	NetworkManager.AddListener(MessageDefinitions.ROOM, handler_JoinRoomResponse);
 	NetworkManager.AddListener(MessageDefinitions.READY, handler_ReadyResponse);
-	NetworkManager.AddListener(MessageDefinitions.CHANGE, handler_ChangeResponse);
-	NetworkManager.AddListener(MessageDefinitions.UPDATE_SETTINGS, handler_SettingsResponse);
+	NetworkManager.AddListener(MessageDefinitions.SEAT, handler_SeatResponse);
+	NetworkManager.AddListener(MessageDefinitions.ENTER_ROOM, handler_EnterRoomResponse);
+	NetworkManager.AddListener(MessageDefinitions.ROOM_UPDATE, handler_SettingsResponse);
+	NetworkManager.AddListener(MessageDefinitions.UPDATE_SETTINGS, handler_RoomUpdateResponse);
 };
-var handler_JoinRoomResponse = function(data)
+var handler_EnterRoomResponse = function(data)
 {
-	console.log("handler_JoinRoomResponse: ", data);
+	console.log("handler_EnterRoomResponse: ", data);
 	// read from data, initialize game data
+	GameState.JoinRoom( data.room );
+
 };
-var handler_ChangeResponse = function(data)
+var handler_Seat = function(data)
 {
-	console.log( state );
-	console.log("handler_ChangeResponse: ", data);
+	console.log("handler_Seat: ", data);
+	//switch
+};
+var handler_SeatResponse = function(data)
+{
+	console.log("handler_SeatResponse: ", data);
 };
 var handler_ReadyResponse = function(data)
 {
@@ -96,24 +111,48 @@ var handler_SettingsResponse = function(data)
 {
 	console.log("handler_SettingsResponse: ", data);
 };
+var handler_RoomUpdateResponse = function(data)
+{
+	console.log("handler_RoomUpdateResponse: ", data);
+};
 var handler_Ready = function(obj)
 {
 	console.log("clicked=", obj);
 	NetworkManager.SendMessage(MessageDefinitions.READY, {})
-};
-var handler_Change = function(obj)
-{
-	console.log("clicked=", obj);
-	NetworkManager.SendMessage(MessageDefinitions.CHANGE_COLOR, {})
 };
 var handler_Settings = function(obj)
 {
 	console.log("clicked=", obj);
 	NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
 };
-
-// Game scene is where the game will be played
+// following buttons at seats for player to choose
+var handler_BlueSeat = function(obj, state)
+{
+	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: Player.Color.BLUE });
+};
+var handler_GreenSeat = function(data)
+{
+	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: Player.Color.GREEN });
+};
+var handler_RedSeat = function(data)
+{
+	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: Player.Color.RED });
+};
+var handler_PinkSeat = function(data)
+{
+	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: Player.Color.PINK });
+};
+/* 
+ * GAME SCENE
+ * Game scene is where the game will be played
+ */
 SceneDefinitions.GameScene = new Scene("GameScene", function()
 { 
 	console.log("game scene running");
+	
+	Map.generate(SpriteDefinitions.MAP_1);
+	
+	var dragon = Map.spawnPlayer(SpriteDefinitions.BLUE_DRAGON, 0, 0);
+	
+	var stick = GUI.Joystick(50, 400, dragon, 5);
 });

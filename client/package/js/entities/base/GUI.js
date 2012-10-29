@@ -46,6 +46,7 @@ GUI.TexturedButton = function ()
 // Creates a joystick at posx, posy which moves the entity obj with speed
 GUI.Joystick = function (posx, posy, obj, speed)
 {
+	/*
 	// INCOMPLETE, NEED TO SET X, Y, W, H, according to image we are going to use
 	var stick = Crafty.e(Properties.RENDERER + ", 2D, Image").attr({
                 x: posx+5,
@@ -63,8 +64,9 @@ GUI.Joystick = function (posx, posy, obj, speed)
     }).image("http://cdn1.iconfinder.com/data/icons/softwaredemo/PNG/64x64/Circle_Grey.png")
     .joystick(stick, {mouseSupport: true, range: 20})
     .attach(stick);
-    
-    obj.addComponent("Keyboard, Multiway").multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
+    */
+    //obj.addComponent("Keyboard, Multiway").multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
+   	obj.addComponent("Keyboard, Fourway").fourway(speed);
     
     return track;
 }

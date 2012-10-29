@@ -92,6 +92,11 @@ Room.prototype.GetPlayer = function( id )
   return this._players[ id ];
 }
 
+Room.prototype.GetPlayerCount = function()
+{
+  return this._players.length;
+}
+
 // start the game
 Room.prototype.StartGame = function()
 {
@@ -115,12 +120,18 @@ Room.prototype.Serialize = function()
   }
 }
 
-Room.prototype.Deserialize = function( object )
+Room.prototype.Deserialize = function( data )
 {
-  this._id = object.id;
-  //this._players = object.players;
-  this._state = object.state;
-  this._settings = this._settings;
+  this._id = data.id;
+  this._players = [];
+  for ( var i = 0; i < data.players.length; i++ )
+  {
+    var player = new Player();
+    player.Deserialize( data );
+    this._players.push( player );
+  }
+  this._state = data.state;
+  this._settings = data.settings;
 }
 
 
