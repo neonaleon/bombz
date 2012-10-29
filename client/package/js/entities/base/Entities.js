@@ -45,6 +45,12 @@ Entities.Dragon = function(sprite_name)
 	return dragon;
 };
 
+Entities.Egg = function()
+{
+	var egg = Crafty.e('egg');
+	return egg;
+};
+
 Entities.Map = function(map_name)
 {
 	var map = Crafty.e("2D");

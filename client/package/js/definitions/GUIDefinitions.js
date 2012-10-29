@@ -4,6 +4,7 @@
 
 var GUIDefinitions = 
 {
+	Z_INDEX : 9999, // GUI should be rendered on top of everything
 	// Replace with images when available
 	GENERIC_BUTTON : "GenericButton",
 	BUTTON_WIDTH : 120,
@@ -15,9 +16,6 @@ var GUIDefinitions =
 	// BUTTON_DOWN_BASE:
 	// BUTTON_UP_OVERLAY:
 	// BUTTON_DOWN_OVERLAY:
-	
-	//JOYSTICK_BASE:
-	//JOYSTICK_STICK:
 	
 	// ICON_HEART : 'filename'
 	// ICON_POWERUP_<TYPE> : 'filename'
