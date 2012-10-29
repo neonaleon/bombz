@@ -12,7 +12,7 @@ Crafty.c('Button', {
 		this._onButtonDownFunc = undefined,
 		this._onButtonOutFunc = undefined,
 		this._onButtonUpFunc = undefined,
-			
+
 		this.bind("MouseDown", function()
 		{
 			if (!this.isDown) 
@@ -51,12 +51,33 @@ GUI.Button = function(buttonText, handler)
 				.onButtonOut(function(){ this.color(GUIDefinitions.BUTTON_UPCOLOR); })
 				.onButtonUp(function(){ this.color(GUIDefinitions.BUTTON_UPCOLOR); handler(this);});
 };
+/*
+Crafty.c('SwitchButton', {
+	init: function(){
+		this.requires("Mouse");
+		this.isDown = false;
+		this._onButtonClickFunc = undefined,
+
+		this.off = function()
+		{
+			this.isDown = false;
+		};
+
+		this.bind("Click", function()
+		{
+			this.isDown = this.isDown ? false : true;
+			this._onButtonClickFunc(this, this.isDown);
+		})
+		return this;
+	},
+	onButtonClick: function (func) {this._onButtonClickFunc = func; return this;},
+})*/
 
 // Creates a switch button with buttonText, which invokes handler(this) when clicked
 // button has true (selected) and false (not selected) state
 GUI.SwitchButton = function(buttonText, handler)
 {
-	return Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse")
+	var button = Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse")
 				.setName("button_" + buttonText)
 				.attr({	isDown:false, w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
 				.color(GUIDefinitions.BUTTON_UPCOLOR)
@@ -65,41 +86,47 @@ GUI.SwitchButton = function(buttonText, handler)
 				{
 					if (!this.isDown) 
 					{
-						this.isDown = true;
-						this.color(GUIDefinitions.BUTTON_DOWNCOLOR);
+						this.on();
 					}
 					else
 					{
-						this.isDown = false;
-						this.color(GUIDefinitions.BUTTON_UPCOLOR);
+						this.off();
 					}
 					handler(this, this.isDown);
-				})
+				});
+
+	button.on = function()
+	{
+		this.isDown = true;
+		this.color(GUIDefinitions.BUTTON_DOWNCOLOR);
+	};
+	button.off = function()
+	{
+		this.isDown = false;
+		this.color(GUIDefinitions.BUTTON_UPCOLOR);
+	};
+	return button;
 };
 
 GUI.OneOrNoneRadioButtonGroup = function(buttonTextArray, handler)
 {
 	var buttons = [];
-	var selected = undefined;	// current selected button
-	function handler_Group( button, value )
-	{
-		var index = buttons.indexOf( button );
 
-		if ( index !=== selected )
-		{
-			selected = index;
-		}
-		else
-		{
-			selected = undefined;
-		}
-		handler( , value );
+	function handler_Group( button, isOn )
+	{
+		for ( var i in buttons )
+			buttons[ i ].off();
+
+		if ( isOn )
+			button.on();
+
+		handler( buttons.indexOf( button ), isOn );
 	}
 
 	for ( var i in buttonTextArray )
 	{
 		var buttonText = buttonTextArray[ i ];
-		buttons.push( GUI.SwitchButton(buttonText, handler_Group ) );
+		buttons.push( GUI.SwitchButton( buttonText, handler_Group ) );
 	}
 	return buttons;
 };

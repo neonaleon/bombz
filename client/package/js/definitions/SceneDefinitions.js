@@ -64,19 +64,11 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 						y:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_HEIGHT/2});
 	}
 
-	var seats = ["BlueSeat", "GreenSeat", "RedSeat", "PinkSeat"];
-	for (var i = 0; i < seats.length; i++)
-	{
-		e = GUI.SwitchButton(seats[i], eval("handler_" + seats[i]))
-				.attr({	x:(i+1)*Properties.DEVICE_WIDTH/4 - GUIDefinitions.BUTTON_WIDTH/2, 
-						y:150});
-	}
-
-	var colorButtons = GUI.OneOrNoneRadioButtonGroup(["Blue", "Green"], function( buttonIndex, value ) {
-		console.log( buttonIndex, value );
-	});
-	colorButtons[ Player.Color.BLUE ].attr({ x: 0, y: 50 });
-	colorButtons[ Player.Color.GREEN ].attr({ x: 200, y: 50 });
+	var colorButtons = GUI.OneOrNoneRadioButtonGroup(["Blue", "Green", "Red", "Pink"], handler_Seat);
+	colorButtons[ Player.Color.BLUE ].attr({ x: 100, y: 100, h: 200 });
+	colorButtons[ Player.Color.GREEN ].attr({ x: 250, y: 100, h: 200 });
+	colorButtons[ Player.Color.RED ].attr({ x: 400, y: 100, h: 200 });
+	colorButtons[ Player.Color.PINK ].attr({ x: 550, y: 100, h: 200 });
 
 	// change scene to game scene
 	var stick = GUI.Joystick(100, 100, e, 5);
@@ -126,28 +118,17 @@ var handler_Ready = function(obj)
 	console.log("clicked=", obj);
 	NetworkManager.SendMessage(MessageDefinitions.READY, {})
 };
+// players chooses colour
+var handler_Seat = function( buttonIndex, value )
+{
+	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: value ? buttonIndex : Player.Color.NONE });
+};
 var handler_Settings = function(obj)
 {
 	console.log("clicked=", obj);
 	NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
 };
-// following buttons at seats for player to choose
-var handler_BlueSeat = function(obj, state)
-{
-	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: Player.Color.BLUE });
-};
-var handler_GreenSeat = function(data)
-{
-	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: Player.Color.GREEN });
-};
-var handler_RedSeat = function(data)
-{
-	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: Player.Color.RED });
-};
-var handler_PinkSeat = function(data)
-{
-	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: Player.Color.PINK });
-};
+
 /* 
  * GAME SCENE
  * Game scene is where the game will be played
