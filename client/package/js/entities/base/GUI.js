@@ -57,7 +57,14 @@ GUI.ACTION_BUTTON_B = 'B';
 
 GUI.ActionButton = function(button)
 {
-	return Crafty.e(Properties.RENDERER + ", 2D, Button"); // add a action button sprite!
+	return Crafty.e(Properties.RENDERER + ", 2D, Button") // add a action button sprite!
+			.setName("actionButton_" + button)
+			.onButtonDown(
+				
+			)
+			.onButtonUp(
+				
+			); 
 }
 
 // Creates a joystick at posx, posy which moves the entity obj with speed
