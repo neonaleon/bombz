@@ -10,5 +10,3 @@ window.onload = function()
 	SceneManager.RunWithScene(SceneDefinitions.GameScene);
 	//SceneManager.RunWithScene(SceneDefinitions.SplashScene);
 };
-
-

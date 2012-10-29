@@ -18,6 +18,19 @@
     <script src="js/definitions/SpriteDefinitions.js"></script>
     <script src="js/definitions/GUIDefinitions.js"></script>
     <script src="js/definitions/SceneDefinitions.js"></script>
+    <!-- game state models -->
+    <!--<script src="js/models/Map.js"></script>-->
+    <script>
+      // to suppress errors from server nodejs code
+      module = {};
+      module.exports = {};
+      function require() {}
+    </script>
+    <script src="js/models/Bomb.js"></script>
+    <!--<script src="js/models/Player.js"></script>-->
+    <script src="js/models/Room.js"></script>
+    <script src="js/models/Player.js"></script>
+    <script src="js/models/Powerup.js"></script>
     <!-- game framework -->
     <script src="js/components/Controller.js"></script>
     <script src="js/entities/base/GUI.js"></script>
@@ -26,6 +39,7 @@
     <script src="js/entities/base/Sprite.js"></script>
     <!-- game objects -->
     <script src="js/entities/Map.js"></script>
+    <script src="js/entities/State.js"></script>
     <!-- game entry point -->
     <script src="js/Main.js"></script>
 
@@ -40,31 +54,6 @@
     </script>
 
     <script>
-    //	var socket = io.connect('http://localhost');
-    	
-      /*
-      // TIME
-      socket.on( 'sntp', function( data )
-      {
-        console.log( data );
-        var time = ( new Date() ).getTime();
-        var RTT = time - data.clientTime;
-        var delta = data.serverTime - time + parseInt( RTT / 2 );
-        console.log( "Wall Clock Time: " + ( new Date() ).getTime() + delta );
-      });
-	  
-      socket.emit( 'sntp', { clientTime: ( new Date() ).getTime() } );
-      */
-
-      // CHAT
-      /*
-      socket.on( 'chat', function( data )
-      {
-        console.log( data );
-      });
-      socket.emit( 'chat', "test" );
-	  */
-	  
       // CRAFTY DEBUGGER
       
       Crafty.modules( { 'crafty-debug-bar': 'DEV' }, function()

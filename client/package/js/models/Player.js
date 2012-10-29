@@ -2,11 +2,11 @@
 var Bomb = require( './Bomb' );
 
 
-function Player( socket )
+function Player( id, socket )
 {
 //// PRIVATE VARIABLES
-  this._id;	      		    // int - identifier - [0 to Room.MAX - 1]
-  this._socket = socket;	// socket
+  this._id = id;	      		 // int - identifier - [0 to Room.MAX - 1]
+  this._socket = socket;	   // socket
 
   
   // this._x;                // int - player's x co-ordinates in pixels
@@ -45,6 +45,10 @@ Player.Default =
 
 
 //// PUBLIC FUNCTIONS
+Player.prototype.GetID = function()
+{
+  return this._id;
+};
 
 Player.prototype.GetSocket = function()
 {
@@ -59,6 +63,16 @@ Player.prototype.GetSpeed = function()
 Player.prototype.SetSpeed = function( speed )
 {
   this._speed = speed;
+}
+
+Player.prototype.GetColor = function()
+{
+  return this._color;
+}
+
+Player.prototype.SetColor = function( color )
+{
+  this._color = color;
 }
 
 Player.prototype.GetBombRange = function()
@@ -142,6 +156,16 @@ Player.prototype.Serialize = function()
     limit: this._bomb_limit,
     powerups: this._powerups,
   };
+}
+
+Player.prototype.Deserialize = function( data )
+{
+  this._id = data.id;
+  this._color = data.color;
+  this._speed = data.speed;
+  this._bomb_range = data.range;
+  this._bomb_limit = data.limit;
+  this._powerups = data.powerups;
 }
 
 

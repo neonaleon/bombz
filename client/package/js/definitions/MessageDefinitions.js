@@ -15,7 +15,7 @@ var MessageDefinitions =
 	// Waiting Room messages
 	// outgoing
 	READY: "ready", // player updates status to ready
-	CHANGE_COLOR: "change", // player changes color
+	SEAT: "seat", // player seats/unseats from color, data is { color: Player.Colour } Player.Colour.NONE to unseat
 	UPDATE_SETTINGS: "settings", // player changes room settings (room owner only)
 	START: "start", // player requests game to start (room owner only)
 	// incoming

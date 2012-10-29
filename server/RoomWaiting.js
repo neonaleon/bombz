@@ -1,5 +1,6 @@
 //// IMPORTS
 var Room = require( './Room' );
+var Player = require( './Player' );
 
 
 function RoomWaiting( room )
@@ -19,11 +20,9 @@ function RoomWaiting( room )
 //// PUBLIC FUNCTIONS
 
 // creates listeners specific to this state for a player
-RoomWaiting.prototype.CreatePlayerListeners = function( player )
+RoomWaiting.prototype.CreatePlayerListeners = function( socket )
 {
   var room = this._room;
-  
-  var socket = player.GetSocket();
 
   // client indicates he is ready to play
   socket.on( 'ready', function( data )
@@ -34,15 +33,35 @@ RoomWaiting.prototype.CreatePlayerListeners = function( player )
   });
 
   // client requests a color change
-  socket.on( 'change', function( data )
+  socket.on( 'seat', function( data )
   {
-    console.log( 'onChangeMessage' );
+    console.log( 'seat', data );
+
+    var color;
+    switch ( data.color )
+    {
+      case Player.Color.BLUE:
+      case Player.Color.GREEN:
+      case Player.Color.RED:
+      case Player.Color.PINK:
+      case Player.Color.NONE:
+        color = data.color;
+        // set player
+        break;
+
+      default:
+        color = Player.Color.NONE;
+        break;
+    }
+
+    socket.emit( 'seat', { color: color } );
   });
 
   // client requests a change in game settings
   socket.on( 'settings', function( data )
   {
     console.log( 'onSettingsMessage' );
+    socket.emit( 'settings', { msg: 'settingsReply' } );
     // if ( data.length !== undefined ) {}
     // else if ( data.length !== undefined ) {}
     // else if ( data.length !== undefined ) {}
@@ -51,9 +70,8 @@ RoomWaiting.prototype.CreatePlayerListeners = function( player )
 }
 
 // removes listeners specific to this state for a player
-RoomWaiting.prototype.RemovePlayerListeners = function( player )
+RoomWaiting.prototype.RemovePlayerListeners = function( socket )
 {
-  var socket = player.GetSocket();
   socket.removeAllListeners( 'ready' );
   socket.removeAllListeners( 'change' );
   socket.removeAllListeners( 'settings' );
@@ -65,46 +83,64 @@ RoomWaiting.prototype.RemovePlayerListeners = function( player )
 RoomWaiting.prototype.Enter = function()
 {
   for ( var index in this._room._players )
-    this.CreatePlayerListeners( this._room._players[ index ] );
+    this.CreatePlayerListeners( this._room._players[ index ].GetSocket() );
 }
 
 // leaving state
 RoomWaiting.prototype.Leave = function()
 {
   for ( var index in this._room._players )
-    this.RemovePlayerListeners( this._room._players[ index ] );
+    this.RemovePlayerListeners( this._room._players[ index ].GetSocket() );
 }
 
 // callback upon adding player to room
-RoomWaiting.prototype.AddPlayer = function( player )
+RoomWaiting.prototype.AddPlayer = function( socket )
 {
-  if ( this._room._players.length >= Room.MAX || this._room._players.indexOf( player ) != -1 )
+  if ( this._room._players.length >= Room.MAX )
     return;
 
+  for ( var i = 0; i < this._room._players.length; i++ )
+    if ( this._room._players[ i ].GetSocket() == socket )
+      return;
+
+  var player = new Player( this._room._players.length, socket );
   this._room._players.push( player );
 
-  this.CreatePlayerListeners( player );
+  this.CreatePlayerListeners( socket );
 }
 
 // callback upon removing player from room
-RoomWaiting.prototype.RemovePlayer = function( player )
+RoomWaiting.prototype.RemovePlayer = function( socket )
 {
-  var index = this._room._players.indexOf( player );
+  var index = -1;
 
-  if ( this._room._players.length < 1 || index  == -1 )
+  for ( var i = 0; i < this._room._players.length; i++ )
+    if ( this._room._players[ i ].GetSocket() == socket )
+      index = this._room._players[ i ];
+
+  if ( index == -1 )
     return;
 
   this._room._players.splice( index, 1 );
 
   // DO SOMETHING
-  this.RemovePlayerListeners( player );
+  this.RemovePlayerListeners( socket );
 }
 
 // representation
 // used to bring a player who just joined waiting room up to date
 RoomWaiting.prototype.Serialize = function()
 {
+  var players = [];
+  for ( var i = 0; i < this._room.GetPlayerCount(); i++ )
+    players.push( this._room.GetPlayer( i ).Serialize() );
 
+  return {
+    id: this._room.GetID(),
+    players: players,
+    //state: this._room.GetState(),
+    settings: this._settings,
+  }
 };
 
 
