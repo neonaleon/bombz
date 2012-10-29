@@ -1,20 +1,21 @@
 //// IMPORTS
-var Room = require( './Room' );
-var Player = require( './Player' );
+var Room = require( './../client/package/js/models/Room' );
+var Player = require( './../client/package/js/models/Player' );
 var Config = require( './Config' );
 var SocketIO = require( 'socket.io' );
-
+var RoomController = require( './RoomController' );
 
 function Server()
 {
+  this._count = 0;
 //// PRIVATE VARIABLES
   this._rooms = [];         // Room[] - list of game rooms
 
   // list of clients, maps socket id to object of useful properties
-  this._clients = [];       // int->Object, socket_id -> { room: room, socket: socket }
+  this._clients = {};       // int->Object, socket_id -> { room: room, socket: socket }
 
   // currently only support 1 room so just create at the start, supposed to only make when new rooms are requested for
-  this._rooms[ 0 ] = new Room( 0 );
+  this._rooms[ 0 ] = new RoomController( 0 );
 }
 
 
@@ -28,6 +29,7 @@ Server.prototype.GetRoom = function( id )
 // add a newly connected client to server
 Server.prototype.AddClient = function( socket )
 {
+  this._count++;
   this._clients[ socket.id ] = {
     socket: socket,
     room: undefined,
@@ -41,12 +43,13 @@ Server.prototype.AddClientToRoom = function( socket )
   var room = this._rooms[ 0 ];
   room.AddPlayer( socket );
   this._clients[ socket.id ].room = room;
-  socket.emit( 'room', { room: room.Serialize() } );
+  socket.emit( 'room', { room: room.Serialize( socket ) } );
 }
 
 // removes a client completely from server
 Server.prototype.RemoveClient = function( socket )
 {
+  this._count--;
   var room = this._clients[ socket.id ].room;
 
   // remove player from room if he's in one

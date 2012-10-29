@@ -45,6 +45,10 @@ Player.Default =
 
 
 //// PUBLIC FUNCTIONS
+Player.prototype.GetID = function()
+{
+  return this._id;
+};
 
 Player.prototype.GetSocket = function()
 {

@@ -1,17 +1,27 @@
 //// IMPORTS
+var Map = require( './Map' );
+var Bomb = require( './Bomb' );
+var Player = require( './Player' );
+var Powerup = require( './Powerup' );
+
 
 function Room( id )
 {
 //// PRIVATE VARIABLES
   this._id = id;                          // int - identifier
-  this._players = [];                     // Player[] - list of player objects
+  this._colors = {};                      // Player.Color
+  this._players = {};                     // Player{} - list of player objects
   this._settings =                        // dictionary - represent game's settings
   {
     type: Room.Settings.Type.SOLO,
-    timeout: Room.Settings.Timeout.FIVE_MINUTES,
+    timeout: Room.Settings.Timeout.FIVE_MINUTES,      // duration of game before sudden death is activated
     suddendeath: Room.Settings.SuddenDeath.DODGEBALL,
   }
-  this._state = Room.State.WAITING;       // current state
+
+  this._state = Room.State.WAITING;      // current state
+
+  // WAITING state specific
+  this._ready = []; // list of players who are ready?
 }
 
 
@@ -58,43 +68,48 @@ Room.prototype.SetState = function( state )
   this._state = state;
 }
 
-// add player to room
+Room.prototype.GetNextAvailablePlayerID = function()
+{
+  for ( var i = 0; i < Room.MAX; i++ )
+    if ( !( i in this._players ) )
+      return i;
+
+  return undefined;
+}
+
+Room.prototype.GetPlayers = function()
+{
+  return this._players;
+}
+
+// add player to room - only possible during WAITING state
 Room.prototype.AddPlayer = function( player )
 {
-  if ( this._room._players.length >= Room.MAX )
-    return;
-
-  if ( this._room._players.indexOf( player ) != -1 )
-    return;
-
-  this._room._players.push( player );
+  this._players[ player.GetID() ] = player;
 }
 
 // remove player from room
 Room.prototype.RemovePlayer = function( player )
 {
-  var index = this._room._players.indexOf( player );
-
-  if ( index == -1 )
-    return;
-
-  this._room._players.splice( index, 1 );
+  delete this._players[ player.GetID() ];
 }
 
 Room.prototype.GetPlayer = function( id )
 {
-  if ( id < 0 || id > this._players.length )
-  {
-    console.log( 'Invalid player id.' );
+  if ( !( id in this._players ) )
     return undefined;
-  }
 
   return this._players[ id ];
 }
 
+Room.prototype.GetSettings = function()
+{
+  return this._settings;
+}
+
 Room.prototype.GetPlayerCount = function()
 {
-  return this._players.length;
+  return Object.keys( this._players ).length;
 }
 
 // start the game
@@ -109,26 +124,15 @@ Room.prototype.EndGame = function()
 
 };
 
-// representation
-Room.prototype.Serialize = function()
-{
-  return {
-    id: this._id,
-//    players: [],
-    state: this._state,
-    settings: this._settings,
-  }
-}
-
 Room.prototype.Deserialize = function( data )
 {
   this._id = data.id;
-  this._players = [];
-  for ( var i = 0; i < data.players.length; i++ )
+  for ( var i in data.players )
   {
-    var player = new Player();
-    player.Deserialize( data );
-    this._players.push( player );
+    var pid = data.players[ i ].id;
+    var player = new Player( pid );
+    player.Deserialize( data.players[ i ] );
+    this.AddPlayer( player );
   }
   this._state = data.state;
   this._settings = data.settings;

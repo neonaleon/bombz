@@ -15,13 +15,15 @@ State.prototype.GetPlayer = function()
 	return this._room;
 }
 
-State.prototype.JoinRoom = function( object )
+State.prototype.JoinRoom = function( data )
 {
 	var room = new Room();
-	room.Deserialize( object );
+	room.Deserialize( data );
+
+	console.log(data);
 
     this._room = room;
-	this._player = room.GetPlayer( room.GetPlayerCount() - 1 );
+	this._player = room.GetPlayer( data.pid );
 
     console.log(this);
 }

@@ -53,12 +53,8 @@ function _isBorder(x, y){
 Map.spawnPlayer = function(type, posx, posy)
 {
 	var player = Sprite.Dragon(type);
-<<<<<<< HEAD
-	player.attr({ x: 200, y: 40, z: 100});
-=======
 	Map.instance.attach(player);
 	player.attr({ x: Map.instance.x + Map.MAP_TILEWIDTH, y: Map.MAP_TILEHEIGHT, z: 100});
->>>>>>> dbbc1f055fd4e13eb16ae3f350cfd63b7d7f0a86
 	return player;
 }
 

@@ -1,8 +1,9 @@
 //// IMPORTS
-var Map = require( './Map' );
-var Bomb = require( './Bomb' );
-var Player = require( './Player' );
-var Powerup = require( './Powerup' );
+var Map = require( './../client/package/js/models/Map' );
+var Room = require( './../client/package/js/models/Room' );
+var Bomb = require( './../client/package/js/models/Bomb' );
+var Player = require( './../client/package/js/models/Player' );
+var Powerup = require( './../client/package/js/models/Powerup' );
 
 
 function RoomController( id )
@@ -16,20 +17,58 @@ function RoomController( id )
 //// CONSTANTS
 
 
+RoomController.prototype.GetPlayerFromSocket = function( socket )
+{
+  var players = this._room.GetPlayers();
+  for ( var i in players )
+    if ( players[ i ].GetSocket() === socket )
+      return players[ i ];
+
+  return undefined;
+}
 
 //// PUBLIC FUNCTIONS
 // add player to room - only possible during WAITING state
 RoomController.prototype.AddPlayer = function( socket )
 {
-  this._room.AddPlayer( socket );
+  if ( this._room.GetState() == Room.State.PLAYING )
+    return;
+
+  if ( this._room.GetPlayerCount() >= Room.MAX )
+    return;
+
+  // player is already in game
+  var players = this._room.GetPlayers();
+  for ( var i in players )
+    if ( players[ i ].GetSocket() === socket )
+      return;
+
+  var pid = this._room.GetNextAvailablePlayerID();
+  var player = new Player( pid, socket );
+  this._room.AddPlayer( player );
+
   this.CreatePlayerListeners( socket );
 }
 
 // remove player from room
 RoomController.prototype.RemovePlayer = function( socket )
 {
-  this._room.RemovePlayer( socket );
+  var player = this.GetPlayerFromSocket( socket );
+  
+  if ( player === undefined )
+    return;
+
+  this._room.RemovePlayer( player );
   this.RemovePlayerListeners( socket );
+
+  if ( this._room.GetState() == Room.State.WAITING )
+  {
+    // inform rest about leaving
+  }
+  else
+  {
+    // check for winners / losers or give out powerups
+  }
 }
 
 // start the game
@@ -47,7 +86,7 @@ RoomController.prototype.EndGame = function()
 // creates listeners specific to this state for a player
 RoomController.prototype.CreatePlayerListeners = function( socket )
 {
-  if ( this._state === Room.State.WAITING )
+  if ( this._room.GetState() === Room.State.WAITING )
   {
   // client indicates he is ready to play
   socket.on( 'ready', function( data )
@@ -122,7 +161,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
 // removes listeners specific to this state for a player
 RoomController.prototype.RemovePlayerListeners = function( socket )
 {
-  if ( this._state === Room.State.WAITING )
+  if ( this._room.GetState() === Room.State.WAITING )
   {
     socket.removeAllListeners( 'ready' );
     socket.removeAllListeners( 'change' );
@@ -137,6 +176,27 @@ RoomController.prototype.RemovePlayerListeners = function( socket )
   }
 }
 
+// representation
+// used to bring a player who just joined waiting room up to date
+RoomController.prototype.Serialize = function( socket )
+{
+  var playersData = {};
+  var playerID = this.GetPlayerFromSocket( socket ).GetID();
+  var players = this._room.GetPlayers();
+  for ( var i in players )
+  {
+    var player = players[ i ];
+    playersData[ player.GetID() ] = player.Serialize();
+  }
+
+  return {
+    pid: playerID,
+    players: playersData,
+    id: this._room.GetID(),
+    state: this._room.GetState(),
+    settings: this._room.GetSettings(),
+  }
+};
 
 //// EXPORTS
-module.exports = Room;
+module.exports = RoomController;
