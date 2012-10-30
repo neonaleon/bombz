@@ -112,18 +112,6 @@ Room.prototype.GetPlayerCount = function()
   return Object.keys( this._players ).length;
 }
 
-// start the game
-Room.prototype.StartGame = function()
-{
-  
-};
-
-// end the game
-Room.prototype.EndGame = function()
-{
-
-};
-
 Room.prototype.Deserialize = function( data )
 {
   this._id = data.id;

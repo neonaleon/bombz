@@ -10,13 +10,10 @@ function RoomController( id )
 {
 //// PRIVATE VARIABLES
   this._room = new Room( id );
-  this._sockets = [];           // Socker[] - socket for each player, index corresponds with player id
 }
 
 
-//// CONSTANTS
-
-
+//// PUBLIC FUNCTIONS
 RoomController.prototype.GetPlayerFromSocket = function( socket )
 {
   var players = this._room.GetPlayers();
@@ -27,7 +24,13 @@ RoomController.prototype.GetPlayerFromSocket = function( socket )
   return undefined;
 }
 
-//// PUBLIC FUNCTIONS
+RoomController.prototype.Broadcast = function( message, data )
+{
+  var players = this._room.GetPlayers();
+  for ( var i in players )
+    players[ i ].GetSocket().emit( message, data );
+}
+
 // add player to room - only possible during WAITING state
 RoomController.prototype.AddPlayer = function( socket )
 {
@@ -74,7 +77,29 @@ RoomController.prototype.RemovePlayer = function( socket )
 // start the game
 RoomController.prototype.StartGame = function()
 {
-  
+  var room = this._room;
+
+  // must be full room
+  if ( room.GetPlayerCount() != Room.MAX )
+      return false;
+
+    // check that everyone has chosen their colors and all different
+  var colors = {};
+  var players = room.GetPlayers();
+  for ( var i in players )
+  {
+    var color = players[ i ].GetColor();
+
+    if ( color === Player.Color.NONE || color in colors )
+    {
+      return false;
+    }
+    else
+    {
+      colors[ color ] = color;
+    }
+  }
+  return true;
 };
 
 // end the game
@@ -94,37 +119,14 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
   // client indicates he is ready to play
   socket.on( 'ready', function( data )
   {
-    var start = true;
-
-    // must be full room
-    if ( room.GetPlayerCount() != Room.MAX )
-      start = false;
-
-    // check that everyone has chosen their colors and all different
-    var colors = {};
-    var players = room.GetPlayers();
-    for ( var i in players )
-    {
-      var color = players[ i ].GetColor();
-
-      if ( color === Player.Color.NONE || color in colors )
-      {
-        start = false;
-        break;
-      }
-      else
-      {
-        colors[ color ] = color;
-      }
-    }
-
+    var start = roomController.StartGame();
     if ( start )
     {
-      socket.emit( 'ready', "YES" );
+      roomController.Broadcast( 'ready', "YES" );
     }
     else
     {
-      socket.emit( 'ready', "NO" );
+      roomController.Broadcast( 'ready', "NO" );
     }
     //SetState( Room.State.PLAYING );
   });
@@ -150,14 +152,13 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     var player = roomController.GetPlayerFromSocket( socket );
     player.SetColor( color );
 
-    socket.emit( 'seat', { color: color } );
+    roomController.Broadcast( 'seat', { id: player.GetID(), color: color } );
   });
 
   // client requests a change in game settings
   socket.on( 'settings', function( data )
   {
-    console.log( 'onSettingsMessage' );
-    socket.emit( 'settings', { msg: 'settingsReply' } );
+    roomController.Broadcast( 'settings', { msg: 'settingsReply' } );
   });
 
   }
