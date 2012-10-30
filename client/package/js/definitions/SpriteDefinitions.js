@@ -19,42 +19,41 @@ var SpriteDefinitions = {
 	TILE_WIDTH: 40,
 	TILE_HEIGHT: 40,
 	
-	BLUE_DRAGON: 'bluedragon',
-	GREEN_DRAGON: 'greendragon',
-	RED_DRAGON: 'reddragon',
-	PINK_DRAGON: 'pinkdragon',
+	BLUE: 'blue',
+	GREEN: 'green',
+	RED: 'red',
+	PINK: 'pink',
 	
 	DRAGONS: ['bluedragon', 'greendragon', 'reddragon', 'pinkdragon'],
+	COLORS: ['blue', 'green', 'red', 'pink'],
 	
 	MAP_1: 'map1',
 	
 	GUI: 'gui',
 };
 
-for (var i = 0; i < SpriteDefinitions.DRAGONS.length; i++)
+for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 {
-	var dragon = SpriteDefinitions.DRAGONS[i];
-	SpriteDefinitions[dragon] = {
+	var color = SpriteDefinitions.COLORS[i];
+	SpriteDefinitions[color] = {
 		'file': '/img/sprite40x40.png',
 		'tile': SpriteDefinitions.TILE_WIDTH,
-		'tileh': undefined,
 		'elements':(function() {
 			var elements = {};
-			elements[dragon] = [5, i];
-			elements['egg'] = [10, i];
+			elements[color + 'dragon'] = [5, i];
+			elements[color + 'egg'] = [10, i];
 			return elements;
 		})(),
 		'anim_walk_up':[[0, i], [1, i]],
 		'anim_walk_right':[[2, i], [3, i], [4, i]],
 		'anim_walk_down':[[5, i], [6, i]],
-		'anim_walk_left':[[7, i], [8, i], [9, i]],
+		'anim_walk_left':[[9, i], [8, i], [7, i]],
 	};
 }
 
 SpriteDefinitions['map1'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
-	'tileh': undefined,
 	'elements': {
 		floor: [0, 4],
 		tileD: [1, 4],

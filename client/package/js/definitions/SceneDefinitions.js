@@ -139,14 +139,16 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	
 	Map.generate(SpriteDefinitions.MAP_1);
 	
-	var dragon = Map.spawnPlayer(SpriteDefinitions.BLUE_DRAGON, 0, 0);
+	var dragon = Map.spawnPlayer(SpriteDefinitions.BLUE);
 	
-	var dragon2 = Map.spawnPlayer(SpriteDefinitions.PINK_DRAGON, 0, 0);
+	var dragon2 = Map.spawnPlayer(SpriteDefinitions.PINK);
 	
-	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400, z:100});
-	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400, z:100});
+	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400});
+	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
 	
-	var pad = GUI.Dpad(dragon2, 5, handler_buttonA, handler_buttonB).attr({x:50, y:400, z:100});
+	var pad = GUI.Dpad(dragon, 5, handler_buttonA, handler_buttonB).attr({x:50, y:400}); // may be reworking this
+	
+	var egg = Entities.Egg().attr({x: 500, y:300, z:999}); // temp only
 });
 
 var handler_buttonA = function()

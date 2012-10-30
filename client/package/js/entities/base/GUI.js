@@ -60,60 +60,6 @@ GUI.Dpad = function (entity, speed, aHandler, bHandler)
    	return dpad;
 }
 
-/* ==============
- * GUI Components
- ================ */
-/*
- * @comp Button converts touch(emulated using mouse) events into button actions such as Button Up, Down, Out
- * Button action handlers are defined by the entity that contains @comp Button, and are invoked accordingly.
- */
-Crafty.c('Button', {
-	init: function(){
-		this.requires("Mouse");
-		this.isDown = false;
-		this._onButtonDownFunc = function(){},
-		this._onButtonOutFunc = function(){},
-		this._onButtonUpFunc = function(){},
-
-		this.bind("MouseDown", function()
-		{
-			if (!this.isDown) 
-			{
-				this.isDown = true;
-				this._onButtonDownFunc();
-			}
-		});
-		this.bind("MouseOut", function(){
-			this.isDown = false;
-			this._onButtonOutFunc();
-		});
-		this.bind("MouseUp", function(){
-			if (this.isDown)
-			{
-				this.isDown = false;
-				this._onButtonUpFunc();
-			}
-		});
-		return this;
-	},
-	onButtonDown: function (func) {this._onButtonDownFunc = func; return this;},
-	onButtonOut: function (func) {this._onButtonOutFunc = func; return this;},
-	onButtonUp: function (func) {this._onButtonUpFunc = func; return this;},
-})
-
-// Creates a button with buttonText, which invokes handler(this) when clicked
-GUI.Button = function(buttonText, handler)
-{
-	return Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Button")
-				.setName("button_" + buttonText)
-				.attr({ w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
-				.color(GUIDefinitions.BUTTON_UPCOLOR)
-				.text(buttonText)
-				.onButtonDown(function(){ this.color(GUIDefinitions.BUTTON_DOWNCOLOR); })
-				.onButtonOut(function(){ this.color(GUIDefinitions.BUTTON_UPCOLOR); })
-				.onButtonUp(function(){ this.color(GUIDefinitions.BUTTON_UPCOLOR); handler(this);});
-};
-
 // Creates a switch button with buttonText, which invokes handler(this) when clicked
 // button has true (selected) and false (not selected) state
 GUI.SwitchButton = function(buttonText, handler)
@@ -172,23 +118,46 @@ GUI.OneOrNoneRadioButtonGroup = function(buttonTextArray, handler)
 	return buttons;
 };
 
-GUI.ACTION_BUTTON_A = 'A';
-GUI.ACTION_BUTTON_B = 'B';
+/* ==============
+ * GUI Components
+ ================ */
+/*
+ * @comp Button converts touch(emulated using mouse) events into button actions such as Button Up, Down, Out
+ * Button action handlers are defined by the entity that contains @comp Button, and are invoked accordingly.
+ */
+Crafty.c('Button', {
+	init: function(){
+		this.requires("Mouse");
+		this.isDown = false;
+		this._onButtonDownFunc = function(){},
+		this._onButtonOutFunc = function(){},
+		this._onButtonUpFunc = function(){},
 
-GUI.ActionButton = function(button)
-{
-	return Crafty.e(Properties.RENDERER + ", 2D, Button"); // add a action button sprite!
-}
-
-// Creates a joystick at posx, posy which moves the entity obj with speed
-GUI.Joystick = function (posx, posy, obj, speed)
-{
-   var joystick = Crafty.e('Controller').attr({x:posx, y:posy});
-    //obj.addComponent("Keyboard, Multiway").multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
-   	obj.addComponent("Controllable").controllable(speed, undefined, undefined);
-   	
-   	return joystick;
-}
+		this.bind("MouseDown", function()
+		{
+			if (!this.isDown) 
+			{
+				this.isDown = true;
+				this._onButtonDownFunc();
+			}
+		});
+		this.bind("MouseOut", function(){
+			this.isDown = false;
+			this._onButtonOutFunc();
+		});
+		this.bind("MouseUp", function(){
+			if (this.isDown)
+			{
+				this.isDown = false;
+				this._onButtonUpFunc();
+			}
+		});
+		return this;
+	},
+	onButtonDown: function (func) {this._onButtonDownFunc = func; return this;},
+	onButtonOut: function (func) {this._onButtonOutFunc = func; return this;},
+	onButtonUp: function (func) {this._onButtonUpFunc = func; return this;},
+})
 
 /*
  * @comp Controller is actually like a joystick
@@ -198,10 +167,6 @@ GUI.Joystick = function (posx, posy, obj, speed)
 Crafty.c('Controller', {
 	init: function() {
 	    this.requires(Properties.RENDERER + ", 2D, Mouse"); // bluedragon, can use sprite for controller image
-		/*
-		this.attr({isDown:false, w:100, h:100, z:100});
-		this.color("#00FF00");
-		*/
 		this.bind("MouseDown", function(mouseEvent){
 			this.isDown = true;
 			this._resolveKey(mouseEvent);
@@ -237,6 +202,7 @@ Crafty.c('Controller', {
 		var dx = x - this.x - this.w/2;
 		var dy = y - this.y - this.h/2;
 		var angle = this._tempVec.setValues(dx, dy).angleBetween(this._xAxis);
+		console.log(angle);
 		if (this.isDown)
 		{
 			if (Math.abs(angle) < Math.PI/4 && !Crafty.keydown[Crafty.keys['RIGHT_ARROW']]) Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : Crafty.keys['RIGHT_ARROW'] });

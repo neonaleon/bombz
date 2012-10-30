@@ -50,9 +50,9 @@ function _isBorder(x, y){
 	return x === 0 || x === (Map.MAP_HORIZONTAL_TILE_COUNT-1) || y === 0 || y === (Map.MAP_VERTICAL_TILE_COUNT-1);
 };
 
-Map.spawnPlayer = function(type, posx, posy)
+Map.spawnPlayer = function(color)
 {
-	var player = Entities.Dragon(type);
+	var player = Entities.Dragon(color);
 	Map.instance.attach(player);
 	player.attr({ x: Map.instance.x + Map.MAP_TILEWIDTH, y: Map.MAP_TILEHEIGHT, z: 100});
 	return player;

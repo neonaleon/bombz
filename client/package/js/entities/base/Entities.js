@@ -6,17 +6,17 @@
 var Entities = {};
 
 /*
- * Creates components for specified sprite_name
- * Returns a Dragon entity
+ * Creates components for specified color
+ * Returns a Dragon entity with the color
  */
-Entities.Dragon = function(sprite_name)
+Entities.Dragon = function(color)
 {
-	var def = SpriteDefinitions[sprite_name];
+	var def = SpriteDefinitions[color];
 	// create Sprite components from SpriteDefinitions given sprite_name
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	
-	var dragon = Crafty.e(Properties.RENDERER + ", 2D, " + sprite_name)
-					.setName(sprite_name);
+	var dragon = Crafty.e(Properties.RENDERER + ", 2D, " + color + 'dragon')
+					.setName(color + 'dragon');
 					
 	dragon.addComponent("SpriteAnimation, Collision")
 				.animate("walk_up", def['anim_walk_up'])
@@ -25,13 +25,13 @@ Entities.Dragon = function(sprite_name)
 				.animate("walk_left", def['anim_walk_left'])
 				.bind("NewDirection", function (newdir) {
                     if (newdir.x < 0)
-                        if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 15, -1);
+                        if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 6, -1);
                     if (newdir.x > 0)
-                        if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 15, -1);   
+                        if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 6, -1);   
                     if (newdir.y < 0)
-                        if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 10, -1);
+                        if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
                     if (newdir.y > 0)
-                        if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 10, -1);
+                        if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
 
                     if(!newdir.x && !newdir.y) this.stop();
                 })
@@ -45,9 +45,9 @@ Entities.Dragon = function(sprite_name)
 	return dragon;
 };
 
-Entities.Egg = function()
+Entities.Egg = function(color)
 {
-	var egg = Crafty.e('egg');
+	var egg = Crafty.e(color + 'egg');
 	return egg;
 };
 
