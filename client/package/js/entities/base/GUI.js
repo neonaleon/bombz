@@ -172,6 +172,44 @@ GUI.OneOrNoneRadioButtonGroup = function(buttonTextArray, handler)
 	return buttons;
 };
 
+
+// Creates a label and 2 < and > buttons, which invokes handler(this) when clicked
+// 
+GUI.Selector = function(choicesArray, handler)
+{
+	var index = 0;
+	var choices = choicesArray;
+
+	var label = Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse")
+				.attr({	w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
+				.text(choices[ index ])
+				.textColor('#0000FF');
+
+	var buttonLeft = Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse")
+					.attr({	isDown:false, w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
+					.text("<<<")
+					.textColor('#FF0000')
+					.bind("Click", function()
+					{
+						index = ( index == 0 ) ? choices.length - 1 : index - 1;
+						label.text( choices[ index ] );
+						handler(index);
+					});
+
+	var buttonRight = Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse")
+					.attr({	isDown:false, w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
+					.text(">>>")
+					.textColor('#FF0000')
+					.bind("Click", function()
+					{
+						index = ( index + 1 ) % choices.length;
+						label.text(choices[ index ]);
+						handler(index);
+					});
+	return { 'label': label, 'left': buttonLeft, 'right': buttonRight };
+};
+
+
 GUI.ACTION_BUTTON_A = 'A';
 GUI.ACTION_BUTTON_B = 'B';
 

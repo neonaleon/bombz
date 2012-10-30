@@ -64,11 +64,23 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 						y:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_HEIGHT/2});
 	}
 
+
+	// all the position settings should go inside GUI.js when using real graphics
 	var colorButtons = GUI.OneOrNoneRadioButtonGroup(["Blue", "Green", "Red", "Pink"], handler_Seat);
 	colorButtons[ Player.Color.BLUE ].attr({ x: 100, y: 100, h: 200 });
 	colorButtons[ Player.Color.GREEN ].attr({ x: 250, y: 100, h: 200 });
 	colorButtons[ Player.Color.RED ].attr({ x: 400, y: 100, h: 200 });
 	colorButtons[ Player.Color.PINK ].attr({ x: 550, y: 100, h: 200 });
+
+	var timeoutSelecter = GUI.Selector(["3 minutes", "4 minutes", "5 minutes"], handler_TimeoutSettings);
+	timeoutSelecter.label.attr({ x: 100, y: 400, h: 50, w: 100 });
+	timeoutSelecter.left.attr({ x: 50, y: 400, h: 50, w: 50 });
+	timeoutSelecter.right.attr({ x: 200, y: 400, h: 50, w: 50 });
+
+	var suddenDeathSelecter = GUI.Selector(["Dodge Ball", "Shrink"], handler_SuddenDeathSettings);
+	suddenDeathSelecter.label.attr({ x: 350, y: 400, h: 50, w: 100 });
+	suddenDeathSelecter.left.attr({ x: 300, y: 400, h: 50, w: 50 });
+	suddenDeathSelecter.right.attr({ x: 450, y: 400, h: 50, w: 50 });
 
 	// change scene to game scene
 	var stick = GUI.Joystick(100, 100, e, 5);
@@ -97,13 +109,16 @@ var handler_Seat = function(data)
 	console.log("handler_Seat: ", data);
 	//switch
 };
-var handler_SeatResponse = function(data)
+var handler_SeatResponse = function(player)
 {
-	console.log("handler_SeatResponse: ", data);
+	if ( player.color == Player.Color.NONE )
+		console.log( "P" + ( player.id + 1 ) + " unseated" ) ;
+	else
+		console.log( "P" + ( player.id + 1 ) + " sat on " + player.color );
 };
 var handler_ReadyResponse = function(data)
 {
-	console.log("handler_ReadyResponse: ", data);
+	console.log(data);
 };
 var handler_SettingsResponse = function(data)
 {
@@ -115,7 +130,6 @@ var handler_RoomUpdateResponse = function(data)
 };
 var handler_Ready = function(obj)
 {
-	console.log("clicked=", obj);
 	NetworkManager.SendMessage(MessageDefinitions.READY, {})
 };
 // players chooses colour
@@ -127,6 +141,16 @@ var handler_Settings = function(obj)
 {
 	console.log("clicked=", obj);
 	NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
+};
+var handler_TimeoutSettings = function(choice)
+{
+	console.log("timeout =", choice);
+	//NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
+};
+var handler_SuddenDeathSettings = function(choice)
+{
+	console.log("sudden death =", choice);
+	//NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
 };
 
 /* 
