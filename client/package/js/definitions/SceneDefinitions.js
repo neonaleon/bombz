@@ -158,20 +158,19 @@ var handler_SuddenDeathSettings = function(choice)
  * Game scene is where the game will be played
  */
 SceneDefinitions.GameScene = new Scene("GameScene", function()
-{ 
+{
 	console.log("game scene running");
-	
+	// generate map and entities
 	Map.generate(SpriteDefinitions.MAP_1);
-	
 	var dragon = Map.spawnPlayer(SpriteDefinitions.BLUE);
-	
 	var dragon2 = Map.spawnPlayer(SpriteDefinitions.PINK);
 	
+	// setup GUI
 	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400});
 	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
+	var pad = GUI.Dpad(dragon, 5, handler_buttonA, handler_buttonB).attr({x:50, y:400}); // allow player to control the dragon
 	
-	var pad = GUI.Dpad(dragon, 5, handler_buttonA, handler_buttonB).attr({x:50, y:400}); // may be reworking this
-	
+	// testing
 	var egg = Entities.Egg(SpriteDefinitions.RED).attr({x:500, y:300, z:999}); // temp only
 });
 

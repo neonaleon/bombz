@@ -1,9 +1,13 @@
 
 var Map = {
+	
 	MAP_WIDTH: 760,
 	MAP_HEIGHT: 600,
-	MAP_HORIZONTAL_TILE_COUNT: 19, // - 2 for border and dodgeball area
-	MAP_VERTICAL_TILE_COUNT: 15,
+	MAP_OUTTER_TILEW: 19, // - 2 for border and dodgeball area
+	MAP_OUTTER_TILEH: 15,
+	
+	MAP_INNER_TILEW: 15,
+	MAP_INNER_TILEH: 11,
 	
 	// tile width/height should be same as the tile set we use, see SpriteDefinitions.js
 	MAP_TILEWIDTH: 40,
@@ -16,6 +20,8 @@ var Map = {
 	Z_BOMB: 5,
 	Z_DRAGON: 6,
 	
+	_spawnPositions: [[0, 0], [15, 0], [0, 11], [15, 11]],
+	
 	instance: undefined,
 };
 
@@ -23,9 +29,9 @@ Map.generate = function(map_name)
 {	
 	var map = Entities.Map(map_name);
 	
-	for (var dx = 0; dx < Map.MAP_HORIZONTAL_TILE_COUNT; dx++)
+	for (var dx = 0; dx < Map.MAP_OUTTER_TILEW; dx++)
 	{
-		for (var dy = 0; dy < Map.MAP_VERTICAL_TILE_COUNT; dy++)
+		for (var dy = 0; dy < Map.MAP_OUTTER_TILEH; dy++)
 		{
 			// outermost border for dodge ballers
 			if (_isBorder(dx, dy))
@@ -66,10 +72,11 @@ Map.generate = function(map_name)
 };
 
 function _isBorder(x, y){
-	return x === 0 || x === (Map.MAP_HORIZONTAL_TILE_COUNT-1) || y === 0 || y === (Map.MAP_VERTICAL_TILE_COUNT-1);
+	return x === 0 || x === (Map.MAP_OUTTER_TILEW-1) || y === 0 || y === (Map.MAP_OUTTER_TILEH-1);
 };
+
 function _isWall(x, y){
-	return x === 1 || x === (Map.MAP_HORIZONTAL_TILE_COUNT-2) || y === 1 || y === (Map.MAP_VERTICAL_TILE_COUNT-2);
+	return x === 1 || x === (Map.MAP_OUTTER_TILEW-2) || y === 1 || y === (Map.MAP_OUTTER_TILEH-2);
 };
 
 Map.spawnPlayer = function(color)
@@ -87,6 +94,10 @@ Map.spawnBomb = function(x, y)
 	
 }
 
+Map.spawnPowerup = function(type, x, y)
+{
+	
+}
 
 
 
