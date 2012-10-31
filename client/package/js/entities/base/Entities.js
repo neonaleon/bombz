@@ -47,7 +47,17 @@ Entities.Dragon = function(color)
 
 Entities.Egg = function(color)
 {
-	var egg = Crafty.e(color + 'egg');
+	var def = SpriteDefinitions[color];
+	// create Sprite components from SpriteDefinitions given sprite_name
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	
+	var egg = Crafty.e(Properties.RENDERER + ", 2D, Bomb, " + color + 'egg')
+						.setName(color + 'egg');
+	
+	console.log(egg);
+	
+	egg.timeout(function(){ egg.trigger('explode'); console.log("BOOM") }, 1000); //temp
+	
 	return egg;
 };
 

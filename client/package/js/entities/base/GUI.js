@@ -26,7 +26,7 @@ GUI.Button = function(buttonText, handler)
 {
 	return Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Button")
 				.setName("button_" + buttonText)
-				.attr({ w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT, z:GUIDefinitions.Z_INDEX })
+				.attr({ w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT, z:GUIDefinitions.Z_GUI })
 				.color(GUIDefinitions.BUTTON_UPCOLOR)
 				.text(buttonText)
 				.onButtonDown(function(){ this.color(GUIDefinitions.BUTTON_DOWNCOLOR); })
@@ -39,7 +39,7 @@ GUI.ActionButton = function(button)
 {
 	return Crafty.e(Properties.RENDERER + ", 2D, Button, button" + button) // add a action button sprite!
 			.setName("actionButton_" + button)
-			.attr({z:GUIDefinitions.Z_INDEX})
+			.attr({z:GUIDefinitions.Z_GUI})
 			.onButtonDown(function (){
 				if (!Crafty.keydown[Crafty.keys[button]])
 					Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : Crafty.keys[button] });
@@ -53,7 +53,7 @@ GUI.ActionButton = function(button)
 // Creates a dpad which moves the target entity with speed, and invokes button handlers when GUI.ACTION_BUTTON_A, or B is pressed.
 GUI.Dpad = function (entity, speed, aHandler, bHandler)
 {
-   var dpad = Crafty.e('Controller, dpad').attr({z:GUIDefinitions.Z_INDEX});
+   var dpad = Crafty.e('Controller, dpad').attr({z:GUIDefinitions.Z_GUI});
    
    	entity.addComponent("Controllable").controllable(speed, aHandler, bHandler);
    	
@@ -238,7 +238,7 @@ Crafty.c('Controller', {
 		var dx = x - this.x - this.w/2;
 		var dy = y - this.y - this.h/2;
 		var angle = this._tempVec.setValues(dx, dy).angleBetween(this._xAxis);
-		console.log(angle);
+		//console.log(angle);
 		if (this.isDown)
 		{
 			if (Math.abs(angle) < Math.PI/4 && !Crafty.keydown[Crafty.keys['RIGHT_ARROW']]) Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : Crafty.keys['RIGHT_ARROW'] });
@@ -262,9 +262,9 @@ Crafty.c('Controllable', {
 		
 		this.bind('KeyDown', function(keyEvent){
 			if (keyEvent.key == Crafty.keys['A'])
-				this._aHandler();
+				if (_aHandler) this._aHandler();
 			if (keyEvent.key == Crafty.keys['B'])
-				this._bHandler();
+				if (_bHandler) this._bHandler();
 		});
 		
 		return this;

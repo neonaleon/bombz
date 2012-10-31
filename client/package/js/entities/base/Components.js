@@ -4,7 +4,7 @@
  * Generally used for creating our game entities in Entities.js
  * @author: Leon Ho
  */
-
+var Components = {};
 
 Crafty.c('EggLayer', {
 	init: function(){
@@ -31,7 +31,7 @@ Crafty.c('Bomb', {
 		this.blastRadius = 3;
 		
 		this.bind('explode', function(){
-			
+			this.destroy();
 		});
 	},
 });

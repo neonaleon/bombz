@@ -4,7 +4,7 @@
 
 var GUIDefinitions = 
 {
-	Z_INDEX : 9999, // GUI should be rendered on top of everything
+	Z_GUI : 9999, // GUI should be rendered on top of everything
 	// Replace with images when available
 	GENERIC_BUTTON : "GenericButton",
 	BUTTON_WIDTH : 120,

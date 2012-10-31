@@ -25,7 +25,7 @@ var SpriteDefinitions = {
 	PINK: 'pink',
 	
 	DRAGONS: ['bluedragon', 'greendragon', 'reddragon', 'pinkdragon'],
-	COLORS: ['blue', 'green', 'red', 'pink'],
+	COLORS: ['blue', 'green', 'red', 'pink'], // follows order on the spritesheet
 	
 	MAP_1: 'map1',
 	
