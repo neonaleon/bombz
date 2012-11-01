@@ -33,6 +33,7 @@ Crafty.c('Egg', {
 		this.blastRadius = 3;
 		
 		this.bind('explode', function(){
+			Crafty.audio.play(AudioDefinitions.EXPLODE);
 			this.destroy();
 		});
 		

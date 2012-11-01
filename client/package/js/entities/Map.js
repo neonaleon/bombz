@@ -14,17 +14,23 @@ var Map = {
 	MAP_TILEHEIGHT: 40,
 	
 	Z_FLOOR: 1,
-	Z_DESTRUCTIBLE:2,
-	Z_INDESTRUCTIBLE:3,
-	
+	Z_POWERUP: 2,
+	Z_DESTRUCTIBLE:3,
+	Z_INDESTRUCTIBLE:4,
 	Z_EGG: 5,
-	Z_DRAGON: 6,
+	Z_FIREBALL: 6,
+	Z_DRAGON: 7,
 	
 	_spawnPositions: [[0, 0], [14, 0], [0, 10], [14, 10]],
 	
 	instance: undefined,
 };
 
+/*
+ * Map.generate
+ * @param map_name the name of the map to generate
+ * map_name can be specified to generate maps using different tilesets (specified in SpriteDefinitions)
+ */
 Map.generate = function(map_name)
 {	
 	var map = Entities.Map(map_name);
@@ -51,7 +57,7 @@ Map.generate = function(map_name)
 		    else if ((dx % 2 !== 0) && (dy % 2 !== 0))
 		    {
 		    	map.attach(
-		    		Crafty.e("2D, DOM, solid, tileD")
+		    		Crafty.e("2D, DOM, solid, tileI")
 						.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
 		    }
 		    // everything else is floor
@@ -60,6 +66,9 @@ Map.generate = function(map_name)
 		    	map.attach(
 					Crafty.e("2D, DOM, floor")
 	            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
+	            		
+	            // chance to spawn a destructible block on top
+	            //if (Crafty.math.random)
 		    }
 		}
 	}
@@ -71,10 +80,12 @@ Map.generate = function(map_name)
 	return map;
 };
 
+// border is the extent of the entire map 
 function _isBorder(x, y){
 	return x === 0 || x === (Map.MAP_OUTER_TILEW-1) || y === 0 || y === (Map.MAP_OUTER_TILEH-1);
 };
 
+// wall separates the regular playable inner area from the dodgeball area
 function _isWall(x, y){
 	return x === 1 || x === (Map.MAP_OUTER_TILEW-2) || y === 1 || y === (Map.MAP_OUTER_TILEH-2);
 };
@@ -104,12 +115,15 @@ Map.spawnPowerup = function(type, x, y)
 	return powerup;
 }
 
+// converts pixel coordinates to tile coordinates
 function _pixelToTile(dict)
 {
-	return { x: Math.floor((dict.x - Map.instance.x) / Map.MAP_TILEWIDTH - 2), y: Math.floor(dict.y / Map.MAP_TILEHEIGHT - 2) };
+	return {x: Math.floor((dict.x - Map.instance.x + Map.MAP_TILEWIDTH/2) / Map.MAP_TILEWIDTH - 2), 
+			y: Math.floor((dict.y + Map.MAP_TILEHEIGHT/2) / Map.MAP_TILEHEIGHT - 2)};
 }
-
+// converts tile coordinates to pixel coordinates 
 function _tileToPixel(dict)
 {
-	return { x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map.instance.x, y: (dict.y + 2) * Map.MAP_TILEHEIGHT };
+	return {x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map.instance.x,
+			y: (dict.y + 2) * Map.MAP_TILEHEIGHT};
 }
