@@ -1,22 +1,23 @@
 TODO:
 	MAP:
 		playerspawning needs to use unique positions
-		map should generate destructible tiles
 		map should generate powerups
-
-
+		egg explosion logic (fire, damage to player & destructible)
+		powerup logic
+		gui elements
 
 GRAPHICS:
 	fireball - 3 frames
 	fire - 3 frames
+	destructible blocks - 3 frames
 	dpad/joystick
 	button A, B
 	gui border for padding area
 
 AUDIO:
 	check this out http://www.bfxr.net/
-	bgm
-	pickup powerup 
-	kick bomb - < 1s
+	bgm - looping
+	pickup powerup - <1s 
+	kick bomb - <1s
+	plant bomb - <1s
 	bomb explode - 1s
-	plant bomb - < 1s
