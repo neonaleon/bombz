@@ -145,7 +145,7 @@ var handler_Settings = function(obj)
 var handler_TimeoutSettings = function(choice)
 {
 	console.log("timeout =", choice);
-	//NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
+	NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, { timeout: choice })
 };
 var handler_SuddenDeathSettings = function(choice)
 {
