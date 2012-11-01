@@ -3,8 +3,8 @@ var Map = {
 	
 	MAP_WIDTH: 760,
 	MAP_HEIGHT: 600,
-	MAP_OUTTER_TILEW: 19, // - 2 for border and dodgeball area
-	MAP_OUTTER_TILEH: 15,
+	MAP_OUTER_TILEW: 19, // - 2 for border and dodgeball area
+	MAP_OUTER_TILEH: 15,
 	
 	MAP_INNER_TILEW: 15,
 	MAP_INNER_TILEH: 11,
@@ -29,9 +29,9 @@ Map.generate = function(map_name)
 {	
 	var map = Entities.Map(map_name);
 	
-	for (var dx = 0; dx < Map.MAP_OUTTER_TILEW; dx++)
+	for (var dx = 0; dx < Map.MAP_OUTER_TILEW; dx++)
 	{
-		for (var dy = 0; dy < Map.MAP_OUTTER_TILEH; dy++)
+		for (var dy = 0; dy < Map.MAP_OUTER_TILEH; dy++)
 		{
 			// outermost border for dodge ballers
 			if (_isBorder(dx, dy))
@@ -72,11 +72,11 @@ Map.generate = function(map_name)
 };
 
 function _isBorder(x, y){
-	return x === 0 || x === (Map.MAP_OUTTER_TILEW-1) || y === 0 || y === (Map.MAP_OUTTER_TILEH-1);
+	return x === 0 || x === (Map.MAP_OUTER_TILEW-1) || y === 0 || y === (Map.MAP_OUTER_TILEH-1);
 };
 
 function _isWall(x, y){
-	return x === 1 || x === (Map.MAP_OUTTER_TILEW-2) || y === 1 || y === (Map.MAP_OUTTER_TILEH-2);
+	return x === 1 || x === (Map.MAP_OUTER_TILEW-2) || y === 1 || y === (Map.MAP_OUTER_TILEH-2);
 };
 
 Map.spawnPlayer = function(color)
@@ -86,14 +86,12 @@ Map.spawnPlayer = function(color)
 	var tileSpawnPos = Map._spawnPositions[Crafty.math.randomInt(0, 3)];
 	player.attr(_tileToPixel({ x: tileSpawnPos[0], y: tileSpawnPos[1] }));
 	player.z = Map.Z_DRAGON;
-	// TODO: choose random spawn points
-	//player.attr({ x: Map.instance.x + Map.MAP_TILEWIDTH*2, y: Map.MAP_TILEHEIGHT*2, z: Map.Z_DRAGON});
-	//player.attr({ x: Map.instance.x, y: 0, z: Map.Z_DRAGON});
 	return player;
 }
 
 Map.spawnEgg = function(dragon)
 {
+	console.log(_pixelToTile({ x: dragon.x, y: dragon.y }));
 	var egg = Entities.Egg(dragon.color).attr(_tileToPixel(_pixelToTile({ x: dragon.x, y: dragon.y })));
 	egg.z = Map.Z_EGG;
 	return egg;
@@ -101,19 +99,17 @@ Map.spawnEgg = function(dragon)
 
 Map.spawnPowerup = function(type, x, y)
 {
-	
+	var powerup = undefined;
+	console.log("spawnPowerup not yet implemented");
+	return powerup;
 }
 
 function _pixelToTile(dict)
 {
-	return { x: (dict.x - Map.instance.x) / Map.MAP_TILEWIDTH - 2, y: dict.y / Map.MAP_TILEHEIGHT - 2 };
+	return { x: Math.floor((dict.x - Map.instance.x) / Map.MAP_TILEWIDTH - 2), y: Math.floor(dict.y / Map.MAP_TILEHEIGHT - 2) };
 }
 
 function _tileToPixel(dict)
 {
 	return { x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map.instance.x, y: (dict.y + 2) * Map.MAP_TILEHEIGHT };
 }
-
-
-
-

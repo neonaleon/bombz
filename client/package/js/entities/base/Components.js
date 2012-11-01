@@ -6,19 +6,18 @@
  */
 var Components = {};
 
+/*
+ * @comp Dragon
+ * This component defines the behavior of the players, the dragons.
+ * 
+ */
 Crafty.c('Dragon', {
 	init: function(){
-		
+		return this;
 	},
 	dragon: function(color){
 		this.color = color;
 		return this;
-	},
-});
-
-Crafty.c('Powerup', {
-	init: function(){
-		
 	},
 });
 
@@ -36,10 +35,27 @@ Crafty.c('Egg', {
 		this.bind('explode', function(){
 			this.destroy();
 		});
+		
+		return this;
 	},
 });
 
+/*
+ * @comp Powerup
+ */
+Crafty.c('Powerup', {
+	init: function(){
+		return this;
+	},
+});
 
-
+/*
+ * @comp Fireball
+ */
+Crafty.c('Fireball', {
+	init: function(){
+		return this;
+	},
+});
 
 
