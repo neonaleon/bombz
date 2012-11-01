@@ -6,11 +6,14 @@
  */
 var Components = {};
 
-Crafty.c('EggLayer', {
+Crafty.c('Dragon', {
 	init: function(){
-			
+		
 	},
-	
+	dragon: function(color){
+		this.color = color;
+		return this;
+	},
 });
 
 Crafty.c('Powerup', {
@@ -20,11 +23,11 @@ Crafty.c('Powerup', {
 });
 
 /*
- * @comp Bomb
- * This component defines the behavior of the bomb.
+ * @comp Egg
+ * This component defines the behavior of the explosive eggs.
  * The variables movable, fuseTime, blastRadius are instance variables. 
  */
-Crafty.c('Bomb', {
+Crafty.c('Egg', {
 	init: function(){
 		this.movable = false;
 		this.fuseTime = 2000;

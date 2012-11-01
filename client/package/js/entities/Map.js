@@ -17,10 +17,10 @@ var Map = {
 	Z_DESTRUCTIBLE:2,
 	Z_INDESTRUCTIBLE:3,
 	
-	Z_BOMB: 5,
+	Z_EGG: 5,
 	Z_DRAGON: 6,
 	
-	_spawnPositions: [[0, 0], [15, 0], [0, 11], [15, 11]],
+	_spawnPositions: [[0, 0], [14, 0], [0, 10], [14, 10]],
 	
 	instance: undefined,
 };
@@ -83,15 +83,20 @@ Map.spawnPlayer = function(color)
 {
 	var player = Entities.Dragon(color);
 	Map.instance.attach(player);
+	var tileSpawnPos = Map._spawnPositions[Crafty.math.randomInt(0, 3)];
+	player.attr(_tileToPixel({ x: tileSpawnPos[0], y: tileSpawnPos[1] }));
+	player.z = Map.Z_DRAGON;
 	// TODO: choose random spawn points
 	//player.attr({ x: Map.instance.x + Map.MAP_TILEWIDTH*2, y: Map.MAP_TILEHEIGHT*2, z: Map.Z_DRAGON});
-	player.attr({ x: Map.instance.x, y: 0, z: Map.Z_DRAGON});
+	//player.attr({ x: Map.instance.x, y: 0, z: Map.Z_DRAGON});
 	return player;
 }
 
-Map.spawnBomb = function(x, y)
+Map.spawnEgg = function(dragon)
 {
-	
+	var egg = Entities.Egg(dragon.color).attr(_tileToPixel(_pixelToTile({ x: dragon.x, y: dragon.y })));
+	egg.z = Map.Z_EGG;
+	return egg;
 }
 
 Map.spawnPowerup = function(type, x, y)
@@ -99,6 +104,15 @@ Map.spawnPowerup = function(type, x, y)
 	
 }
 
+function _pixelToTile(dict)
+{
+	return { x: (dict.x - Map.instance.x) / Map.MAP_TILEWIDTH - 2, y: dict.y / Map.MAP_TILEHEIGHT - 2 };
+}
+
+function _tileToPixel(dict)
+{
+	return { x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map.instance.x, y: (dict.y + 2) * Map.MAP_TILEHEIGHT };
+}
 
 
 

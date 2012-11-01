@@ -171,15 +171,17 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	var pad = GUI.Dpad(dragon, 5, handler_buttonA, handler_buttonB).attr({x:50, y:400}); // allow player to control the dragon
 	
 	// testing
-	var egg = Entities.Egg(SpriteDefinitions.RED).attr({x:500, y:300, z:999}); // temp only
+	// var egg = Entities.Egg(SpriteDefinitions.RED).attr({x:500, y:300, z:999}); // temp only
 });
 
-var handler_buttonA = function()
+var handler_buttonA = function(dragon)
 {
 	console.log("A DOWN");
+	console.log(dragon);
+	Map.spawnEgg(dragon);
 }
 
-var handler_buttonB = function()
+var handler_buttonB = function(dragon)
 {
 	console.log("B DOWN");
 }

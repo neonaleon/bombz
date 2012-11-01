@@ -255,16 +255,17 @@ Crafty.c('Controller', {
  * 
  */
 Crafty.c('Controllable', {
-	_aHandler: undefined,
-	_bHandler: undefined,
 	init: function(){
 		this.requires("Keyboard, Multiway");
 		
+		this._aHandler = function(){ console.log("button A pressed but event handler not defined.") };
+		this._bHandler = function(){ console.log("button B pressed but event handler not defined.") };
+		
 		this.bind('KeyDown', function(keyEvent){
 			if (keyEvent.key == Crafty.keys['A'])
-				if (_aHandler) this._aHandler();
+				if (this._aHandler) this._aHandler(this);
 			if (keyEvent.key == Crafty.keys['B'])
-				if (_bHandler) this._bHandler();
+				if (this._bHandler) this._bHandler(this);
 		});
 		
 		return this;

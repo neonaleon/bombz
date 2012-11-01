@@ -15,8 +15,9 @@ Entities.Dragon = function(color)
 	// create Sprite components from SpriteDefinitions given sprite_name
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	
-	var dragon = Crafty.e(Properties.RENDERER + ", 2D, " + color + 'dragon')
-					.setName(color + 'dragon');
+	var dragon = Crafty.e(Properties.RENDERER + ", 2D, Dragon, " + color + 'dragon')
+						.setName(color + 'dragon')
+						.dragon(color);
 					
 	dragon.addComponent("SpriteAnimation, Collision")
 				.animate("walk_up", def['anim_walk_up'])
@@ -51,12 +52,12 @@ Entities.Egg = function(color)
 	// create Sprite components from SpriteDefinitions given sprite_name
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	
-	var egg = Crafty.e(Properties.RENDERER + ", 2D, Bomb, " + color + 'egg')
+	var egg = Crafty.e(Properties.RENDERER + ", 2D, Egg, " + color + 'egg')
 						.setName(color + 'egg');
 	
-	console.log(egg);
+	//console.log(egg);
 	
-	egg.timeout(function(){ egg.trigger('explode'); console.log("BOOM") }, 1000); //temp
+	egg.timeout(function(){ egg.trigger('explode'); console.log("BOOM"); }, 1000); //temp
 	
 	return egg;
 };
