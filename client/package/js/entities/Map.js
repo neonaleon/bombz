@@ -13,6 +13,8 @@ var Map = {
 	MAP_TILEWIDTH: 40,
 	MAP_TILEHEIGHT: 40,
 	
+	MAP_PROPORTION_DESTRUCTIBLE: 0.9,
+	
 	Z_FLOOR: 1,
 	Z_POWERUP: 2,
 	Z_DESTRUCTIBLE:3,
@@ -23,7 +25,7 @@ var Map = {
 	
 	_spawnPositions: [[0, 0], [14, 0], [0, 10], [14, 10]],
 	
-	instance: undefined,
+	_instance: undefined,
 };
 
 /*
@@ -47,35 +49,35 @@ Map.generate = function(map_name)
 	            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
 	        }
 	        // wall to separate dodge ballers
-	        else if (_isWall(dx, dy))
+	        // or indestructible blocks in every other tile
+	        else if (_isWall(dx, dy) || ((dx % 2 !== 0) && (dy % 2 !== 0)))
 	        {
 	        	map.attach(
 		    		Crafty.e("2D, DOM, solid, tileI")
 						.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
 	        }
-	        // indestructible blocks in every other tile
-		    else if ((dx % 2 !== 0) && (dy % 2 !== 0))
-		    {
-		    	map.attach(
-		    		Crafty.e("2D, DOM, solid, tileI")
-						.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
-		    }
 		    // everything else is floor
 		    else
 		    {
 		    	map.attach(
 					Crafty.e("2D, DOM, floor")
 	            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
-	            		
-	            // chance to spawn a destructible block on top
-	            //if (Crafty.math.random)
+	           	
+	           	// with a chance to spawn a powerup (not yet implemented)
+	            // or to spawn a destructible block
+	            if (Crafty.math.randomNumber(0, 1) < Map.MAP_PROPORTION_DESTRUCTIBLE)
+	            {
+	            	map.attach(
+						Crafty.e("2D, DOM, Destructible, solid, tileD")
+		            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_DESTRUCTIBLE }));
+	            }
 		    }
 		}
 	}
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 	
-	Map.instance = map;
+	Map._instance = map;
 	
 	return map;
 };
@@ -93,10 +95,18 @@ function _isWall(x, y){
 Map.spawnPlayer = function(color)
 {
 	var player = Entities.Dragon(color);
-	Map.instance.attach(player);
 	var tileSpawnPos = Map._spawnPositions[Crafty.math.randomInt(0, 3)];
 	player.attr(_tileToPixel({ x: tileSpawnPos[0], y: tileSpawnPos[1] }));
 	player.z = Map.Z_DRAGON;
+	// checks the player's proximity for destructible blocks, remove them if spawning player there
+	var destructibles = Crafty("Destructible");
+	for (var i = 0; i < destructibles.length; i ++)
+	{
+		var block = Crafty(destructibles[i]);
+		var blockPos = _pixelToTile({x: block.x, y: block.y});
+		if (Math.abs(blockPos.x - tileSpawnPos[0]) <= 1 && Math.abs(blockPos.y - tileSpawnPos[1]) <= 1)
+			block.destroy();
+	}
 	return player;
 }
 
@@ -118,12 +128,12 @@ Map.spawnPowerup = function(type, x, y)
 // converts pixel coordinates to tile coordinates
 function _pixelToTile(dict)
 {
-	return {x: Math.floor((dict.x - Map.instance.x + Map.MAP_TILEWIDTH/2) / Map.MAP_TILEWIDTH - 2), 
+	return {x: Math.floor((dict.x - Map._instance.x + Map.MAP_TILEWIDTH/2) / Map.MAP_TILEWIDTH - 2), 
 			y: Math.floor((dict.y + Map.MAP_TILEHEIGHT/2) / Map.MAP_TILEHEIGHT - 2)};
 }
 // converts tile coordinates to pixel coordinates 
 function _tileToPixel(dict)
 {
-	return {x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map.instance.x,
+	return {x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map._instance.x,
 			y: (dict.y + 2) * Map.MAP_TILEHEIGHT};
 }

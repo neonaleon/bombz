@@ -59,4 +59,13 @@ Crafty.c('Fireball', {
 	},
 });
 
+/*
+ * @comp Destructible
+ */
+Crafty.c('Destructible', {
+	init: function(){
+		return this;
+	},
+});
+
 
