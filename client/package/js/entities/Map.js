@@ -3,8 +3,8 @@ var Map = {
 	
 	MAP_WIDTH: 760,
 	MAP_HEIGHT: 600,
-	MAP_OUTTER_TILEW: 19, // - 2 for border and dodgeball area
-	MAP_OUTTER_TILEH: 15,
+	MAP_OUTER_TILEW: 19, // - 2 for border and dodgeball area
+	MAP_OUTER_TILEH: 15,
 	
 	MAP_INNER_TILEW: 15,
 	MAP_INNER_TILEH: 11,
@@ -13,25 +13,33 @@ var Map = {
 	MAP_TILEWIDTH: 40,
 	MAP_TILEHEIGHT: 40,
 	
+	MAP_PROPORTION_DESTRUCTIBLE: 0.9,
+	
 	Z_FLOOR: 1,
-	Z_DESTRUCTIBLE:2,
-	Z_INDESTRUCTIBLE:3,
+	Z_POWERUP: 2,
+	Z_DESTRUCTIBLE:3,
+	Z_INDESTRUCTIBLE:4,
+	Z_EGG: 5,
+	Z_FIREBALL: 6,
+	Z_DRAGON: 7,
 	
-	Z_BOMB: 5,
-	Z_DRAGON: 6,
+	_spawnPositions: [[0, 0], [14, 0], [0, 10], [14, 10]],
 	
-	_spawnPositions: [[0, 0], [15, 0], [0, 11], [15, 11]],
-	
-	instance: undefined,
+	_instance: undefined,
 };
 
+/*
+ * Map.generate
+ * @param map_name the name of the map to generate
+ * map_name can be specified to generate maps using different tilesets (specified in SpriteDefinitions)
+ */
 Map.generate = function(map_name)
 {	
 	var map = Entities.Map(map_name);
 	
-	for (var dx = 0; dx < Map.MAP_OUTTER_TILEW; dx++)
+	for (var dx = 0; dx < Map.MAP_OUTER_TILEW; dx++)
 	{
-		for (var dy = 0; dy < Map.MAP_OUTTER_TILEH; dy++)
+		for (var dy = 0; dy < Map.MAP_OUTER_TILEH; dy++)
 		{
 			// outermost border for dodge ballers
 			if (_isBorder(dx, dy))
@@ -41,65 +49,91 @@ Map.generate = function(map_name)
 	            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
 	        }
 	        // wall to separate dodge ballers
-	        else if (_isWall(dx, dy))
+	        // or indestructible blocks in every other tile
+	        else if (_isWall(dx, dy) || ((dx % 2 !== 0) && (dy % 2 !== 0)))
 	        {
 	        	map.attach(
 		    		Crafty.e("2D, DOM, solid, tileI")
 						.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
 	        }
-	        // indestructible blocks in every other tile
-		    else if ((dx % 2 !== 0) && (dy % 2 !== 0))
-		    {
-		    	map.attach(
-		    		Crafty.e("2D, DOM, solid, tileD")
-						.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
-		    }
 		    // everything else is floor
 		    else
 		    {
 		    	map.attach(
 					Crafty.e("2D, DOM, floor")
 	            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
+	           	
+	           	// with a chance to spawn a powerup (not yet implemented)
+	            // or to spawn a destructible block
+	            if (Crafty.math.randomNumber(0, 1) < Map.MAP_PROPORTION_DESTRUCTIBLE)
+	            {
+	            	map.attach(
+						Crafty.e("2D, DOM, Destructible, solid, tileD")
+		            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_DESTRUCTIBLE }));
+	            }
 		    }
 		}
 	}
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 	
-	Map.instance = map;
+	Map._instance = map;
 	
 	return map;
 };
 
+// border is the extent of the entire map 
 function _isBorder(x, y){
-	return x === 0 || x === (Map.MAP_OUTTER_TILEW-1) || y === 0 || y === (Map.MAP_OUTTER_TILEH-1);
+	return x === 0 || x === (Map.MAP_OUTER_TILEW-1) || y === 0 || y === (Map.MAP_OUTER_TILEH-1);
 };
 
+// wall separates the regular playable inner area from the dodgeball area
 function _isWall(x, y){
-	return x === 1 || x === (Map.MAP_OUTTER_TILEW-2) || y === 1 || y === (Map.MAP_OUTTER_TILEH-2);
+	return x === 1 || x === (Map.MAP_OUTER_TILEW-2) || y === 1 || y === (Map.MAP_OUTER_TILEH-2);
 };
 
 Map.spawnPlayer = function(color)
 {
 	var player = Entities.Dragon(color);
-	Map.instance.attach(player);
-	// TODO: choose random spawn points
-	//player.attr({ x: Map.instance.x + Map.MAP_TILEWIDTH*2, y: Map.MAP_TILEHEIGHT*2, z: Map.Z_DRAGON});
-	player.attr({ x: Map.instance.x, y: 0, z: Map.Z_DRAGON});
+	var tileSpawnPos = Map._spawnPositions[Crafty.math.randomInt(0, 3)];
+	player.attr(_tileToPixel({ x: tileSpawnPos[0], y: tileSpawnPos[1] }));
+	player.z = Map.Z_DRAGON;
+	// checks the player's proximity for destructible blocks, remove them if spawning player there
+	var destructibles = Crafty("Destructible");
+	for (var i = 0; i < destructibles.length; i ++)
+	{
+		var block = Crafty(destructibles[i]);
+		var blockPos = _pixelToTile({x: block.x, y: block.y});
+		if (Math.abs(blockPos.x - tileSpawnPos[0]) <= 1 && Math.abs(blockPos.y - tileSpawnPos[1]) <= 1)
+			block.destroy();
+	}
 	return player;
 }
 
-Map.spawnBomb = function(x, y)
+Map.spawnEgg = function(dragon)
 {
-	
+	console.log(_pixelToTile({ x: dragon.x, y: dragon.y }));
+	var egg = Entities.Egg(dragon.color).attr(_tileToPixel(_pixelToTile({ x: dragon.x, y: dragon.y })));
+	egg.z = Map.Z_EGG;
+	return egg;
 }
 
 Map.spawnPowerup = function(type, x, y)
 {
-	
+	var powerup = undefined;
+	console.log("spawnPowerup not yet implemented");
+	return powerup;
 }
 
-
-
-
-
+// converts pixel coordinates to tile coordinates
+function _pixelToTile(dict)
+{
+	return {x: Math.floor((dict.x - Map._instance.x + Map.MAP_TILEWIDTH/2) / Map.MAP_TILEWIDTH - 2), 
+			y: Math.floor((dict.y + Map.MAP_TILEHEIGHT/2) / Map.MAP_TILEHEIGHT - 2)};
+}
+// converts tile coordinates to pixel coordinates 
+function _tileToPixel(dict)
+{
+	return {x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map._instance.x,
+			y: (dict.y + 2) * Map.MAP_TILEHEIGHT};
+}
