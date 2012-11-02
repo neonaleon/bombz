@@ -1,9 +1,8 @@
 TODO:
 	MAP:
-		playerspawning needs to use unique positions
 		map should generate powerups
-		egg explosion logic (fire, damage to player & destructible)
-		powerup logic
+		egg explosion logic (destroy blocks done, fire effect + bomb collision done, kill player not done)
+		powerup logic 
 		gui elements
 
 GRAPHICS:

@@ -13,6 +13,8 @@ var Components = {};
  */
 Crafty.c('Dragon', {
 	init: function(){
+		//this.requires("SpriteAnimation, Collision");
+		
 		return this;
 	},
 	dragon: function(color){
@@ -28,16 +30,16 @@ Crafty.c('Dragon', {
  */
 Crafty.c('Egg', {
 	init: function(){
-		this.movable = false;
-		this.fuseTime = 2000;
+		this.requires('solid');
+		
 		this.blastRadius = 3;
 		
 		this.bind('explode', function(){
 			Crafty.audio.play(AudioDefinitions.EXPLODE);
 			
-			var eggPos = Map.pixelToTile({x: this.x, y: this.y});
+			this.removeComponent('Egg', false);
 			
-			var fire = Crafty.e('Fire');
+			var eggPos = Map.pixelToTile({x: this.x, y: this.y});
 			
 			var directions = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 			for (var i = 0; i < 4; i++)
@@ -45,10 +47,10 @@ Crafty.c('Egg', {
 				var dir = directions[i];
 				for (var j = 1; j < this.blastRadius; j++)
 				{
+					var fire = Crafty.e('Fire').fire(500);
+					fire.z = Map.Z_FIRE;
 					fire.attr(Map.tileToPixel({ x: eggPos.x + j*dir[0], y: eggPos.y + j*dir[1]}));
-					console.log(fire);
 					if (fire.hit('Egg')) { fire.hit('Egg')[0].obj.trigger('explode'); break; };
-					console.log(fire.hit('Destructible'));
 					if (fire.hit('Burnable')) { fire.hit('Burnable')[0].obj.trigger('burn'); break; };
 					if (fire.hit('solid')) { fire.destroy(); break; };
 				}
@@ -67,7 +69,12 @@ Crafty.c('Egg', {
 Crafty.c('Fire', {
 	init: function(){
 		this.requires(Properties.RENDERER + ", 2D, fire, Collision");
-		return this;	
+		return this;
+	},
+	// lifetime specifies how long the fire lasts (or how long the animation runs)
+	fire: function(lifetime){ 
+		this.timeout(function(){ this.destroy(); }, lifetime);
+		return this;
 	},
 });
 
