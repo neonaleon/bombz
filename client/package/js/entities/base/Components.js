@@ -48,7 +48,7 @@ Crafty.c('Egg', {
 					fire.attr(Map.tileToPixel({ x: eggPos.x + j*dir[0], y: eggPos.y + j*dir[1]}));
 					console.log(fire);
 					if (fire.hit('Egg')) { fire.hit('Egg')[0].obj.trigger('explode'); break; };
-					console.log(fire.hit('Destructible'));
+					console.log(fire.hit('Burnable'));
 					if (fire.hit('Burnable')) { fire.hit('Burnable')[0].obj.trigger('burn'); break; };
 					if (fire.hit('solid')) { fire.destroy(); break; };
 				}

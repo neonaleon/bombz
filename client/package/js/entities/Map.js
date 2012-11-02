@@ -68,7 +68,7 @@ Map.generate = function(map_name)
 	            if (Crafty.math.randomNumber(0, 1) < Map.MAP_PROPORTION_DESTRUCTIBLE)
 	            {
 	            	map.attach(
-						Crafty.e("2D, DOM, Destructible, solid, tileD")
+						Crafty.e("2D, DOM, Destructible, Burnable, solid, tileD")
 		            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_DESTRUCTIBLE }));
 	            }
 		    }
@@ -99,7 +99,7 @@ Map.spawnPlayer = function(color)
 	player.attr(Map.tileToPixel({ x: tileSpawnPos[0], y: tileSpawnPos[1] }));
 	player.z = Map.Z_DRAGON;
 	// checks the player's proximity for destructible blocks, remove them if spawning player there
-	var destructibles = Crafty("Destructible, Burnable");
+	var destructibles = Crafty("Destructible");
 	for (var i = 0; i < destructibles.length; i ++)
 	{
 		var block = Crafty(destructibles[i]);
