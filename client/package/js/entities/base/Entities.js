@@ -70,7 +70,7 @@ Entities.Egg = function(color)
 						.setName(color + 'egg');
 	
 	// testing only
-	egg.timeout(function(){ egg.trigger('explode'); console.log("BOOM"); }, 1000);
+	egg.timeout(function(){ egg.trigger('explode'); console.log("BOOM"); }, 1500);
 	
 	return egg;
 };
