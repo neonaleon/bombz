@@ -34,10 +34,40 @@ Crafty.c('Egg', {
 		
 		this.bind('explode', function(){
 			Crafty.audio.play(AudioDefinitions.EXPLODE);
+			
+			var eggPos = Map.pixelToTile({x: this.x, y: this.y});
+			
+			var fire = Crafty.e('Fire');
+			
+			var directions = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+			for (var i = 0; i < 4; i++)
+			{
+				var dir = directions[i];
+				for (var j = 1; j < this.blastRadius; j++)
+				{
+					fire.attr(Map.tileToPixel({ x: eggPos.x + j*dir[0], y: eggPos.y + j*dir[1]}));
+					console.log(fire);
+					if (fire.hit('Egg')) { fire.hit('Egg')[0].obj.trigger('explode'); break; };
+					console.log(fire.hit('Burnable'));
+					if (fire.hit('Burnable')) { fire.hit('Burnable')[0].obj.trigger('burn'); break; };
+					if (fire.hit('solid')) { fire.destroy(); break; };
+				}
+			}
+			
 			this.destroy();
 		});
 		
 		return this;
+	},
+});
+
+/*
+ * @comp Fire
+ */
+Crafty.c('Fire', {
+	init: function(){
+		this.requires(Properties.RENDERER + ", 2D, fire, Collision");
+		return this;	
 	},
 });
 
@@ -64,6 +94,18 @@ Crafty.c('Fireball', {
  */
 Crafty.c('Destructible', {
 	init: function(){
+		return this;
+	},
+});
+
+/*
+ * @comp Burnable
+ */
+Crafty.c('Burnable', {
+	init: function(){
+		this.bind('burn', function(){
+			this.destroy();
+		});
 		return this;
 	},
 });

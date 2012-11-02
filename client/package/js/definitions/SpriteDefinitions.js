@@ -42,6 +42,8 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 			var elements = {};
 			elements[color + 'dragon'] = [5, i];
 			elements[color + 'egg'] = [10, i];
+			// temporary
+			elements['fire'] = [10, 2];
 			return elements;
 		})(),
 		'anim_walk_up':[[0, i], [1, i]],

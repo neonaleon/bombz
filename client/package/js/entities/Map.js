@@ -68,7 +68,7 @@ Map.generate = function(map_name)
 	            if (Crafty.math.randomNumber(0, 1) < Map.MAP_PROPORTION_DESTRUCTIBLE)
 	            {
 	            	map.attach(
-						Crafty.e("2D, DOM, Destructible, solid, tileD")
+						Crafty.e("2D, DOM, Destructible, Burnable, solid, tileD")
 		            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_DESTRUCTIBLE }));
 	            }
 		    }
@@ -96,14 +96,14 @@ Map.spawnPlayer = function(color)
 {
 	var player = Entities.Dragon(color);
 	var tileSpawnPos = Map._spawnPositions[Crafty.math.randomInt(0, 3)];
-	player.attr(_tileToPixel({ x: tileSpawnPos[0], y: tileSpawnPos[1] }));
+	player.attr(Map.tileToPixel({ x: tileSpawnPos[0], y: tileSpawnPos[1] }));
 	player.z = Map.Z_DRAGON;
 	// checks the player's proximity for destructible blocks, remove them if spawning player there
 	var destructibles = Crafty("Destructible");
 	for (var i = 0; i < destructibles.length; i ++)
 	{
 		var block = Crafty(destructibles[i]);
-		var blockPos = _pixelToTile({x: block.x, y: block.y});
+		var blockPos = Map.pixelToTile({x: block.x, y: block.y});
 		if (Math.abs(blockPos.x - tileSpawnPos[0]) <= 1 && Math.abs(blockPos.y - tileSpawnPos[1]) <= 1)
 			block.destroy();
 	}
@@ -112,8 +112,7 @@ Map.spawnPlayer = function(color)
 
 Map.spawnEgg = function(dragon)
 {
-	console.log(_pixelToTile({ x: dragon.x, y: dragon.y }));
-	var egg = Entities.Egg(dragon.color).attr(_tileToPixel(_pixelToTile({ x: dragon.x, y: dragon.y })));
+	var egg = Entities.Egg(dragon.color).attr(Map.tileToPixel(Map.pixelToTile({ x: dragon.x, y: dragon.y })));
 	egg.z = Map.Z_EGG;
 	return egg;
 }
@@ -126,13 +125,13 @@ Map.spawnPowerup = function(type, x, y)
 }
 
 // converts pixel coordinates to tile coordinates
-function _pixelToTile(dict)
+Map.pixelToTile = function(dict)
 {
 	return {x: Math.floor((dict.x - Map._instance.x + Map.MAP_TILEWIDTH/2) / Map.MAP_TILEWIDTH - 2), 
 			y: Math.floor((dict.y + Map.MAP_TILEHEIGHT/2) / Map.MAP_TILEHEIGHT - 2)};
 }
 // converts tile coordinates to pixel coordinates 
-function _tileToPixel(dict)
+Map.tileToPixel = function(dict)
 {
 	return {x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map._instance.x,
 			y: (dict.y + 2) * Map.MAP_TILEHEIGHT};
