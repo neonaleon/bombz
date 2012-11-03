@@ -50,7 +50,7 @@ Entities.Dragon = function(color)
 	// create dragon entity
 	var dragon = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Dragon, " + color + 'dragon')
 						.setName(color + 'dragon')
-						.bind('burn', function(){ this.destroy(); }) // TODO: Dragon should lose health
+						.bind('burn', function(){ dragon.loseHealth(); })
 						.dragon(color);
 
 	// add animation and collision logic
@@ -102,7 +102,7 @@ Entities.Egg = function(color)
 {
 	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Egg, " + color + 'egg')
 						.setName(color + 'egg')
-						.bind('burn', function(){ this.explode(); })
+						.bind('burn', function(){ this.trigger('explode'); })
 						.egg(3, 1500);
 	return egg;
 };

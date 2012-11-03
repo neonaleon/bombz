@@ -44,17 +44,26 @@ Crafty.c('Dragon', {
 	loseHealth: function(){
 		this.health -= 1;
 		if (this.health == 0)
+		{
 			this.dead = true;
+			this.destroy(); // temp TODO: shift player to dodgeball area
+		}
+		console.log("lose health: " + this.health);
 	},
 	layEgg: function(){
-		console.log("LAY EGG!");
-		if (!this.onEgg && this.eggCount <= this.eggLimit)
+		if (!this.onEgg && this.eggCount < this.eggLimit)
 		{
+			this.eggCount += 1;
+			console.log("planted: " + this.eggCount);
 			Map.spawnEgg(this);
 		};
 	},
 	spitFireball:function(){
 		console.log("SPIT FIRE!");
+	},
+	clearEgg: function(){
+		this.eggCount -= 1;
+		console.log("exploded: " + this.eggCount);
 	},
 	dragon: function(color){
 		this.color = color;
@@ -66,9 +75,12 @@ Crafty.c('Dragon', {
  * @comp Egg
  * This component defines the behavior of the explosive eggs.
  * The variables movable, fuseTime, blastRadius are instance variables. 
+ * @event explode
+ * @event exploded
  */
 Crafty.c('Egg', {
 	init: function(){
+		this.owner = undefined;
 		this.bind('explode', this.explode);
 		return this;
 	},
@@ -92,6 +104,7 @@ Crafty.c('Egg', {
 				if (fire.hit('solid')) { fire.destroy(); break; };
 			}
 		}
+		this.owner.clearEgg();
 		this.destroy();
 	},
 	egg: function(blastRadius, fuseTime){

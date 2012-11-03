@@ -123,6 +123,7 @@ Map.spawnEgg = function(dragon)
 {
 	// spawn egg on the dragon making the egg
 	var egg = Entities.Egg(dragon.color).attr(Map.tileToPixel(Map.pixelToTile({ x: dragon.x, y: dragon.y })));
+	egg.owner = dragon;
 	egg.z = Map.Z_EGG;
 	return egg;
 }
