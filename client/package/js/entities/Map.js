@@ -1,4 +1,8 @@
-
+/*
+ * Map.js
+ * @author: Leon Ho
+ * @author: Natalie
+ */
 var Map = {
 	
 	MAP_WIDTH: 760,

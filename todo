@@ -20,3 +20,15 @@ AUDIO:
 	kick bomb - <1s
 	plant bomb - <1s
 	bomb explode - 1s
+
+NOTES:
+Dragons are Burnable
+Eggs are Burnable
+
+2 collision types 
+Egg
+solid
+
+Controlled by network manager
+LocalPlayer id
+Players[id] to get state

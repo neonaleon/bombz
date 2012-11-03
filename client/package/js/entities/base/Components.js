@@ -1,8 +1,8 @@
 /*
  * Components.js
+ * @author: Leon Ho
  * Contains components that are involved in game logic.
  * Generally used for creating our game entities in Entities.js
- * @author: Leon Ho
  */
 var Components = {};
 
@@ -12,9 +12,7 @@ var Components = {};
  * 
  */
 Crafty.c('Dragon', {
-	init: function(){
-		//this.requires("SpriteAnimation, Collision");
-		
+	init: function(){		
 		return this;
 	},
 	dragon: function(color){
@@ -30,14 +28,12 @@ Crafty.c('Dragon', {
  */
 Crafty.c('Egg', {
 	init: function(){
-		this.requires('solid');
-		
 		this.blastRadius = 3;
 		
 		this.bind('explode', function(){
 			Crafty.audio.play(AudioDefinitions.EXPLODE);
 			
-			this.removeComponent('Egg', false);
+			this.removeComponent('Egg', false); // prevent fire from colliding with this
 			
 			var eggPos = Map.pixelToTile({x: this.x, y: this.y});
 			
@@ -45,7 +41,7 @@ Crafty.c('Egg', {
 			for (var i = 0; i < 4; i++)
 			{
 				var dir = directions[i];
-				for (var j = 1; j < this.blastRadius; j++)
+				for (var j = (i === 0) ? 0 : 1; j < this.blastRadius; j++)
 				{
 					var fire = Crafty.e('Fire').fire(500);
 					fire.z = Map.Z_FIRE;

@@ -1,4 +1,9 @@
-
+/*
+ * AudioDefinitions
+ * @author: Leon Ho
+ * This file is used to add audio assets to Crafty for use in the game.
+ * In the game components, use Crafty.audio.play(AudioDefinitions.SOME_ENUM, [repeatCount], [volume]) to play the audio.
+ */
 
 var AudioDefinitions = {
 	EXPLODE: "explode",
