@@ -74,7 +74,7 @@ Entities.Dragon = function(color)
                 })
                 .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
                 .bind('Moved', function(oldpos) {
-                	if (this.onEgg)
+                	if (this.onEgg && this.hit('Egg').length == 1)
                 	{
                 		if (this.hit('solid'))
 	                	{
@@ -98,12 +98,13 @@ Entities.Dragon = function(color)
 /*
  * @entity Egg
  */
-Entities.Egg = function(color)
+Entities.Egg = function(dragon)
 {
-	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Egg, " + color + 'egg')
+	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Egg, " + dragon.color + 'egg')
 						.setName(color + 'egg')
 						.bind('burn', function(){ this.trigger('explode'); })
 						.egg(3, 1500);
+	egg.owner = dragon;
 	return egg;
 };
 

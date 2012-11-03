@@ -165,6 +165,7 @@ Crafty.c('Fireball', {
 
 /*
  * @comp Destructible
+ * This component is used by Map only for searching
  */
 Crafty.c('Destructible', {
 	init: function(){
