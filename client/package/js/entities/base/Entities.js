@@ -4,7 +4,11 @@
  */
 
 var Entities = {
-	
+	// powerup constants (follows SpriteDefinitions)
+	POWERUP_KICK: 'kick',
+	POWERUP_SPEED: 'speed',
+	POWERUP_BLAST: 'blast',
+	POWERUP_EGGLIMIT: 'egg_limit'
 };
 
 /*
@@ -116,8 +120,8 @@ Entities.Powerup = function(type)
 	var def = SpriteDefinitions['powerup'];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	
-	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, " + type);
-	console.log("entity powerup not yet implemented");
+	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, " + type)
+							.powerup(type);
 	return powerup;
 }
 

@@ -78,9 +78,9 @@ SpriteDefinitions['powerup'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
 	'elements': {
-		kick: [],
-		blast: [],
-		egg: [],
-		speed: [],
+		kick: [10, 0],
+		blast: [10, 1],
+		egg_limit: [10, 2],
+		speed: [10, 3],
 	}
 };

@@ -28,8 +28,13 @@ var Map = {
 	Z_FIREBALL: 7,
 	Z_DRAGON: 8,
 	
+	// 4 corner spawn positions
 	SPAWN_POSITIONS: [[0, 0], [14, 0], [0, 10], [14, 10]],
-	POWERUPS: [],
+	// 2 of each powerup
+	POWERUPS: [	Entities.POWERUP_KICK, Entities.POWERUP_KICK,
+				Entities.POWERUP_SPEED, Entities.POWERUP_SPEED, 
+				Entities.POWERUP_BLAST, Entities.POWERUP_BLAST,
+				Entities.POWERUP_EGGLIMIT, Entities.POWERUP_EGGLIMIT ], 
 	
 	_spawnPositions: undefined,
 	_powerups: undefined,
@@ -48,6 +53,7 @@ Map.generate = function(map_name)
 	Map._powerups = Map.POWERUPS.slice();
 	
 	var map = Entities.Map(map_name);
+	Map._instance = map;
 	
 	for (var dx = 0; dx < Map.MAP_OUTER_TILEW; dx++)
 	{
@@ -71,9 +77,8 @@ Map.generate = function(map_name)
 		    {
 		    	map.attach(
 					Entities.FloorTile().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
-	           	
-	           	// with a chance to spawn a powerup (not yet implemented)
-	            // or to spawn a destructible block
+
+	            // chance to spawn a destructible block
 	            if (Crafty.math.randomNumber(0, 1) < Map.MAP_PROPORTION_DESTRUCTIBLE)
 	            {
 	            	map.attach(
@@ -82,10 +87,29 @@ Map.generate = function(map_name)
 		    }
 		}
 	}
+	
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 	
-	Map._instance = map;
+	var powerup_positions = [];
+	// spawn powerups
+	while (Map._powerups.length > 0)
+	{
+		console.log(Map._powerups.length);
+		var powerup_type = Map._powerups.splice(0, 1)[0];
+		console.log(powerup_type)
+		
+		do 
+		{
+			// roll unique position
+			var pos = Crafty.math.randomInt(0, 116);
+			var x = pos % 13 + 1;
+			var y = parseInt(pos / 13) + 1;
+			
+		} while (powerup_positions.indexOf(pos) > 0 || ((x % 2 !== 0) && (y % 2 !== 0)))
+		
+		Map.spawnPowerup(powerup_type, x, y);
+	}
 	
 	return map;
 };
@@ -129,8 +153,8 @@ Map.spawnEgg = function(dragon)
 
 Map.spawnPowerup = function(type, x, y)
 {
-	var powerup = undefined;
-	console.log("spawnPowerup not yet implemented");
+	var powerup = Entities.Powerup(type).attr(Map.tileToPixel({ x: x, y: y }));
+	powerup.z = 100;
 	return powerup;
 }
 

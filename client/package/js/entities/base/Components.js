@@ -140,6 +140,12 @@ Crafty.c('Powerup', {
 	powerup: function(type){
 		return this;
 	},
+	apply: function(){
+		
+	},
+	unapply: function(){
+		
+	},
 });
 
 /*
