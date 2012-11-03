@@ -1,6 +1,7 @@
 /*
  * GUI.js
  * @author: Leon Ho
+ * @author: Eldwin
  * This file contains factory methods for generating GUI entities
  */
 

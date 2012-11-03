@@ -1,4 +1,8 @@
-
+/*
+ * Map.js
+ * @author: Leon Ho
+ * @author: Natalie
+ */
 var Map = {
 	
 	MAP_WIDTH: 760,
@@ -19,9 +23,10 @@ var Map = {
 	Z_POWERUP: 2,
 	Z_DESTRUCTIBLE:3,
 	Z_INDESTRUCTIBLE:4,
-	Z_EGG: 5,
-	Z_FIREBALL: 6,
-	Z_DRAGON: 7,
+	Z_FIRE: 5,
+	Z_EGG: 6,
+	Z_FIREBALL: 7,
+	Z_DRAGON: 8,
 	
 	_spawnPositions: [[0, 0], [14, 0], [0, 10], [14, 10]],
 	

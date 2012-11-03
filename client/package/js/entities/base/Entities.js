@@ -29,8 +29,9 @@ Entities.Dragon = function(color)
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	
 	// create dragon entity
-	var dragon = Crafty.e(Properties.RENDERER + ", 2D, Dragon, " + color + 'dragon')
+	var dragon = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Dragon, " + color + 'dragon')
 						.setName(color + 'dragon')
+						.attr({onEgg: false})
 						.dragon(color);
 
 	// add animation and collision detection
@@ -51,11 +52,24 @@ Entities.Dragon = function(color)
 
                     if(!newdir.x && !newdir.y) this.stop();
                 })
+                .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
                 .bind('Moved', function(oldpos) {
-                    var hit = this.hit('solid');
-                    if(hit){
-                        this.attr({x: oldpos.x, y:oldpos.y});
-                    }
+                	if (this.onEgg)
+                	{
+                		if (this.hit('solid'))
+	                	{
+	                		this.x = oldpos.x;
+	                		this.y = oldpos.y;
+	                	}
+                	}
+                	else 
+                	{
+                		if (this.hit('solid') || this.hit('Egg'))
+	                	{
+	                		this.x = oldpos.x;
+	                		this.y = oldpos.y;
+	                	}
+                	}
                 });
 
 	return dragon;

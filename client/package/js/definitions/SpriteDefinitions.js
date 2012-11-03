@@ -1,6 +1,7 @@
 /*
  * SpriteDefinitions.js
  * @author: Leon Ho
+ * @author: Natalie
  * define as such
  * 'spritename': {
  * 		'file': 'filename',
