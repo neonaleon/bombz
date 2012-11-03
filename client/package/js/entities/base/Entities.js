@@ -3,7 +3,9 @@
  * @author: Leon Ho
  */
 
-var Entities = {};
+var Entities = {
+	
+};
 
 /*
  * @entity Map
@@ -19,8 +21,25 @@ Entities.Map = function(map_name)
 	return map;
 };
 
+Entities.DestructibleBlock = function()
+{
+	return Crafty.e("2D, DOM, Destructible, Burnable, solid, tileD")
+					.bind('burn', function(){ this.destroy(); });
+};
+
+Entities.SolidBlock = function()
+{
+	return Crafty.e("2D, DOM, solid, tileI");
+};
+
+Entities.FloorTile = function()
+{
+	return Crafty.e("2D, DOM, floor");
+};
+
 /*
  * @entity Dragon
+ * 
  */
 Entities.Dragon = function(color)
 {
@@ -31,11 +50,12 @@ Entities.Dragon = function(color)
 	// create dragon entity
 	var dragon = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Dragon, " + color + 'dragon')
 						.setName(color + 'dragon')
-						.attr({onEgg: false})
+						.bind('burn', function(){ this.destroy(); }) // TODO: Dragon should lose health
 						.dragon(color);
 
-	// add animation and collision detection
-	dragon.addComponent("SpriteAnimation, Collision")
+	// add animation and collision logic
+	dragon.addComponent("SpriteAnimation, Collision, WiredHitBox")
+				.collision([10, 10], [30, 10], [30, 30], [10, 30]) // smaller hit box based on 40x40 sprites
 				.animate("walk_up", def['anim_walk_up'])
 				.animate("walk_right", def['anim_walk_right'])
 				.animate("walk_down", def['anim_walk_down'])
@@ -80,12 +100,10 @@ Entities.Dragon = function(color)
  */
 Entities.Egg = function(color)
 {
-	var egg = Crafty.e(Properties.RENDERER + ", 2D, Egg, " + color + 'egg')
-						.setName(color + 'egg');
-	
-	// testing only
-	egg.timeout(function(){ egg.trigger('explode'); console.log("BOOM"); }, 1500);
-	
+	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Egg, " + color + 'egg')
+						.setName(color + 'egg')
+						.bind('burn', function(){ this.explode(); })
+						.egg(3, 1500);
 	return egg;
 };
 
@@ -94,7 +112,10 @@ Entities.Egg = function(color)
  */
 Entities.Powerup = function(type)
 {
-	var powerup = undefined;
+	var def = SpriteDefinitions['powerup'];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	
+	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, " + type);
 	console.log("entity powerup not yet implemented");
 	return powerup;
 }

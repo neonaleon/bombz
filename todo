@@ -2,8 +2,12 @@ TODO:
 	MAP:
 		map should generate powerups
 		egg explosion logic (destroy blocks done, fire effect + bomb collision done, kill player not done)
-		powerup logic 
+		powerup logic (bomb limit, blastradius, movespeed, kicker)
 		gui elements
+
+		dodgeball
+		suddendeath
+		tag-team
 
 GRAPHICS:
 	fireball - 3 frames
@@ -22,13 +26,15 @@ AUDIO:
 	bomb explode - 1s
 
 NOTES:
-Dragons are Burnable
-Eggs are Burnable
+	Dragons are Burnable (however now, running back onto fire after egg exploded doesnt work)
+	Eggs are Burnable
+	Destructible blocks are Burnable
 
-2 collision types 
-Egg
-solid
+	2 collision types 
+	Egg
+	solid
 
-Controlled by network manager
-LocalPlayer id
-Players[id] to get state
+	hmm
+	Controlled by network manager
+	LocalPlayer id
+	Players[id] to get state

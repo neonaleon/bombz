@@ -258,23 +258,10 @@ Crafty.c('Controller', {
 Crafty.c('Controllable', {
 	init: function(){
 		this.requires("Keyboard, Multiway");
-		
-		this._aHandler = function(){ console.log("button A pressed but event handler not defined.") };
-		this._bHandler = function(){ console.log("button B pressed but event handler not defined.") };
-		
-		this.bind('KeyDown', function(keyEvent){
-			if (keyEvent.key == Crafty.keys['A'])
-				if (this._aHandler) this._aHandler(this);
-			if (keyEvent.key == Crafty.keys['B'])
-				if (this._bHandler) this._bHandler(this);
-		});
-		
 		return this;
 	},
-	controllable: function(speed, aHandler, bHandler){
-		this._aHandler = aHandler;
-		this._bHandler = bHandler;
-		this.multiway(speed, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
+	controllable: function(){
+		this.multiway(1, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
 		return this;
 	}
 })

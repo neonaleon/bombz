@@ -8,12 +8,53 @@ var Components = {};
 
 /*
  * @comp Dragon
- * This component defines the behavior of the players, the dragons.
- * 
+ * This component defines the behavior the dragons.
+ * This is also essentially the player's state.
  */
 Crafty.c('Dragon', {
-	init: function(){		
+	init: function(){
+		this.onEgg = false;
+		this.blastRadius = 3;
+		this.moveSpeed = 5;
+		this.eggLimit = 3;
+		this.eggCount = 0;
+		this.health = 3;
+		this.powerups = [];
+		this.dead = false;
+		
+		this.bind('NewComponent', function(component){
+			// if a controllable component was added to this player
+			if ('Controllable' in this.__c)
+			{
+				this.bind('Moved', function(oldpos){
+					this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
+					this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
+				});
+				this.bind('KeyDown', function(keyEvent){
+					if (keyEvent.key == Crafty.keys['A'])
+						this.layEgg();
+					if (keyEvent.key == Crafty.keys['B'])
+						this.spitFireball();
+				});
+				this.unbind('NewComponent');
+			}
+		});
 		return this;
+	},
+	loseHealth: function(){
+		this.health -= 1;
+		if (this.health == 0)
+			this.dead = true;
+	},
+	layEgg: function(){
+		console.log("LAY EGG!");
+		if (!this.onEgg && this.eggCount <= this.eggLimit)
+		{
+			Map.spawnEgg(this);
+		};
+	},
+	spitFireball:function(){
+		console.log("SPIT FIRE!");
 	},
 	dragon: function(color){
 		this.color = color;
@@ -28,39 +69,41 @@ Crafty.c('Dragon', {
  */
 Crafty.c('Egg', {
 	init: function(){
-		this.blastRadius = 3;
+		this.bind('explode', this.explode);
+		return this;
+	},
+	explode: function(){
+		Crafty.audio.play(AudioDefinitions.EXPLODE);
+			
+		this.removeComponent('Burnable', false);
 		
-		this.bind('explode', function(){
-			Crafty.audio.play(AudioDefinitions.EXPLODE);
-			
-			this.removeComponent('Egg', false); // prevent fire from colliding with this
-			
-			var eggPos = Map.pixelToTile({x: this.x, y: this.y});
-			
-			var directions = [[1, 0], [0, 1], [-1, 0], [0, -1]];
-			for (var i = 0; i < 4; i++)
+		var eggPos = Map.pixelToTile({x: this.x, y: this.y});
+		
+		var directions = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+		for (var i = 0; i < 4; i++)
+		{
+			var dir = directions[i];
+			for (var j = (i === 0) ? 0 : 1; j < this.blastRadius; j++)
 			{
-				var dir = directions[i];
-				for (var j = (i === 0) ? 0 : 1; j < this.blastRadius; j++)
-				{
-					var fire = Crafty.e('Fire').fire(500);
-					fire.z = Map.Z_FIRE;
-					fire.attr(Map.tileToPixel({ x: eggPos.x + j*dir[0], y: eggPos.y + j*dir[1]}));
-					if (fire.hit('Egg')) { fire.hit('Egg')[0].obj.trigger('explode'); break; };
-					if (fire.hit('Burnable')) { fire.hit('Burnable')[0].obj.trigger('burn'); break; };
-					if (fire.hit('solid')) { fire.destroy(); break; };
-				}
+				var fire = Crafty.e('Fire').fire(500);
+				fire.z = Map.Z_FIRE;
+				fire.attr(Map.tileToPixel({ x: eggPos.x + j*dir[0], y: eggPos.y + j*dir[1]}));
+				if (fire.hit('Burnable')) { fire.hit('Burnable')[0].obj.trigger('burn'); break; };
+				if (fire.hit('solid')) { fire.destroy(); break; };
 			}
-			
-			this.destroy();
-		});
-		
+		}
+		this.destroy();
+	},
+	egg: function(blastRadius, fuseTime){
+		this.blastRadius = blastRadius;
+		this.timeout(function(){ this.trigger('explode'); }, fuseTime);
 		return this;
 	},
 });
 
 /*
  * @comp Fire
+ * 
  */
 Crafty.c('Fire', {
 	init: function(){
@@ -81,6 +124,18 @@ Crafty.c('Powerup', {
 	init: function(){
 		return this;
 	},
+	powerup: function(type){
+		return this;
+	},
+});
+
+/*
+ * @comp Kicker
+ */
+Crafty.c('Kicker', {
+	init: function(){
+		return this;
+	},
 });
 
 /*
@@ -88,6 +143,9 @@ Crafty.c('Powerup', {
  */
 Crafty.c('Fireball', {
 	init: function(){
+		return this;
+	},
+	fireball: function(){
 		return this;
 	},
 });
@@ -103,12 +161,11 @@ Crafty.c('Destructible', {
 
 /*
  * @comp Burnable
+ * Entities that have a burnable component should bind to 'burn' event
+ * The 'burn' event occurs when the entity is hit by @comp fire
  */
 Crafty.c('Burnable', {
 	init: function(){
-		this.bind('burn', function(){
-			this.destroy();
-		});
 		return this;
 	},
 });

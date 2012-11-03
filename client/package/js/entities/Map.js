@@ -28,7 +28,11 @@ var Map = {
 	Z_FIREBALL: 7,
 	Z_DRAGON: 8,
 	
-	_spawnPositions: [[0, 0], [14, 0], [0, 10], [14, 10]],
+	SPAWN_POSITIONS: [[0, 0], [14, 0], [0, 10], [14, 10]],
+	POWERUPS: [],
+	
+	_spawnPositions: undefined,
+	_powerups: undefined,
 	
 	_instance: undefined,
 };
@@ -40,6 +44,9 @@ var Map = {
  */
 Map.generate = function(map_name)
 {	
+	Map._spawnPositions = Map.SPAWN_POSITIONS.slice();
+	Map._powerups = Map.POWERUPS.slice();
+	
 	var map = Entities.Map(map_name);
 	
 	for (var dx = 0; dx < Map.MAP_OUTER_TILEW; dx++)
@@ -50,31 +57,27 @@ Map.generate = function(map_name)
 			if (_isBorder(dx, dy))
 			{
 				map.attach(
-					Crafty.e("2D, DOM, floor")
-	            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
+					Entities.FloorTile().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
 	        }
 	        // wall to separate dodge ballers
 	        // or indestructible blocks in every other tile
 	        else if (_isWall(dx, dy) || ((dx % 2 !== 0) && (dy % 2 !== 0)))
 	        {
 	        	map.attach(
-		    		Crafty.e("2D, DOM, solid, tileI")
-						.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
+		    		Entities.SolidBlock().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
 	        }
 		    // everything else is floor
 		    else
 		    {
 		    	map.attach(
-					Crafty.e("2D, DOM, floor")
-	            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
+					Entities.FloorTile().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
 	           	
 	           	// with a chance to spawn a powerup (not yet implemented)
 	            // or to spawn a destructible block
 	            if (Crafty.math.randomNumber(0, 1) < Map.MAP_PROPORTION_DESTRUCTIBLE)
 	            {
 	            	map.attach(
-						Crafty.e("2D, DOM, Destructible, Burnable, solid, tileD")
-		            		.attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_DESTRUCTIBLE }));
+						Entities.DestructibleBlock().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_DESTRUCTIBLE }));
 	            }
 		    }
 		}
@@ -87,20 +90,21 @@ Map.generate = function(map_name)
 	return map;
 };
 
-// border is the extent of the entire map 
 function _isBorder(x, y){
+	// border is the extent of the entire map
 	return x === 0 || x === (Map.MAP_OUTER_TILEW-1) || y === 0 || y === (Map.MAP_OUTER_TILEH-1);
 };
 
-// wall separates the regular playable inner area from the dodgeball area
 function _isWall(x, y){
+	// wall separates the regular playable inner area from the dodgeball area
 	return x === 1 || x === (Map.MAP_OUTER_TILEW-2) || y === 1 || y === (Map.MAP_OUTER_TILEH-2);
 };
 
 Map.spawnPlayer = function(color)
 {
 	var player = Entities.Dragon(color);
-	var tileSpawnPos = Map._spawnPositions[Crafty.math.randomInt(0, 3)];
+	// get a unique spawn position
+	var tileSpawnPos = Map._spawnPositions.splice(Crafty.math.randomInt(0, Map._spawnPositions.length-1), 1)[0];
 	player.attr(Map.tileToPixel({ x: tileSpawnPos[0], y: tileSpawnPos[1] }));
 	player.z = Map.Z_DRAGON;
 	// checks the player's proximity for destructible blocks, remove them if spawning player there
@@ -117,6 +121,7 @@ Map.spawnPlayer = function(color)
 
 Map.spawnEgg = function(dragon)
 {
+	// spawn egg on the dragon making the egg
 	var egg = Entities.Egg(dragon.color).attr(Map.tileToPixel(Map.pixelToTile({ x: dragon.x, y: dragon.y })));
 	egg.z = Map.Z_EGG;
 	return egg;
@@ -129,15 +134,16 @@ Map.spawnPowerup = function(type, x, y)
 	return powerup;
 }
 
-// converts pixel coordinates to tile coordinates
 Map.pixelToTile = function(dict)
 {
+	// converts pixel coordinates in dict to tile coordinates
 	return {x: Math.floor((dict.x - Map._instance.x + Map.MAP_TILEWIDTH/2) / Map.MAP_TILEWIDTH - 2), 
 			y: Math.floor((dict.y + Map.MAP_TILEHEIGHT/2) / Map.MAP_TILEHEIGHT - 2)};
 }
-// converts tile coordinates to pixel coordinates 
+
 Map.tileToPixel = function(dict)
 {
+	// converts tile coordinates in dict to pixel coordinates 
 	return {x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map._instance.x,
 			y: (dict.y + 2) * Map.MAP_TILEHEIGHT};
 }
