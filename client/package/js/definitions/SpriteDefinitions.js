@@ -73,3 +73,14 @@ SpriteDefinitions['gui'] = {
 		buttonB: [2, 4],
 	}
 };
+
+SpriteDefinitions['powerup'] = {
+	'file': '/img/sprite40x40.png',
+	'tile': SpriteDefinitions.TILE_WIDTH,
+	'elements': {
+		kick: [0,5],
+		blast: [1,5],
+		egg: [2,5],
+		speed: [3,5],
+	}
+};

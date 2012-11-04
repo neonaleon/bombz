@@ -1,6 +1,9 @@
-// SceneDefinitions.js
-// @author Leon Ho
-// This file contains definitions for the scenes we will use in the game
+/*
+ * SceneDefinitions.js
+ * @author: Leon Ho
+ * @author: Eldwin
+ * This file contains definitions for the scenes we will use in the game
+ */
 
 function Scene(sceneName, initializer)
 {
@@ -164,20 +167,11 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	Map.generate(SpriteDefinitions.MAP_1);
 	var dragon = Map.spawnPlayer(SpriteDefinitions.BLUE);
 	var dragon2 = Map.spawnPlayer(SpriteDefinitions.PINK);
+	var dragon3 = Map.spawnPlayer(SpriteDefinitions.GREEN);
+	var dragon4 = Map.spawnPlayer(SpriteDefinitions.RED);
 	
 	// setup GUI
 	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400});
 	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
-	var pad = GUI.Dpad(dragon, 5, handler_buttonA, handler_buttonB).attr({x:50, y:400}); // allow player to control the dragon
+	var pad = GUI.Dpad(dragon3).attr({x:50, y:400}); // allow player to control the dragon
 });
-
-var handler_buttonA = function(dragon)
-{
-	console.log("A DOWN");
-	Map.spawnEgg(dragon);
-}
-
-var handler_buttonB = function(dragon)
-{
-	console.log("B DOWN");
-}
