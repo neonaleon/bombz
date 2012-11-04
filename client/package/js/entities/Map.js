@@ -154,7 +154,7 @@ Map.spawnEgg = function(dragon)
 Map.spawnPowerup = function(type, x, y)
 {
 	var powerup = Entities.Powerup(type).attr(Map.tileToPixel({ x: x, y: y }));
-	powerup.z = 100;
+	powerup.z = Map.Z_POWERUP;
 	return powerup;
 }
 

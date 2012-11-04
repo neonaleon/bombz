@@ -1,5 +1,6 @@
 TODO:
 	MAP:
+		fireball logic
 		powerup logic (bomb limit, blastradius, movespeed, kicker)
 		gui elements
 
