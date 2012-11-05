@@ -43,9 +43,8 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 			var elements = {};
 			elements[color + 'dragon'] = [5, i];
 			elements[color + 'egg'] = [10, i];
-			// temporary
+			//keep this here
 			elements['fire'] = [3, 4];
-			elements['anim_fire'] = [[3, 4], [5,4]];
 			return elements;
 		})(),
 		'anim_walk_up':[[0, i], [1, i]],
@@ -54,6 +53,13 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 		'anim_walk_left':[[9, i], [8, i], [7, i]],
 	};
 }
+
+SpriteDefinitions['effects'] = {
+	'file': '/img/sprite40x40.png',
+	'tile': SpriteDefinitions.TILE_WIDTH,
+	'elements': {},
+	'anim_fire':[[3,4], [4,4], [5,4]],
+};
 
 SpriteDefinitions['map1'] = {
 	'file': '/img/sprite40x40.png',
