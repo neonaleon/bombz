@@ -17,6 +17,7 @@ Crafty.c('Dragon', {
 		this.blastRadius = 3;
 		this.moveSpeed = 5;
 		this.eggLimit = 3;
+		this.canKick = false;
 		this.eggCount = 0;
 		this.health = 3;
 		this.powerups = [];
@@ -145,15 +146,6 @@ Crafty.c('Powerup', {
 	},
 	unapply: function(){
 		
-	},
-});
-
-/*
- * @comp Kicker
- */
-Crafty.c('Kicker', {
-	init: function(){
-		return this;
 	},
 });
 
