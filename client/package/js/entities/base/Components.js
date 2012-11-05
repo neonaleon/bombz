@@ -87,11 +87,11 @@ Crafty.c('Egg', {
 	},
 	explode: function(){
 		Crafty.audio.play(AudioDefinitions.EXPLODE);
-			
+
 		this.removeComponent('Burnable', false);
-		
+
 		var eggPos = Map.pixelToTile({x: this.x, y: this.y});
-		
+
 		var directions = [[1, 0], [0, 1], [-1, 0], [0, -1]];
 		for (var i = 0; i < 4; i++)
 		{
@@ -121,7 +121,13 @@ Crafty.c('Egg', {
  */
 Crafty.c('Fire', {
 	init: function(){
-		this.requires(Properties.RENDERER + ", 2D, fire, Collision");
+		var def = SpriteDefinitions['effects'];
+		Crafty.sprite(SpriteDefinitions['effects']);
+		this.requires(Properties.RENDERER + ", 2D, SpriteAnimation, Collision, fire");
+		this.animate("fire_explode", def['anim_fire']);
+		this.bind("EnterFrame", function (newdir) {
+			if (!this.isPlaying("fire_explode")) this.stop().animate("fire_explode", 3, 1);
+        })
 		return this;
 	},
 	// lifetime specifies how long the fire lasts (or how long the animation runs)
