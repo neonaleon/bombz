@@ -18,7 +18,7 @@ State.prototype.GetPlayer = function()
 State.prototype.JoinRoom = function( data )
 {
 	var room = new Room();
-	room.Deserialize( data );
+	room.Deserialize( data.room );
 
 	console.log(data);
 

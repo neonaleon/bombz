@@ -51,6 +51,9 @@ RoomController.prototype.AddPlayer = function( socket )
   this._room.AddPlayer( player );
 
   this.CreatePlayerListeners( socket );
+
+  // send update to everyone else but new player since he would have gotten it from room message
+  socket.broadcast.emit( 'update', this.Serialize() );
 }
 
 // remove player from room
@@ -116,51 +119,41 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
 
   if ( room.GetState() === Room.State.WAITING )
   {
-  // client indicates he is ready to play
-  socket.on( 'ready', function( data )
-  {
-    var start = roomController.StartGame();
-    if ( start )
+    // client indicates he is ready to play
+    socket.on( 'start', function( data )
     {
-      roomController.Broadcast( 'ready', "YES" );
-    }
-    else
+      var start = roomController.StartGame();
+      if ( start )
+      {
+        roomController.Broadcast( 'start', "YES" );
+      }
+      //SetState( Room.State.PLAYING );
+    });
+
+    // client requests a color change
+    socket.on( 'seat', function( data )
     {
-      roomController.Broadcast( 'ready', "NO" );
-    }
-    //SetState( Room.State.PLAYING );
-  });
+      var color;
+      switch ( data.color )
+      {
+        case Player.Color.BLUE:
+        case Player.Color.GREEN:
+        case Player.Color.RED:
+        case Player.Color.PINK:
+          color = data.color;
+          break;
 
-  // client requests a color change
-  socket.on( 'seat', function( data )
-  {
-    var color;
-    switch ( data.color )
-    {
-      case Player.Color.BLUE:
-      case Player.Color.GREEN:
-      case Player.Color.RED:
-      case Player.Color.PINK:
-        color = data.color;
-        break;
+        default:
+          color = Player.Color.NONE;
+          break;
+      }
 
-      default:
-        color = Player.Color.NONE;
-        break;
-    }
+      var player = roomController.GetPlayerFromSocket( socket );
+      player.SetColor( color );
 
-    var player = roomController.GetPlayerFromSocket( socket );
-    player.SetColor( color );
-
-    roomController.Broadcast( 'seat', { id: player.GetID(), color: color } );
-  });
-
-  // client requests a change in game settings
-  socket.on( 'settings', function( data )
-  {
-    roomController.Broadcast( 'settings', { msg: 'settingsReply' } );
-  });
-
+      roomController.Broadcast( 'update', roomController.Serialize() );
+      //roomController.Broadcast( 'seat', { id: player.GetID(), color: color } );
+    });
   }
   else
   {
@@ -197,9 +190,9 @@ RoomController.prototype.RemovePlayerListeners = function( socket )
 {
   if ( this._room.GetState() === Room.State.WAITING )
   {
-    socket.removeAllListeners( 'ready' );
-    socket.removeAllListeners( 'change' );
-    socket.removeAllListeners( 'settings' );
+    socket.removeAllListeners( 'seat' );
+    socket.removeAllListeners( 'start' );
+    socket.removeAllListeners( 'update' );
   }
   else
   {
@@ -214,22 +207,23 @@ RoomController.prototype.RemovePlayerListeners = function( socket )
 // used to bring a player who just joined waiting room up to date
 RoomController.prototype.Serialize = function( socket )
 {
-  var playersData = {};
-  var playerID = this.GetPlayerFromSocket( socket ).GetID();
+  var data = {};
+  data.room = {};
+  data.room.players = [];
+
   var players = this._room.GetPlayers();
   for ( var i in players )
   {
     var player = players[ i ];
-    playersData[ player.GetID() ] = player.Serialize();
+    data.room.players[ player.GetID() ] = player.GetColor();
   }
 
-  return {
-    pid: playerID,
-    players: playersData,
-    id: this._room.GetID(),
-    state: this._room.GetState(),
-    settings: this._room.GetSettings(),
+  if ( socket !== undefined )
+  {
+    data.pid = this.GetPlayerFromSocket( socket ).GetID();
   }
+
+  return data;
 };
 
 //// EXPORTS

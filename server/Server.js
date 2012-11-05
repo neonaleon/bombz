@@ -43,7 +43,7 @@ Server.prototype.AddClientToRoom = function( socket )
   var room = this._rooms[ 0 ];
   room.AddPlayer( socket );
   this._clients[ socket.id ].room = room;
-  socket.emit( 'room', { room: room.Serialize( socket ) } );
+  socket.emit( 'room', room.Serialize( socket ) );
 }
 
 // removes a client completely from server

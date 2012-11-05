@@ -58,60 +58,43 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	NetworkManager.Connect(Properties.MASTERSERVER_IP, Properties.MASTERSERVER_PORT, handler_Connect);
 	
 	console.log("waiting room scene running");
-	var buttons = ["Ready", "Settings"];
-	var e; // FOR TESTING JOYSTICK
-	for (var i = 0; i < buttons.length; i++)
-	{
-		e = GUI.Button(buttons[i], eval("handler_" + buttons[i]))
-				.attr({	x:(i+1)*Properties.DEVICE_WIDTH/4 - GUIDefinitions.BUTTON_WIDTH/2, 
-						y:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_HEIGHT/2});
-	}
 
+	var startButton = GUI.Button( "Start", handler_Start );
+	startButton.attr({	x: Properties.DEVICE_WIDTH - 2 * GUIDefinitions.BUTTON_WIDTH })
+	startButton.attr({	y: Properties.DEVICE_HEIGHT - 2 * GUIDefinitions.BUTTON_HEIGHT });
 
 	// all the position settings should go inside GUI.js when using real graphics
 	var colorButtons = GUI.OneOrNoneRadioButtonGroup(["Blue", "Green", "Red", "Pink"], handler_Seat);
-	colorButtons[ Player.Color.BLUE ].attr({ x: 100, y: 100, h: 200 });
-	colorButtons[ Player.Color.GREEN ].attr({ x: 250, y: 100, h: 200 });
-	colorButtons[ Player.Color.RED ].attr({ x: 400, y: 100, h: 200 });
-	colorButtons[ Player.Color.PINK ].attr({ x: 550, y: 100, h: 200 });
-
-	var timeoutSelecter = GUI.Selector(["3 minutes", "4 minutes", "5 minutes"], handler_TimeoutSettings);
-	timeoutSelecter.label.attr({ x: 100, y: 400, h: 50, w: 100 });
-	timeoutSelecter.left.attr({ x: 50, y: 400, h: 50, w: 50 });
-	timeoutSelecter.right.attr({ x: 200, y: 400, h: 50, w: 50 });
-
-	var suddenDeathSelecter = GUI.Selector(["Dodge Ball", "Shrink"], handler_SuddenDeathSettings);
-	suddenDeathSelecter.label.attr({ x: 350, y: 400, h: 50, w: 100 });
-	suddenDeathSelecter.left.attr({ x: 300, y: 400, h: 50, w: 50 });
-	suddenDeathSelecter.right.attr({ x: 450, y: 400, h: 50, w: 50 });
-
-	// change scene to game scene
-	var stick = GUI.Joystick(100, 100, e, 5);
-	stick.shift(100, 100);
-	
-	// Map.generate(SpriteDefinitions.MAP_1);
+	colorButtons[ Player.Color.BLUE ].attr({ x: 100, y: 100, w: 150, h: 350 });
+	colorButtons[ Player.Color.GREEN ].attr({ x: 300, y: 100, w: 150, h: 350 });
+	colorButtons[ Player.Color.RED ].attr({ x: 500, y: 100, w: 150, h: 350 });
+	colorButtons[ Player.Color.PINK ].attr({ x: 700, y: 100, w: 150, h: 350 });
 });
 var handler_Connect = function()
 {
 	console.log("NetworkManager connected");
-	NetworkManager.AddListener(MessageDefinitions.READY, handler_ReadyResponse);
 	NetworkManager.AddListener(MessageDefinitions.SEAT, handler_SeatResponse);
+	NetworkManager.AddListener(MessageDefinitions.START, handler_StartResponse);
+	NetworkManager.AddListener(MessageDefinitions.UPDATE, handler_UpdateResponse);
 	NetworkManager.AddListener(MessageDefinitions.ENTER_ROOM, handler_EnterRoomResponse);
-	NetworkManager.AddListener(MessageDefinitions.ROOM_UPDATE, handler_SettingsResponse);
-	NetworkManager.AddListener(MessageDefinitions.UPDATE_SETTINGS, handler_RoomUpdateResponse);
 };
 var handler_EnterRoomResponse = function(data)
 {
-	console.log("handler_EnterRoomResponse: ", data);
+	console.log("enter: ", data);
 	// read from data, initialize game data
-	GameState.JoinRoom( data.room );
-
+	GameState.JoinRoom( data );
 };
-var handler_Seat = function(data)
+var handler_UpdateResponse = function(data)
 {
-	console.log("handler_Seat: ", data);
-	//switch
+	console.log("update: ", data);
 };
+
+// players seats on a colour
+var handler_Seat = function( buttonIndex, value )
+{
+	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: value ? buttonIndex : Player.Color.NONE });
+};
+// broadcast receiver for reponses to all players seatting on color
 var handler_SeatResponse = function(player)
 {
 	if ( player.color == Player.Color.NONE )
@@ -119,41 +102,16 @@ var handler_SeatResponse = function(player)
 	else
 		console.log( "P" + ( player.id + 1 ) + " sat on " + player.color );
 };
-var handler_ReadyResponse = function(data)
+
+// request for game to start (on leader will see the button)
+var handler_Start = function(obj)
 {
-	console.log(data);
+	NetworkManager.SendMessage(MessageDefinitions.START, {})
 };
-var handler_SettingsResponse = function(data)
+// broadcast response when game is starting
+var handler_StartResponse = function(data)
 {
-	console.log("handler_SettingsResponse: ", data);
-};
-var handler_RoomUpdateResponse = function(data)
-{
-	console.log("handler_RoomUpdateResponse: ", data);
-};
-var handler_Ready = function(obj)
-{
-	NetworkManager.SendMessage(MessageDefinitions.READY, {})
-};
-// players chooses colour
-var handler_Seat = function( buttonIndex, value )
-{
-	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: value ? buttonIndex : Player.Color.NONE });
-};
-var handler_Settings = function(obj)
-{
-	console.log("clicked=", obj);
-	NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
-};
-var handler_TimeoutSettings = function(choice)
-{
-	console.log("timeout =", choice);
-	NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, { timeout: choice })
-};
-var handler_SuddenDeathSettings = function(choice)
-{
-	console.log("sudden death =", choice);
-	//NetworkManager.SendMessage(MessageDefinitions.UPDATE_SETTINGS, {})
+	SceneManager.ChangeScene( SceneDefinitions.GameScene );
 };
 
 /* 
