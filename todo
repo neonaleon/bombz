@@ -43,3 +43,14 @@ NOTES:
 	Controlled by network manager
 	LocalPlayer id
 	Players[id] to get state
+
+NAT:
+	burnt dragon
+	fireball pickup (after death), enable button to shoot
+	fireball animation (before death)
+	waiting room, playerX selection, ready button, start button
+	egg crack
+	directional pad + action button
+	wingz
+	side bar (player right, fill up white area)
+	destructing tiles
