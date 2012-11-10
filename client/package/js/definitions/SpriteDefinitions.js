@@ -19,14 +19,20 @@ var SpriteDefinitions = {
 	
 	TILE_WIDTH: 40,
 	TILE_HEIGHT: 40,
-	
+	/*
 	BLUE: 'blue',
 	GREEN: 'green',
 	RED: 'red',
 	PINK: 'pink',
-	
+	*/
+	BLUE: 0,
+	GREEN: 1,
+	RED: 2,
+	PINK: 3,
+
 	DRAGONS: ['bluedragon', 'greendragon', 'reddragon', 'pinkdragon'],
-	COLORS: ['blue', 'green', 'red', 'pink'], // follows order on the spritesheet
+	//COLORS: ['blue', 'green', 'red', 'pink'], // follows order on the spritesheet
+	COLORS: [0, 1, 2, 3], // follows order on the spritesheet
 	
 	MAP_1: 'map1',
 	

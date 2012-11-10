@@ -19,9 +19,6 @@ function Room( id )
   }
 
   this._state = Room.State.WAITING;      // current state
-
-  // WAITING state specific
-  this._ready = []; // list of players who are ready?
 }
 
 
@@ -114,16 +111,12 @@ Room.prototype.GetPlayerCount = function()
 
 Room.prototype.Deserialize = function( data )
 {
-  this._id = data.id;
   for ( var i in data.players )
   {
-    var pid = data.players[ i ].id;
-    var player = new Player( pid );
-    player.Deserialize( data.players[ i ] );
+    var player = new Player( i );
+    player.SetColor( data.players[ i ] );
     this.AddPlayer( player );
   }
-  this._state = data.state;
-  this._settings = data.settings;
 }
 
 

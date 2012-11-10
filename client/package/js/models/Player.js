@@ -32,6 +32,15 @@ Player.Color =
   NONE: 4,
 };
 
+Player.Direction =
+{
+  UP: 0,
+  DOWN: 1,
+  LEFT: 2,
+  RIGHT: 3,
+  NONE: 4,
+};
+
 Player.Default =
 {
   SPEED: 1,

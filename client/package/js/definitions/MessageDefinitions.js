@@ -21,6 +21,7 @@ var MessageDefinitions =
 	SEAT: "seat", // player seats/unseats from color, data is { color: Player.Colour } Player.Colour.NONE to unseat
 
 	// Game messages
+	TIME: "time", // time sync
 	MOVE: "move", // player changes direction 
 	BOMB: "bomb", // player plants a bomb
 	FIREBALL: "fireball", // player shoots fireball

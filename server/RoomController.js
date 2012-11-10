@@ -10,6 +10,8 @@ function RoomController( id )
 {
 //// PRIVATE VARIABLES
   this._room = new Room( id );
+
+  this._map = new Map( 19, 15, 40, 40, [] );
 }
 
 
@@ -125,9 +127,19 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       var start = roomController.StartGame();
       if ( start )
       {
-        roomController.Broadcast( 'start', "YES" );
+        roomController.GetMap().Generate();
+        roomController.Broadcast( 'start', { map: roomController.GetMap().Serialize() } );
+
+        var players = room.GetPlayers();
+
+        for ( var i in players )
+          roomController.RemovePlayerListeners( players[ i ].GetSocket() );
+
+        room.SetState( Room.State.PLAYING );
+
+        for ( var i in players )
+          roomController.CreatePlayerListeners( players[ i ].GetSocket() );
       }
-      //SetState( Room.State.PLAYING );
     });
 
     // client requests a color change
@@ -157,17 +169,27 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
   }
   else
   {
+    socket.on( 'time', function( data )
+    {
+      data.serverTime = ( new Date() ).getTime();
+      socket.emit( 'time', data );
+    });
+
     // player moves
     socket.on( 'move', function( data )
     {
-      console.log( 'onMove' );
+      data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
+      socket.broadcast.emit( 'move', data );
     });
 
     // player plants a bomb
     socket.on( 'bomb', function( data )
     {
-      console.log( 'onBomb' );
-      // set timer till bomb explodes and check again
+      // set timer till bomb explodes and check again??
+      var data = {};
+      data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
+
+      socket.broadcast.emit( 'bomb', data );
     });
 
     // player shoots a fireball
@@ -201,6 +223,11 @@ RoomController.prototype.RemovePlayerListeners = function( socket )
     socket.removeAllListeners( 'fireball' );
     socket.removeAllListeners( 'kickbomb' );
   }
+}
+
+RoomController.prototype.GetMap = function()
+{
+  return this._map;
 }
 
 // representation

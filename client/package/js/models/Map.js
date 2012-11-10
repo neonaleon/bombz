@@ -24,11 +24,14 @@ function Map( width, height, grid_width, grid_height, tiles )
 
 
 //// CONSTANTS
+Map.WIDTH = 760;
+Map.HEIGHT = 600;
+
 Map.Tile =
 {
   EMPTY: 0,
-  BLOCK_DESTRUCTIBLE: 1,
-  BLOCK_INDESTRUCTIBLE: 2,
+  DESTRUCTIBLE: 1,
+  INDESTRUCTIBLE: 2,
 };
 
 
@@ -127,15 +130,73 @@ Map.prototype.BombExplode = function( bomb )
   return affected;
 }
 
+
+Map.prototype.Generate = function()
+{ 
+  // Map._spawnPositions = Map.SPAWN_POSITIONS.slice();
+  // Map._powerups = Map.POWERUPS.slice();
+  
+  this._tiles = [];
+  
+  for ( var y = 0; y < this._height; y++ )
+  {
+    for ( var x = 0; x < this._width; x++ )
+    {
+      // outermost border for dodge ballers
+      if ( x % ( this._width - 1 ) === 0 || y % ( this._height - 1 ) === 0 )
+      {
+        this._tiles.push( Map.Tile.EMPTY );
+      }
+      // surrounding wall to separate dodge ballers
+      else if ( x === 1 || x === ( this._width - 2 ) || y === 1 || y === ( this._height - 2 ) )
+      {
+        this._tiles.push( Map.Tile.INDESTRUCTIBLE );
+      }
+      // or indestructible blocks in every other tile
+      else if ( ( x % 2 !== 0 ) && ( y % 2 !== 0 ) )
+      {
+        this._tiles.push( Map.Tile.INDESTRUCTIBLE );
+      }
+      // everything else is floor with chance of spawning destructable tile
+      else
+      {
+        this._tiles.push( ( Math.random() < 0.9 ) ? Map.Tile.DESTRUCTIBLE : Map.Tile.EMPTY );
+      }
+    }
+  }
+  /*
+  var powerup_positions = [];
+  // spawn powerups
+  while (Map._powerups.length > 0)
+  {
+    console.log(Map._powerups.length);
+    var powerup_type = Map._powerups.splice(0, 1)[0];
+    console.log(powerup_type)
+    
+    do 
+    {
+      // roll unique position
+      var pos = Crafty.math.randomInt(0, 116);
+      var x = pos % 13 + 1;
+      var y = parseInt(pos / 13) + 1;
+      
+    } while (powerup_positions.indexOf(pos) > 0 || ((x % 2 !== 0) && (y % 2 !== 0)))
+    
+    Map.spawnPowerup(powerup_type, x, y);
+  }
+  */
+};
+
 // representation
 // used when map is just generated at start of game
 // non-visible power ups (within blocks) are not included here otherwide players can cheat
 Map.prototype.Serialize = function()
 {
   return {
+    name: 'map1',
     tiles: this._tiles,
-    width: this._grid_width,
-    height: this._grid_height,
+    width: this._width,
+    height: this._height,
   };
 }
 

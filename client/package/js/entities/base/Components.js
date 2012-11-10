@@ -22,7 +22,8 @@ Crafty.c('Dragon', {
 		this.health = 3;
 		this.powerups = [];
 		this.dead = false;
-		
+		this.direction = undefined;
+
 		this.bind('NewComponent', function(component){
 			// if a controllable component was added to this player
 			if ('Controllable' in this.__c)
@@ -30,6 +31,33 @@ Crafty.c('Dragon', {
 				this.bind('Moved', function(oldpos){
 					this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
 					this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
+
+					// use DR to check if need to update
+
+					NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+				});
+				this.bind('NewDirection', function(newdir){
+					var direction;
+					
+					if (newdir.x < 0)
+                        direction = Player.Direction.LEFT;
+                    if (newdir.x > 0)
+                        direction = Player.Direction.RIGHT;
+                    if (newdir.y < 0)
+                        direction = Player.Direction.UP;
+                    if (newdir.y > 0)
+                        direction = Player.Direction.DOWN;
+                    if(!newdir.x && !newdir.y)
+                    	direction = Player.Direction.NONE;
+
+                    if ( this.direction === direction )
+						return;
+
+                    this.direction = direction;
+                    this.trigger( "ChangeDirection", direction );
+
+                    if ( direction === Player.Direction.NONE )
+                    	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 				});
 				this.bind('KeyDown', function(keyEvent){
 					if (keyEvent.key == Crafty.keys['A'])
@@ -56,6 +84,7 @@ Crafty.c('Dragon', {
 		{
 			this.eggCount += 1;
 			console.log("planted: " + this.eggCount);
+			NetworkManager.SendMessage(MessageDefinitions.BOMB);
 			Map.spawnEgg(this);
 		};
 	},
@@ -184,8 +213,7 @@ Crafty.c('Destructible', {
  */
 Crafty.c('Burnable', {
 	init: function(){
+
 		return this;
 	},
 });
-
-

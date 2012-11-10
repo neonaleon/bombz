@@ -80,13 +80,11 @@ var handler_Connect = function()
 };
 var handler_EnterRoomResponse = function(data)
 {
-	console.log("enter: ", data);
-	// read from data, initialize game data
-	GameState.JoinRoom( data );
+	GameState.UpdateRoom( data );
 };
 var handler_UpdateResponse = function(data)
 {
-	console.log("update: ", data);
+	GameState.UpdateRoom( data );
 };
 
 // players seats on a colour
@@ -111,6 +109,7 @@ var handler_Start = function(obj)
 // broadcast response when game is starting
 var handler_StartResponse = function(data)
 {
+	GameState.SetMap( data.map );
 	SceneManager.ChangeScene( SceneDefinitions.GameScene );
 };
 
@@ -121,15 +120,56 @@ var handler_StartResponse = function(data)
 SceneDefinitions.GameScene = new Scene("GameScene", function()
 {
 	console.log("game scene running");
+
+	// network messages
+	NetworkManager.AddListener(MessageDefinitions.TIME, handler_Time);
+	NetworkManager.AddListener(MessageDefinitions.MOVE, handler_Move);
+	NetworkManager.AddListener(MessageDefinitions.BOMB, handler_Bomb);
+	NetworkManager.AddListener(MessageDefinitions.KICK, handler_Kick);
+	NetworkManager.AddListener(MessageDefinitions.FIREBALL, handler_Fireball);
+	NetworkManager.SendMessage(MessageDefinitions.TIME, { clientTime: ( new Date() ).getTime() } );
+
 	// generate map and entities
-	Map.generate(SpriteDefinitions.MAP_1);
-	var dragon = Map.spawnPlayer(SpriteDefinitions.BLUE);
-	var dragon2 = Map.spawnPlayer(SpriteDefinitions.PINK);
-	var dragon3 = Map.spawnPlayer(SpriteDefinitions.GREEN);
-	var dragon4 = Map.spawnPlayer(SpriteDefinitions.RED);
-	
+	Map.generate(GameState.GetMap());
+
+
+	dragons = {};
+	var players = GameState.GetRoom().GetPlayers();
+	for ( var i in players )
+	{
+		var player = players[ i ];
+		dragons[ player.GetID() ] = Map.spawnPlayer( player.GetColor() );
+	}
+
 	// setup GUI
 	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400});
 	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
-	var pad = GUI.Dpad(dragon3).attr({x:50, y:400}); // allow player to control the dragon
+	
+	var pad = GUI.Dpad(dragons[ GameState.GetLocalPlayer().GetID() ] ).attr({x:50, y:400}); // allow player to control the dragon
 });
+var handler_Time = function(data)
+{
+	console.log( data );
+	var time = ( new Date() ).getTime();
+	var RTT = time - data.clientTime;
+	var delta = data.serverTime - time + parseInt( RTT / 2 );
+	console.log( "Wall Clock Time: " + ( new Date() ).getTime() + delta );
+};
+var handler_Move = function(data)
+{
+	var dragon = dragons[ data.pid ];
+	dragon.attr({ x: data.x, y: data.y });
+	dragon.trigger( "ChangeDirection", data.dir );
+};
+var handler_Bomb = function(data)
+{
+	Map.spawnEgg( dragons[ data.pid ] );
+};
+var handler_Kick = function(data)
+{
+
+};
+var handler_Fireball = function(data)
+{
+
+};
