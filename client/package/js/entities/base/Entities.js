@@ -8,7 +8,9 @@ var Entities = {
 	POWERUP_KICK: 'kick',
 	POWERUP_SPEED: 'speed',
 	POWERUP_BLAST: 'blast',
-	POWERUP_EGGLIMIT: 'egg_limit'
+	POWERUP_EGGLIMIT: 'egg_limit',
+
+	POWERUP_SPRITES: [ 'speed', 'blast', 'egg_limit', 'kick' ],
 };
 
 /*

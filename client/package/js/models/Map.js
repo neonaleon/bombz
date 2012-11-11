@@ -67,13 +67,13 @@ Map.prototype.RemoveBomb = function( bomb )
   
 }
 
-// add a powerup to the map if it is a valid grid for a bomb
+// add a powerup to the map if it is a valid grid for a powerup
 Map.prototype.AddPowerup = function( powerup )
 {
   var tile = GetTile( powerup.GetX(), powerup.GetY() );
 }
 
-// removes a powerup from the map if it is a valid grid for a bomb
+// removes a powerup from the map if it is a valid grid for a powerup
 Map.prototype.RemovePowerup = function( powerup )
 {
   

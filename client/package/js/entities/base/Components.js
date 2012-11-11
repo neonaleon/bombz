@@ -94,6 +94,7 @@ Crafty.c('Dragon', {
 	},
 	spitFireball:function(){
 		console.log("SPIT FIRE!");
+		NetworkManager.SendMessage(MessageDefinitions.FIREBALL);
 	},
 	clearEgg: function(){
 		this.eggCount -= 1;
