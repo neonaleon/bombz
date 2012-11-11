@@ -19,12 +19,7 @@ var SpriteDefinitions = {
 	
 	TILE_WIDTH: 40,
 	TILE_HEIGHT: 40,
-	/*
-	BLUE: 'blue',
-	GREEN: 'green',
-	RED: 'red',
-	PINK: 'pink',
-	*/
+	
 	BLUE: 0,
 	GREEN: 1,
 	RED: 2,
@@ -49,8 +44,6 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 			var elements = {};
 			elements[color + 'dragon'] = [5, i];
 			elements[color + 'egg'] = [10, i];
-			//keep this here
-			elements['fire'] = [3, 4];
 			return elements;
 		})(),
 		'anim_walk_up':[[0, i], [1, i]],
@@ -63,7 +56,9 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 SpriteDefinitions['effects'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
-	'elements': {},
+	'elements': {
+		fire: [5, 4],
+	},
 	'anim_fire':[[3,4], [4,4], [5,4]],
 };
 
@@ -93,7 +88,7 @@ SpriteDefinitions['powerup'] = {
 	'elements': {
 		kick: [0,5],
 		blast: [1,5],
-		egg: [2,5],
+		egg_limit: [2,5],
 		speed: [3,5],
 	}
 };

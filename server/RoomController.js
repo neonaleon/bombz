@@ -161,18 +161,6 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
         for ( var i in players )
           roomController.CreatePlayerListeners( players[ i ].GetSocket() );
 
-/*
-        setTimeout( function() {
-        setInterval( function()
-        {
-          roomController.Broadcast( MessageDefinitions.POWERUP, {
-            x: Math.floor( Math.random() * 19 ),
-            y: Math.floor( Math.random() * 15 ),
-            type: Math.floor( Math.random() * 4 ),
-          });
-        }, 10000 );
-        }, 5000 );
-*/
       }
     });
 
