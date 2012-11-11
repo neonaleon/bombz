@@ -7,7 +7,14 @@
 
     <link href="css/style.css" rel="stylesheet" />
 
-	<!-- imports -->
+    <!-- to suppress errors from server nodejs code -->
+    <script>
+      module = {};
+      module.exports = {};
+      function require() {}
+    </script>
+
+    <!-- imports -->
     <script src="js/socket.io.min.js"></script>
     <script src="js/crafty-min.js"></script>
     <script src="js/jquery-1.8.2.min.js"></script>
@@ -21,12 +28,6 @@
     <script src="js/definitions/SceneDefinitions.js"></script>
     <!-- game state models -->
     <!--<script src="js/models/Map.js"></script>-->
-    <script>
-      // to suppress errors from server nodejs code
-      module = {};
-      module.exports = {};
-      function require() {}
-    </script>
     <script src="js/models/Bomb.js"></script>
     <script src="js/models/Room.js"></script>
     <script src="js/models/Player.js"></script>

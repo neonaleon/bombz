@@ -88,6 +88,7 @@ Map.generate = function(mapData)
 	
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
+
 	/*
 	var powerup_positions = [];
 	// spawn powerups

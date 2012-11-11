@@ -56,7 +56,7 @@ RoomController.prototype.AddPlayer = function( socket )
   this.CreatePlayerListeners( socket );
 
   // send update to everyone else but new player since he would have gotten it from room message
-  socket.broadcast.emit( 'update', this.Serialize() );
+  socket.broadcast.emit( MessageDefinitions.UPDATE, this.Serialize() );
 }
 
 // remove player from room
@@ -70,13 +70,14 @@ RoomController.prototype.RemovePlayer = function( socket )
   this._room.RemovePlayer( player );
   this.RemovePlayerListeners( socket );
 
-  if ( this._room.GetState() == Room.State.WAITING )
+  if ( this._room.GetState() == Room.State.WAITING ) // waiting room
   {
-    // inform rest about leaving
+    socket.broadcast.emit( MessageDefinitions.UPDATE, this.Serialize() );
   }
-  else
+  else // game room
   {
     // check for winners / losers or give out powerups
+    
   }
 }
 
@@ -173,7 +174,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.TIME, function( data )
     {
       data.serverTime = ( new Date() ).getTime();
-      socket.emit( MessageDefinitions.timer, data );
+      socket.emit( MessageDefinitions.TIME, data );
     });
 
     // player moves

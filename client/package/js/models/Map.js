@@ -1,5 +1,5 @@
 //// IMPORTS
-
+var Powerup = require( './Powerup' );
 
 function Map( width, height, grid_width, grid_height, tiles )
 {
@@ -12,8 +12,13 @@ function Map( width, height, grid_width, grid_height, tiles )
 
   this._cells = [];                   // 
   this._bombs = [];                   // Bomb[] - list of bombs currently on map
-  this._powerups = [];                // Powerup[] - list of powerups currently on map
-
+  this._powerups =                    // Powerup[] - list of powerups currently on map
+  [
+    Powerup.BUFF_SPEED, Powerup.BUFF_SPEED, 
+    Powerup.BUFF_RANGE, Powerup.BUFF_RANGE,
+    Powerup.BUFF_CAPACITY, Powerup.BUFF_CAPACITY,
+    Powerup.ABILITY_KICKBOMB, Powerup.ABILITY_KICKBOMB
+  ];
 
 //// CONSTRAINTS
   if ( ( width * height ) != tiles.length )
@@ -152,7 +157,7 @@ Map.prototype.Generate = function()
       {
         this._tiles.push( Map.Tile.INDESTRUCTIBLE );
       }
-      // or indestructible blocks in every other tile
+      // indestructible blocks in every other tile
       else if ( ( x % 2 !== 0 ) && ( y % 2 !== 0 ) )
       {
         this._tiles.push( Map.Tile.INDESTRUCTIBLE );

@@ -55,8 +55,9 @@ var handler_PopulateGameLobby = function (data)
 // The Waiting Room
 SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 {
-	NetworkManager.Connect(Properties.MASTERSERVER_IP, Properties.MASTERSERVER_PORT, handler_Connect);
-	
+	// NetworkManager.Connect(Properties.MASTERSERVER_IP, Properties.MASTERSERVER_PORT, handler_Connect);
+	NetworkManager.Connect("192.168.1.9", Properties.MASTERSERVER_PORT, handler_Connect);
+
 	console.log("waiting room scene running");
 
 	var startButton = GUI.Button( "Start", handler_Start );
@@ -149,10 +150,10 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 });
 var handler_Time = function(data)
 {
-	console.log( data );
 	var time = ( new Date() ).getTime();
 	var RTT = time - data.clientTime;
-	var delta = data.serverTime - time + parseInt( RTT / 2 );
+	var delay = parseInt( RTT / 2 );
+	var delta = data.serverTime - time + delay;
 	console.log( "Wall Clock Time: " + ( new Date() ).getTime() + delta );
 };
 var handler_Move = function(data)

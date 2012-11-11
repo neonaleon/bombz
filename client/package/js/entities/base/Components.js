@@ -12,7 +12,7 @@ var Components = {};
  * This is also essentially the player's state.
  */
 Crafty.c('Dragon', {
-	init: function(){
+	init: function() {
 		this.onEgg = false;
 		this.blastRadius = 3;
 		this.moveSpeed = 5;
@@ -23,6 +23,10 @@ Crafty.c('Dragon', {
 		this.powerups = [];
 		this.dead = false;
 		this.direction = undefined;
+
+		this.pdu = undefined;
+		this.lastUpdate = undefined;
+		this.expectedPosition = undefined;
 
 		this.bind('NewComponent', function(component){
 			// if a controllable component was added to this player
