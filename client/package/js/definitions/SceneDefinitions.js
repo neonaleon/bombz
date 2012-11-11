@@ -127,6 +127,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	NetworkManager.AddListener(MessageDefinitions.BOMB, handler_Bomb);
 	NetworkManager.AddListener(MessageDefinitions.KICK, handler_Kick);
 	NetworkManager.AddListener(MessageDefinitions.LEAVE, handler_Leave); // player leaves/disconnects
+	NetworkManager.AddListener(MessageDefinitions.POWERUP, handler_Powerup);
 	NetworkManager.AddListener(MessageDefinitions.FIREBALL, handler_Fireball);
 	NetworkManager.SendMessage(MessageDefinitions.TIME, { clientTime: ( new Date() ).getTime() } );
 
@@ -166,13 +167,17 @@ var handler_Bomb = function(data)
 {
 	Map.spawnEgg( dragons[ data.pid ] );
 };
+var handler_Powerup = function(powerup)
+{
+	Map.spawnPowerup( Entities.POWERUP_SPRITES[ parseInt(powerup.type) ], powerup.x, powerup.y);
+};
 var handler_Kick = function(data)
 {
 
 };
 var handler_Fireball = function(data)
 {
-
+	console.log( "P" + ( data.pid + 1 ) + " spit fireball." ) ;
 };
 var handler_Leave = function(data)
 {

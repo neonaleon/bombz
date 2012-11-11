@@ -88,28 +88,6 @@ Map.generate = function(mapData)
 	
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
-
-	/*
-	var powerup_positions = [];
-	// spawn powerups
-	while (Map._powerups.length > 0)
-	{
-		console.log(Map._powerups.length);
-		var powerup_type = Map._powerups.splice(0, 1)[0];
-		console.log(powerup_type)
-		
-		do 
-		{
-			// roll unique position
-			var pos = Crafty.math.randomInt(0, 116);
-			var x = pos % 13 + 1;
-			var y = parseInt(pos / 13) + 1;
-			
-		} while (powerup_positions.indexOf(pos) > 0 || ((x % 2 !== 0) && (y % 2 !== 0)))
-		
-		Map.spawnPowerup(powerup_type, x, y);
-	}
-	*/
 	
 	return map;
 };

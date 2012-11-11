@@ -104,12 +104,10 @@ RoomController.prototype.StartGame = function()
   var room = this._room;
 
   // must be full room
-  //TODO
-  /*
-  if ( room.GetPlayerCount() != Room.MAX )
-    return false;
-*/
-    // check that everyone has chosen their colors and all different
+  //if ( room.GetPlayerCount() != Room.MAX )
+  //  return false;
+
+  // check that everyone has chosen their colors and all different
   var colors = {};
   var players = room.GetPlayers();
   for ( var i in players )
@@ -153,13 +151,28 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
 
         var players = room.GetPlayers();
 
+        // remove waiting state listeners
         for ( var i in players )
           roomController.RemovePlayerListeners( players[ i ].GetSocket() );
 
         room.SetState( Room.State.PLAYING );
 
+        // add playing state listeners
         for ( var i in players )
           roomController.CreatePlayerListeners( players[ i ].GetSocket() );
+
+/*
+        setTimeout( function() {
+        setInterval( function()
+        {
+          roomController.Broadcast( MessageDefinitions.POWERUP, {
+            x: Math.floor( Math.random() * 19 ),
+            y: Math.floor( Math.random() * 15 ),
+            type: Math.floor( Math.random() * 4 ),
+          });
+        }, 10000 );
+        }, 5000 );
+*/
       }
     });
 
@@ -217,6 +230,10 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.FIREBALL, function( data )
     {
       console.log( 'onFireball' );
+      var data = {};
+      data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
+
+      roomController.Broadcast( MessageDefinitions.FIREBALL, data, socket );
     });
 
     // player kicks a bomb
