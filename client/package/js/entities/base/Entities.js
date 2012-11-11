@@ -111,6 +111,8 @@ Entities.Dragon = function(color)
                 	{
                 		if (this.hit('solid') || this.hit('Egg'))
 	                	{
+	                		var egg = this.hit('Egg');
+	                		if (egg) egg[0].trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
 	                		this.x = oldpos.x;
 	                		this.y = oldpos.y;
 	                	}
