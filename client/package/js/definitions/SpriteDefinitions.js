@@ -59,7 +59,7 @@ SpriteDefinitions['effects'] = {
 	'elements': {
 		fire: [5, 4],
 	},
-	'anim_fire':[[3,4], [4,4], [5,4]],
+	'anim_fire':[[4,4], [5,4], [6,4], [7,4], [8,4], [9,4]],
 };
 
 SpriteDefinitions['map1'] = {
@@ -69,6 +69,7 @@ SpriteDefinitions['map1'] = {
 		floor: [0, 4],
 		tileD: [1, 4],
 		tileI: [2, 4],
+		tileB: [3, 4],
 	}
 };
 
