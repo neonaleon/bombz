@@ -125,7 +125,8 @@ Entities.Egg = function(dragon)
 						.setName(color + 'egg')
 						.bind('burn', function(){ this.trigger('explode'); })
 						.egg(dragon.blastRadius, 1500);
-	//egg.addComponent("Collision, WiredHitBox");
+	//TODO fix the chaining
+	egg.addComponent("Collision, WiredHitBox");
 	egg.owner = dragon;
 	return egg;
 };

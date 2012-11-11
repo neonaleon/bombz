@@ -89,7 +89,11 @@ Map.generate = function(mapData)
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 	
+	// TODO: test
 	Map.spawnPowerup(EntityDefinitions.POWERUP_KICK, 5, 0);
+	Map.spawnPowerup(EntityDefinitions.POWERUP_BLAST, 1, 0);
+	Map.spawnPowerup(EntityDefinitions.POWERUP_SPEED, 3, 0);
+	Map.spawnPowerup(EntityDefinitions.POWERUP_EGGLIMIT, 2, 0);
 	
 	return map;
 };

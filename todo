@@ -9,10 +9,14 @@ TODO:
 		
 		gui elements for waiting room (need to reflect changes for player)
 
+		Entities, and Map has some TODOs
+
 		dodgeball
 		suddendeath
 
 BUGS: // report any bugs here, please include a description and the steps to repro it
+	Egg is kickable, but if add collision component, cannot chain explosion
+
 	for some reason, Collision component must always be added after everything, otherwise something funny happens
 	see TODO in server\RoomController.js
 
