@@ -11,6 +11,7 @@ var Properties =
 	
 	// server properties
 	MASTERSERVER_IP: "http://localhost",
+	//MASTERSERVER_IP: "http://ec2-184-73-92-233.compute-1.amazonaws.com",
 	MASTERSERVER_PORT: 8000,
 	
 	// game properties

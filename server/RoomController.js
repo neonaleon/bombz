@@ -77,7 +77,7 @@ RoomController.prototype.RemovePlayer = function( socket )
   else // game room
   {
     // check for winners / losers or give out powerups
-    
+
   }
 }
 
@@ -88,7 +88,7 @@ RoomController.prototype.StartGame = function()
 
   // must be full room
   if ( room.GetPlayerCount() != Room.MAX )
-      return false;
+    return false;
 
     // check that everyone has chosen their colors and all different
   var colors = {};
