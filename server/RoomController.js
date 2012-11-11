@@ -104,12 +104,10 @@ RoomController.prototype.StartGame = function()
   var room = this._room;
 
   // must be full room
-  //TODO
-  /*
-  if ( room.GetPlayerCount() != Room.MAX )
-    return false;
-*/
-    // check that everyone has chosen their colors and all different
+  //if ( room.GetPlayerCount() != Room.MAX )
+  //  return false;
+
+  // check that everyone has chosen their colors and all different
   var colors = {};
   var players = room.GetPlayers();
   for ( var i in players )
