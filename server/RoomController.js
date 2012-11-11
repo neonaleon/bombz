@@ -4,6 +4,7 @@ var Room = require( './../client/package/js/models/Room' );
 var Bomb = require( './../client/package/js/models/Bomb' );
 var Player = require( './../client/package/js/models/Player' );
 var Powerup = require( './../client/package/js/models/Powerup' );
+var MessageDefinitions = require( './../client/package/js/definitions/MessageDefinitions' );
 
 
 function RoomController( id )
@@ -122,13 +123,13 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
   if ( room.GetState() === Room.State.WAITING )
   {
     // client indicates he is ready to play
-    socket.on( 'start', function( data )
+    socket.on( MessageDefinitions.START, function( data )
     {
       var start = roomController.StartGame();
       if ( start )
       {
         roomController.GetMap().Generate();
-        roomController.Broadcast( 'start', { map: roomController.GetMap().Serialize() } );
+        roomController.Broadcast( MessageDefinitions.START, { map: roomController.GetMap().Serialize() } );
 
         var players = room.GetPlayers();
 
@@ -143,7 +144,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     });
 
     // client requests a color change
-    socket.on( 'seat', function( data )
+    socket.on( MessageDefinitions.SEAT, function( data )
     {
       var color;
       switch ( data.color )
@@ -163,43 +164,43 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       var player = roomController.GetPlayerFromSocket( socket );
       player.SetColor( color );
 
-      roomController.Broadcast( 'update', roomController.Serialize() );
+      roomController.Broadcast( MessageDefinitions.UPDATE, roomController.Serialize() );
       //roomController.Broadcast( 'seat', { id: player.GetID(), color: color } );
     });
   }
   else
   {
-    socket.on( 'time', function( data )
+    socket.on( MessageDefinitions.TIME, function( data )
     {
       data.serverTime = ( new Date() ).getTime();
-      socket.emit( 'time', data );
+      socket.emit( MessageDefinitions.timer, data );
     });
 
     // player moves
-    socket.on( 'move', function( data )
+    socket.on( MessageDefinitions.MOVE, function( data )
     {
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
-      socket.broadcast.emit( 'move', data );
+      socket.broadcast.emit( MessageDefinitions.MOVE, data );
     });
 
     // player plants a bomb
-    socket.on( 'bomb', function( data )
+    socket.on( MessageDefinitions.BOMB, function( data )
     {
       // set timer till bomb explodes and check again??
       var data = {};
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
 
-      socket.broadcast.emit( 'bomb', data );
+      socket.broadcast.emit( MessageDefinitions.BOMB, data );
     });
 
     // player shoots a fireball
-    socket.on( 'fireball', function( data )
+    socket.on( MessageDefinitions.FIREBALL, function( data )
     {
       console.log( 'onFireball' );
     });
 
     // player kicks a bomb
-    socket.on( 'kickbomb', function( data )
+    socket.on( MessageDefinitions.KICK, function( data )
     {
       // CHECK If PLAYER HAS ABILITY
       console.log( 'onKickBomb' );
@@ -212,22 +213,27 @@ RoomController.prototype.RemovePlayerListeners = function( socket )
 {
   if ( this._room.GetState() === Room.State.WAITING )
   {
-    socket.removeAllListeners( 'seat' );
-    socket.removeAllListeners( 'start' );
-    socket.removeAllListeners( 'update' );
+    socket.removeAllListeners( MessageDefinitions.SEAT );
+    socket.removeAllListeners( MessageDefinitions.START );
+    socket.removeAllListeners( MessageDefinitions.UPDATE );
   }
   else
   {
-    socket.removeAllListeners( 'move' );
-    socket.removeAllListeners( 'bomb' );
-    socket.removeAllListeners( 'fireball' );
-    socket.removeAllListeners( 'kickbomb' );
+    socket.removeAllListeners( MessageDefinitions.MOVE );
+    socket.removeAllListeners( MessageDefinitions.BOMB );
+    socket.removeAllListeners( MessageDefinitions.KICK );
+    socket.removeAllListeners( MessageDefinitions.FIREBALL );
   }
 }
 
 RoomController.prototype.GetMap = function()
 {
   return this._map;
+}
+
+RoomController.prototype.GetState = function()
+{
+  return this._room.GetState();
 }
 
 // representation

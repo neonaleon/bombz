@@ -100,7 +100,7 @@ Server.prototype.Start = function()
     // socket events
     SocketIO.sockets.on( 'connection', function( socket )
     {
-      if ( server._count >= Room.MAX )
+      if ( server._count >= Room.MAX || server._rooms[ 0 ].GetState() === Room.State.PLAYING )
       {
         socket.emit( 'welcome', { msg: "Unable to join. Maximum players reached." } );
         socket.disconnect();
