@@ -88,7 +88,13 @@ Map.generate = function(mapData)
 	
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
-	
+
+	var powerups = mapData.powerups;
+	for (var i = 0; i < powerups.length; i++)
+	{
+		var powerup = powerups[i];
+		Map.spawnPowerup( Entities.POWERUP_SPRITES[ powerup.type ], powerup.x , powerup.y );	
+	}
 	return map;
 };
 

@@ -12,13 +12,7 @@ function Map( width, height, grid_width, grid_height, tiles )
 
   this._cells = [];                   // 
   this._bombs = [];                   // Bomb[] - list of bombs currently on map
-  this._powerups =                    // Powerup[] - list of powerups currently on map
-  [
-    Powerup.BUFF_SPEED, Powerup.BUFF_SPEED, 
-    Powerup.BUFF_RANGE, Powerup.BUFF_RANGE,
-    Powerup.BUFF_CAPACITY, Powerup.BUFF_CAPACITY,
-    Powerup.ABILITY_KICKBOMB, Powerup.ABILITY_KICKBOMB
-  ];
+  this._powerups = [];                // Powerup[] - list of powerups currently on map
 }
 
 
@@ -33,6 +27,15 @@ Map.Tile =
   INDESTRUCTIBLE: 2,
 };
 
+Map.Default =
+{
+  POWERUPS: [
+    Powerup.Type.BUFF_SPEED, Powerup.Type.BUFF_SPEED, 
+    Powerup.Type.BUFF_RANGE, Powerup.Type.BUFF_RANGE,
+    Powerup.Type.BUFF_CAPACITY, Powerup.Type.BUFF_CAPACITY,
+    Powerup.Type.ABILITY_KICKBOMB, Powerup.Type.ABILITY_KICKBOMB
+  ],
+};
 
 //// PUBLIC FUNCTIONS
 // converts pixel co-ordinate to grid co-ordinate
@@ -133,7 +136,6 @@ Map.prototype.BombExplode = function( bomb )
 Map.prototype.Generate = function()
 { 
   // Map._spawnPositions = Map.SPAWN_POSITIONS.slice();
-  // Map._powerups = Map.POWERUPS.slice();
   
   this._tiles = [];
   
@@ -163,27 +165,26 @@ Map.prototype.Generate = function()
       }
     }
   }
-  /*
-  var powerup_positions = [];
+
   // spawn powerups
-  while (Map._powerups.length > 0)
+  var powerup_positions = [];
+  var powerups = Map.Default.POWERUPS.slice();
+   
+  for ( var i = 0; i < powerups.length; i++ )
   {
-    console.log(Map._powerups.length);
-    var powerup_type = Map._powerups.splice(0, 1)[0];
-    console.log(powerup_type)
-    
+    var pos, x, y;
     do 
     {
       // roll unique position
-      var pos = Crafty.math.randomInt(0, 116);
-      var x = pos % 13 + 1;
-      var y = parseInt(pos / 13) + 1;
+      pos = Math.floor( Math.random() * 116 );
+      x = pos % 13 + 1;
+      y = parseInt( pos / 13 ) + 1;
       
-    } while (powerup_positions.indexOf(pos) > 0 || ((x % 2 !== 0) && (y % 2 !== 0)))
+    } while ( powerup_positions.indexOf( pos ) > 0 || ( ( x % 2 !== 0 ) && ( y % 2 !== 0 ) ) )
     
-    Map.spawnPowerup(powerup_type, x, y);
+    powerup_positions.push( pos );
+    this._powerups.push( { type: powerups[ i ], x: x, y: y } );
   }
-  */
 };
 
 // representation
@@ -196,6 +197,7 @@ Map.prototype.Serialize = function()
     tiles: this._tiles,
     width: this._width,
     height: this._height,
+    powerups: this._powerups,
   };
 }
 
