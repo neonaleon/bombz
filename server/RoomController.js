@@ -10,13 +10,20 @@ var MessageDefinitions = require( './../client/package/js/definitions/MessageDef
 function RoomController( id )
 {
 //// PRIVATE VARIABLES
+  //this._map                     // Map
   this._room = new Room( id );
 
-  this._map = new Map( 19, 15, 40, 40, [] );
+  this.Reset();
 }
 
 
 //// PUBLIC FUNCTIONS
+RoomController.prototype.Reset = function( socket )
+{
+  this._room.Reset();
+  this._map = new Map( 19, 15, 40, 40, [] );
+}
+
 RoomController.prototype.GetPlayerFromSocket = function( socket )
 {
   var players = this._room.GetPlayers();
@@ -78,6 +85,13 @@ RoomController.prototype.RemovePlayer = function( socket )
   {
     // check for winners / losers or give out powerups
 
+
+
+    if ( this._room.GetPlayerCount() === 0 )
+    {
+      this.Reset();
+      console.log( "Room empty, RESET" );
+    }
   }
 }
 

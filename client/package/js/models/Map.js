@@ -19,12 +19,6 @@ function Map( width, height, grid_width, grid_height, tiles )
     Powerup.BUFF_CAPACITY, Powerup.BUFF_CAPACITY,
     Powerup.ABILITY_KICKBOMB, Powerup.ABILITY_KICKBOMB
   ];
-
-//// CONSTRAINTS
-  if ( ( width * height ) != tiles.length )
-  {
-    console.log( 'Invalid map parameters - number of tiles do not match width and height of map.' );
-  }
 }
 
 

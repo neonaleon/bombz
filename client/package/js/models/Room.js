@@ -9,16 +9,11 @@ function Room( id )
 {
 //// PRIVATE VARIABLES
   this._id = id;                          // int - identifier
-  this._colors = {};                      // Player.Color
-  this._players = {};                     // Player{} - list of player objects
-  this._settings =                        // dictionary - represent game's settings
-  {
-    type: Room.Settings.Type.SOLO,
-    timeout: Room.Settings.Timeout.FIVE_MINUTES,      // duration of game before sudden death is activated
-    suddendeath: Room.Settings.SuddenDeath.DODGEBALL,
-  }
+  // this._players;                       // Player{} - list of player objects
+  // this._settings;                      // dictionary - represent game's settings
+  // this._state;                         // Room.State - current state of room
 
-  this._state = Room.State.WAITING;      // current state
+  this.Reset();
 }
 
 
@@ -47,6 +42,18 @@ Room.Settings.SuddenDeath =
 
 
 //// PUBLIC FUNCTIONS
+Room.prototype.Reset = function()
+{
+  this._players = {};
+  this._settings =
+  {
+    type: Room.Settings.Type.SOLO,
+    timeout: Room.Settings.Timeout.FIVE_MINUTES, // duration of game before sudden death is activated
+    suddendeath: Room.Settings.SuddenDeath.DODGEBALL,
+  }
+  this._state = Room.State.WAITING;
+};
+
 
 // returns id of room
 Room.prototype.GetID = function()

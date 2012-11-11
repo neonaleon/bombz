@@ -16,6 +16,10 @@ NetworkManager.Connect = function (ip, port, handler)
 		NetworkManager.connected = true;
 		handler();
 	});
+	socket.on("disconnect", function(){ 
+		NetworkManager.connected = false;
+		console.log( "NetworkManager disconnected" );
+	});
 };
 
 // Send message to server
