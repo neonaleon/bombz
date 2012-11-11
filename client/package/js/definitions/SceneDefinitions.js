@@ -55,8 +55,8 @@ var handler_PopulateGameLobby = function (data)
 // The Waiting Room
 SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 {
-	// NetworkManager.Connect(Properties.MASTERSERVER_IP, Properties.MASTERSERVER_PORT, handler_Connect);
-	NetworkManager.Connect("192.168.1.9", Properties.MASTERSERVER_PORT, handler_Connect);
+	NetworkManager.Connect(Properties.MASTERSERVER_IP, Properties.MASTERSERVER_PORT, handler_Connect);
+	// NetworkManager.Connect("192.168.1.9", Properties.MASTERSERVER_PORT, handler_Connect);
 
 	console.log("waiting room scene running");
 
