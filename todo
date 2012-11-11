@@ -6,13 +6,12 @@ TODO:
 
 		dodgeball
 		suddendeath
-		tag-team
 
 BUGS: // report any bugs here, please include a description and the steps to repro it
+	see TODO in server\RoomController.js
 
 GRAPHICS:
 	fireball - 3 frames
-	fire - 3 frames
 	destructible blocks - 3 frames
 	dpad/joystick
 	button A, B

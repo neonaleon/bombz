@@ -222,3 +222,19 @@ Crafty.c('Burnable', {
 		return this;
 	},
 });
+
+/*
+ * @comp Kickable
+ * Entities that have a kickable component should bind to 'kicked' event
+ * The 'kicked' event occurs when the entity is hit by @comp Dragon
+ */
+Crafty.c('Kickable', {
+	init: function(){
+		this.bind('kicked', function(){
+			
+		});
+		return this;
+	},
+});
+
+
