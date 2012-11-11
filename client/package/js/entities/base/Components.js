@@ -91,18 +91,18 @@ Crafty.c('Dragon', {
 		if (!this.onEgg && this.eggCount < this.eggLimit)
 		{
 			this.eggCount += 1;
-			console.log("planted: " + this.eggCount);
+			//console.log("planted: " + this.eggCount);
 			NetworkManager.SendMessage(MessageDefinitions.BOMB);
 			Map.spawnEgg(this);
 		};
 	},
 	spitFireball:function(){
-		console.log("SPIT FIRE!");
+		//console.log("SPIT FIRE!");
 		NetworkManager.SendMessage(MessageDefinitions.FIREBALL);
 	},
 	clearEgg: function(){
 		this.eggCount -= 1;
-		console.log("exploded: " + this.eggCount);
+		//console.log("exploded: " + this.eggCount);
 	},
 	dragon: function(color){
 		this.color = color;
@@ -288,7 +288,6 @@ Crafty.c('Powerup', {
  */
 Crafty.c(EntityDefinitions.POWERUP_KICK, {
 	init: function(){
-		console.log(EntityDefinitions.POWERUP_KICK);
 		this.bind("applyPowerup", this.apply);
 		this.bind("unapplyPowerup", this.unapply);
 		return this;
@@ -304,7 +303,6 @@ Crafty.c(EntityDefinitions.POWERUP_KICK, {
  */
 Crafty.c(EntityDefinitions.POWERUP_SPEED, {
 	init: function(){
-		console.log(EntityDefinitions.POWERUP_SPEED);
 		this.bind("applyPowerup", this.apply);
 		this.bind("unapplyPowerup", this.unapply);
 		return this;
@@ -322,7 +320,6 @@ Crafty.c(EntityDefinitions.POWERUP_SPEED, {
  */
 Crafty.c(EntityDefinitions.POWERUP_BLAST, {
 	init: function(){
-		console.log(EntityDefinitions.POWERUP_BLAST);
 		this.bind("applyPowerup", this.apply);
 		this.bind("unapplyPowerup", this.unapply);
 		return this;
@@ -340,7 +337,6 @@ Crafty.c(EntityDefinitions.POWERUP_BLAST, {
  */
 Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT, {
 	init: function(){
-		console.log(EntityDefinitions.POWERUP_EGGLIMIT);
 		this.bind("applyPowerup", this.apply);
 		this.bind("unapplyPowerup", this.unapply);
 		return this;

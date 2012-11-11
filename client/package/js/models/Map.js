@@ -169,7 +169,7 @@ Map.prototype.Generate = function()
   // spawn powerups
   var powerup_positions = [];
   var powerups = Map.Default.POWERUPS.slice();
-   
+  
   for ( var i = 0; i < powerups.length; i++ )
   {
     var pos, x, y;
