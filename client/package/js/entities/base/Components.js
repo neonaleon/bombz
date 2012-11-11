@@ -233,7 +233,7 @@ Crafty.c('Kickable', {
 				this.isMoving = true;
 				this.bind("EnterFrame", function()
 				{
-					if (this.hit('solid') || this.hit('Dragon'))
+					if (this.hit('solid') || this.hit('Dragon') || this.hit('Egg'))
 					{
 						this.isMoving = false;
 						// TODO: snap to map grid?

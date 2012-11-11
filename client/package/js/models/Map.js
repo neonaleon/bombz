@@ -163,27 +163,37 @@ Map.prototype.Generate = function()
       }
     }
   }
+  
+  //TODO: POWERUPS
   /*
-  var powerup_positions = [];
-  // spawn powerups
-  while (Map._powerups.length > 0)
-  {
-    console.log(Map._powerups.length);
-    var powerup_type = Map._powerups.splice(0, 1)[0];
-    console.log(powerup_type)
-    
-    do 
-    {
-      // roll unique position
-      var pos = Crafty.math.randomInt(0, 116);
-      var x = pos % 13 + 1;
-      var y = parseInt(pos / 13) + 1;
-      
-    } while (powerup_positions.indexOf(pos) > 0 || ((x % 2 !== 0) && (y % 2 !== 0)))
-    
-    Map.spawnPowerup(powerup_type, x, y);
-  }
-  */
+        setTimeout( function() {
+	        	
+			  var powerup_positions = [];
+			  // spawn powerups
+			  while (this._powerups.length > 0)
+			  {
+			    //console.log(this._powerups.length);
+			    var powerup_type = this._powerups.splice(0, 1)[0];
+			    //console.log(powerup_type)
+			    
+			    do 
+			    {
+			      // roll unique position
+			      var pos = Math.floor(Math.random()*116); //Crafty.math.randomInt(0, 116);
+			      var x = pos % 13 + 1;
+			      var y = parseInt(pos / 13) + 1;
+			      
+			    } while (powerup_positions.indexOf(pos) > 0 || ((x % 2 !== 0) && (y % 2 !== 0)))
+			    
+			    // Map.spawnPowerup(powerup_type, x, y);
+			    roomController.Broadcast( MessageDefinitions.POWERUP, {
+		            x: x,// Math.floor( Math.random() * 19 ),
+		            y: y,//Math.floor( Math.random() * 15 ),
+		            type: powerup_type, //Math.floor( Math.random() * 4 ),
+	         	});
+	         	
+        }, 5000 );
+*/
 };
 
 // representation
