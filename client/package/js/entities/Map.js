@@ -89,6 +89,8 @@ Map.generate = function(mapData)
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 	
+	Map.spawnPowerup(EntityDefinitions.POWERUP_KICK, 5, 0);
+	
 	return map;
 };
 
@@ -120,7 +122,7 @@ Map.spawnPlayer = function(color)
 			block.destroy();
 	}
 	//TODO: TEST
-	player.addComponent(EntityDefinitions.POWERUP_KICK);
+	//player.addComponent(EntityDefinitions.POWERUP_KICK);
 	return player;
 }
 

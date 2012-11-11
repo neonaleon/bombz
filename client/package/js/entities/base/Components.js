@@ -256,20 +256,30 @@ Crafty.c('Kickable', {
 
 /*
  * @comp Powerup
+ * this is the component that specifies a powerup that is placed on the map, and the GUI
+ * the actual powerup effect is added to the dragon as a component
  */
 Crafty.c('Powerup', {
 	init: function(){
-		this.bind()
+		this.type = undefined;
 		return this;
 	},
 	powerup: function(type){
+		this.type = type;
+		this.bind("EnterFrame", function(){
+			var hitDragon = this.hit('Dragon');
+			if (hitDragon)
+			{
+				var dragon = hitDragon[0].obj;
+				if (!dragon.has(this.type))
+				{
+					dragon.addComponent(this.type);
+					dragon.trigger('applyPowerup');
+					this.destroy();
+				}
+			}
+		});
 		return this;
-	},
-	apply: function(dragon){
-		
-	},
-	unapply: function(dragon){
-		
 	},
 });
 
@@ -279,7 +289,13 @@ Crafty.c('Powerup', {
 Crafty.c(EntityDefinitions.POWERUP_KICK, {
 	init: function(){
 		console.log(EntityDefinitions.POWERUP_KICK);
+		this.bind("applyPowerup", this.apply);
+		this.bind("unapplyPowerup", this.unapply);
 		return this;
+	},
+	apply: function(){},
+	unapply: function(){
+		this.removeComponent(EntityDefinitions.POWERUP_KICK);
 	},
 });
 
@@ -289,8 +305,16 @@ Crafty.c(EntityDefinitions.POWERUP_KICK, {
 Crafty.c(EntityDefinitions.POWERUP_SPEED, {
 	init: function(){
 		console.log(EntityDefinitions.POWERUP_SPEED);
+		this.bind("applyPowerup", this.apply);
+		this.bind("unapplyPowerup", this.unapply);
 		return this;
 	},
+	apply: function(){
+		this.moveSpeed = 10;
+	},
+	unapply: function(){
+		this.moveSpeed = 5;
+	}
 });
 
 /*
@@ -299,8 +323,16 @@ Crafty.c(EntityDefinitions.POWERUP_SPEED, {
 Crafty.c(EntityDefinitions.POWERUP_BLAST, {
 	init: function(){
 		console.log(EntityDefinitions.POWERUP_BLAST);
+		this.bind("applyPowerup", this.apply);
+		this.bind("unapplyPowerup", this.unapply);
 		return this;
 	},
+	apply: function(){
+		this.blastRadius = 6;
+	},
+	unapply: function(){
+		this.blastRadius = 3;
+	}
 });
 
 /*
@@ -309,6 +341,14 @@ Crafty.c(EntityDefinitions.POWERUP_BLAST, {
 Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT, {
 	init: function(){
 		console.log(EntityDefinitions.POWERUP_EGGLIMIT);
+		this.bind("applyPowerup", this.apply);
+		this.bind("unapplyPowerup", this.unapply);
 		return this;
 	},
+	apply: function(){
+		this.eggLimit = 6;
+	},
+	unapply: function(){
+		this.eggLimit = 3;
+	}
 });

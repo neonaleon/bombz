@@ -124,8 +124,8 @@ Entities.Egg = function(dragon)
 	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Kickable, Egg," + dragon.color + 'egg')
 						.setName(color + 'egg')
 						.bind('burn', function(){ this.trigger('explode'); })
-						.egg(3, 1500);
-	egg.addComponent("Collision, WiredHitBox");
+						.egg(dragon.blastRadius, 1500);
+	//egg.addComponent("Collision, WiredHitBox");
 	egg.owner = dragon;
 	return egg;
 };

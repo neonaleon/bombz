@@ -93,7 +93,7 @@ SpriteDefinitions['powerup'] = {
 	'elements': {
 		kick: [0,5],
 		blast: [1,5],
-		egg: [2,5],
+		egg_limit: [2,5],
 		speed: [3,5],
 	}
 };
