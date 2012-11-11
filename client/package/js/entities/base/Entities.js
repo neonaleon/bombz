@@ -8,7 +8,9 @@ var Entities = {
 	POWERUP_KICK: 'kick',
 	POWERUP_SPEED: 'speed',
 	POWERUP_BLAST: 'blast',
-	POWERUP_EGGLIMIT: 'egg_limit'
+	POWERUP_EGGLIMIT: 'egg_limit',
+	
+	EGG_MOVE_SPEED: 5,
 };
 
 /*
@@ -112,7 +114,7 @@ Entities.Dragon = function(color)
                 		if (this.hit('solid') || this.hit('Egg'))
 	                	{
 	                		var egg = this.hit('Egg');
-	                		if (egg) egg[0].trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+	                		if (egg && this.has) egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
 	                		this.x = oldpos.x;
 	                		this.y = oldpos.y;
 	                	}
@@ -127,10 +129,11 @@ Entities.Dragon = function(color)
  */
 Entities.Egg = function(dragon)
 {
-	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Egg, " + dragon.color + 'egg')
+	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Kickable, Egg," + dragon.color + 'egg')
 						.setName(color + 'egg')
 						.bind('burn', function(){ this.trigger('explode'); })
 						.egg(3, 1500);
+	egg.addComponent("Collision, WiredHitBox");
 	egg.owner = dragon;
 	return egg;
 };

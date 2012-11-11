@@ -155,12 +155,13 @@ Crafty.c('Egg', {
 Crafty.c('Fire', {
 	init: function(){
 		var def = SpriteDefinitions['effects'];
-		Crafty.sprite(SpriteDefinitions['effects']);
+		Crafty.sprite(def['tile'], def['file'], def['elements']);
 		this.requires(Properties.RENDERER + ", 2D, SpriteAnimation, Collision, fire");
 		this.animate("fire_explode", def['anim_fire']);
-		this.bind("EnterFrame", function (newdir) {
-			if (!this.isPlaying("fire_explode")) this.stop().animate("fire_explode", 3, 1);
-        })
+        this.bind("NewEntity", function(data){
+        	// play once upon spawn
+        	if (data.id == this[0] && !this.isPlaying("fire_explode")) this.stop().animate("fire_explode", 18, 1);
+        });
 		return this;
 	},
 	// lifetime specifies how long the fire lasts (or how long the animation runs)
@@ -217,7 +218,6 @@ Crafty.c('Destructible', {
  */
 Crafty.c('Burnable', {
 	init: function(){
-
 		return this;
 	},
 });
@@ -229,8 +229,31 @@ Crafty.c('Burnable', {
  */
 Crafty.c('Kickable', {
 	init: function(){
-		this.bind('kicked', function(){
-			
+		this.isMoving = false;
+
+		this.bind('kicked', function(dir)
+		{
+			if (!this.isMoving)
+			{
+				this.isMoving = true;
+				this.bind("EnterFrame", function()
+				{
+					if (this.hit('solid') || this.hit('Dragon'))
+					{
+						this.isMoving = false;
+						// TODO: snap to map grid?
+						//var collide = Map.tileToPixel(Map.pixelToTile({ x: this.x, y: this.y }));
+						//this.x = collide.x;
+						//this.y = collide.y;
+						return;
+					}
+					if (this.isMoving)
+					{
+						this.x += dir.x * Entities.EGG_MOVE_SPEED;
+						this.y += dir.y * Entities.EGG_MOVE_SPEED;
+					}
+				});
+			}
 		});
 		return this;
 	},

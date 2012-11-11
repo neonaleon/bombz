@@ -49,8 +49,6 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 			var elements = {};
 			elements[color + 'dragon'] = [5, i];
 			elements[color + 'egg'] = [10, i];
-			//keep this here
-			elements['fire'] = [3, 4];
 			return elements;
 		})(),
 		'anim_walk_up':[[0, i], [1, i]],
@@ -63,7 +61,9 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 SpriteDefinitions['effects'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
-	'elements': {},
+	'elements': {
+		fire: [5, 4],
+	},
 	'anim_fire':[[3,4], [4,4], [5,4]],
 };
 

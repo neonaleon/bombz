@@ -1,13 +1,17 @@
 TODO:
 	MAP:
 		fireball logic
-		powerup logic (bomb limit, blastradius, movespeed, kicker)
+		bomb limit, 
+		blastradius, 
+		movespeed, 
+		kicker
 		gui elements
 
 		dodgeball
 		suddendeath
 
 BUGS: // report any bugs here, please include a description and the steps to repro it
+	for some reason, Collision component must always be added after everything, otherwise something funny happens
 	see TODO in server\RoomController.js
 
 GRAPHICS:
