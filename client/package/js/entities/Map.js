@@ -92,7 +92,7 @@ Map.generate = function(mapData)
 	for (var i = 0; i < powerups.length; i++)
 	{
 		var powerup = powerups[i];
-		Map.spawnPowerup( EntityDefinitions.POWERUP_SPRITES[ powerup.type ], powerup.x , powerup.y );	
+		Map.spawnPowerup( EntityDefinitions.POWERUP_SPRITES[powerup.type], powerup.x , powerup.y );	
 	}
 	return map;
 };
@@ -125,7 +125,6 @@ Map.spawnPlayer = function(color)
 			block.destroy();
 	}
 	//TODO: TEST
-	player.addComponent(EntityDefinitions.POWERUP_KICK);
 	return player;
 }
 
