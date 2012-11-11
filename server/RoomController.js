@@ -63,7 +63,7 @@ RoomController.prototype.AddPlayer = function( socket )
   this.CreatePlayerListeners( socket );
 
   // send update to everyone else but new player since he would have gotten it from room message
-  socket.broadcast.emit( MessageDefinitions.UPDATE, this.Serialize() );
+  this.Broadcast( MessageDefinitions.UPDATE, this.Serialize() );
 }
 
 // remove player from room
@@ -77,20 +77,22 @@ RoomController.prototype.RemovePlayer = function( socket )
   this._room.RemovePlayer( player );
   this.RemovePlayerListeners( socket );
 
-  if ( this._room.GetState() == Room.State.WAITING ) // waiting room
+  if ( this._room.GetState() === Room.State.WAITING ) // waiting room
   {
-    socket.broadcast.emit( MessageDefinitions.UPDATE, this.Serialize() );
+    this.Broadcast( MessageDefinitions.UPDATE, this.Serialize() );
   }
   else // game room
   {
-    // check for winners / losers or give out powerups
+    this.Broadcast( MessageDefinitions.LEAVE, { id: player.GetID() } );
 
-
-
+    // all players left room, reset it to waiting state. otherwise, check if anyone has won or powerups need to drop
     if ( this._room.GetPlayerCount() === 0 )
     {
       this.Reset();
-      console.log( "Room empty, RESET" );
+    }
+    else
+    {
+
     }
   }
 }
@@ -195,7 +197,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.MOVE, function( data )
     {
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
-      socket.broadcast.emit( MessageDefinitions.MOVE, data );
+      roomController.Broadcast( MessageDefinitions.MOVE, data );
     });
 
     // player plants a bomb
@@ -205,7 +207,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       var data = {};
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
 
-      socket.broadcast.emit( MessageDefinitions.BOMB, data );
+      roomController.Broadcast( MessageDefinitions.BOMB, data );
     });
 
     // player shoots a fireball

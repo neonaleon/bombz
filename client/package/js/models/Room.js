@@ -9,9 +9,9 @@ function Room( id )
 {
 //// PRIVATE VARIABLES
   this._id = id;                          // int - identifier
+  // this._state;                         // Room.State - current state of room
   // this._players;                       // Player{} - list of player objects
   // this._settings;                      // dictionary - represent game's settings
-  // this._state;                         // Room.State - current state of room
 
   this.Reset();
 }

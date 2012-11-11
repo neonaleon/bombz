@@ -126,6 +126,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	NetworkManager.AddListener(MessageDefinitions.MOVE, handler_Move);
 	NetworkManager.AddListener(MessageDefinitions.BOMB, handler_Bomb);
 	NetworkManager.AddListener(MessageDefinitions.KICK, handler_Kick);
+	NetworkManager.AddListener(MessageDefinitions.LEAVE, handler_Leave); // player leaves/disconnects
 	NetworkManager.AddListener(MessageDefinitions.FIREBALL, handler_Fireball);
 	NetworkManager.SendMessage(MessageDefinitions.TIME, { clientTime: ( new Date() ).getTime() } );
 
@@ -172,4 +173,11 @@ var handler_Kick = function(data)
 var handler_Fireball = function(data)
 {
 
+};
+var handler_Leave = function(data)
+{
+	dragons[ data.id ].destroy();
+	console.log( "P" + ( data.id + 1 ) + " has left the game." ) ;
+
+	// message should have more things like powerups dropped by player
 };

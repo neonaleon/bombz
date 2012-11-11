@@ -26,7 +26,8 @@ var MessageDefinitions =
 	BOMB: "bomb", // player plants a bomb
 	FIREBALL: "fireball", // player shoots fireball
 	KICK: "kick", // player kicks a bomb
-	POWERUP: "powerup" // powerup drops in the map
+	POWERUP: "powerup", // powerup drops in the map
+	LEAVE: "leave", // player leaves / disconnects
 };
 
 //// EXPORTS
