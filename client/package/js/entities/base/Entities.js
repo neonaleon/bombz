@@ -3,15 +3,7 @@
  * @author: Leon Ho
  */
 
-var Entities = {
-	// powerup constants (follows SpriteDefinitions)
-	POWERUP_KICK: 'kick',
-	POWERUP_SPEED: 'speed',
-	POWERUP_BLAST: 'blast',
-	POWERUP_EGGLIMIT: 'egg_limit',
-	
-	EGG_MOVE_SPEED: 5,
-};
+var Entities = {};
 
 /*
  * @entity Map
@@ -114,7 +106,7 @@ Entities.Dragon = function(color)
                 		if (this.hit('solid') || this.hit('Egg'))
 	                	{
 	                		var egg = this.hit('Egg');
-	                		if (egg && this.has) egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+	                		if (egg && this.has(EntityDefinitions.POWERUP_KICK)) egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
 	                		this.x = oldpos.x;
 	                		this.y = oldpos.y;
 	                	}
@@ -148,6 +140,7 @@ Entities.Powerup = function(type)
 	
 	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, " + type)
 							.powerup(type);
+	powerup.addComponent("Collision");
 	return powerup;
 }
 

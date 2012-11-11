@@ -141,6 +141,8 @@ Map.spawnPlayer = function(color)
 		if (Math.abs(blockPos.x - tileSpawnPos[0]) <= 1 && Math.abs(blockPos.y - tileSpawnPos[1]) <= 1)
 			block.destroy();
 	}
+	
+	player.addComponent(EntityDefinitions.POWERUP_KICK);
 	return player;
 }
 
@@ -158,6 +160,11 @@ Map.spawnPowerup = function(type, x, y)
 	var powerup = Entities.Powerup(type).attr(Map.tileToPixel({ x: x, y: y }));
 	powerup.z = Map.Z_POWERUP;
 	return powerup;
+}
+
+Map.suddenDeath = function()
+{
+	//TODO: ACTIVATE SUDDEN DEATH!!!!
 }
 
 Map.pixelToTile = function(dict)

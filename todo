@@ -1,11 +1,13 @@
 TODO:
 	MAP:
 		fireball logic
+		
 		bomb limit, 
 		blastradius, 
 		movespeed, 
-		kicker
-		gui elements
+		-----kicker
+		
+		gui elements for waiting room (need to reflect changes for player)
 
 		dodgeball
 		suddendeath

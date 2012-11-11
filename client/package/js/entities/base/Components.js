@@ -6,6 +6,10 @@
  */
 var Components = {};
 
+/* ====================
+ * Main game components
+ ======================*/
+
 /*
  * @comp Dragon
  * This component defines the behavior the dragons.
@@ -172,24 +176,6 @@ Crafty.c('Fire', {
 });
 
 /*
- * @comp Powerup
- */
-Crafty.c('Powerup', {
-	init: function(){
-		return this;
-	},
-	powerup: function(type){
-		return this;
-	},
-	apply: function(){
-		
-	},
-	unapply: function(){
-		
-	},
-});
-
-/*
  * @comp Fireball
  */
 Crafty.c('Fireball', {
@@ -200,6 +186,10 @@ Crafty.c('Fireball', {
 		return this;
 	},
 });
+
+/* ============================
+ * Collision related components
+ ==============================*/
 
 /*
  * @comp Destructible
@@ -221,6 +211,10 @@ Crafty.c('Burnable', {
 		return this;
 	},
 });
+
+/* ==========================
+ * Powerup related components
+ ============================*/
 
 /*
  * @comp Kickable
@@ -249,8 +243,8 @@ Crafty.c('Kickable', {
 					}
 					if (this.isMoving)
 					{
-						this.x += dir.x * Entities.EGG_MOVE_SPEED;
-						this.y += dir.y * Entities.EGG_MOVE_SPEED;
+						this.x += dir.x * EntityDefinitions.EGG_MOVE_SPEED;
+						this.y += dir.y * EntityDefinitions.EGG_MOVE_SPEED;
 					}
 				});
 			}
@@ -259,4 +253,61 @@ Crafty.c('Kickable', {
 	},
 });
 
+/*
+ * @comp Powerup
+ */
+Crafty.c('Powerup', {
+	init: function(){
+		this.bind()
+		return this;
+	},
+	powerup: function(type){
+		return this;
+	},
+	apply: function(dragon){
+		
+	},
+	unapply: function(dragon){
+		
+	},
+});
 
+/*
+ * @comp kick
+ */
+Crafty.c(EntityDefinitions.POWERUP_KICK, {
+	init: function(){
+		console.log(EntityDefinitions.POWERUP_KICK);
+		return this;
+	},
+});
+
+/*
+ * @comp speed
+ */
+Crafty.c(EntityDefinitions.POWERUP_SPEED, {
+	init: function(){
+		console.log(EntityDefinitions.POWERUP_SPEED);
+		return this;
+	},
+});
+
+/*
+ * @comp blast
+ */
+Crafty.c(EntityDefinitions.POWERUP_BLAST, {
+	init: function(){
+		console.log(EntityDefinitions.POWERUP_BLAST);
+		return this;
+	},
+});
+
+/*
+ * @comp egg_limit
+ */
+Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT, {
+	init: function(){
+		console.log(EntityDefinitions.POWERUP_EGGLIMIT);
+		return this;
+	},
+});
