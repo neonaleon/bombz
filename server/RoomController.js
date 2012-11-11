@@ -160,7 +160,6 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
         // add playing state listeners
         for ( var i in players )
           roomController.CreatePlayerListeners( players[ i ].GetSocket() );
-
       }
     });
 

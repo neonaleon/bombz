@@ -169,7 +169,7 @@ var handler_Bomb = function(data)
 };
 var handler_Powerup = function(powerup)
 {
-	Map.spawnPowerup(powerup.type, powerup.x, powerup.y);
+	Map.spawnPowerup(EntityDefinitions.POWERUP_SPRITES[powerup.type], powerup.x, powerup.y);
 };
 var handler_Kick = function(data)
 {
