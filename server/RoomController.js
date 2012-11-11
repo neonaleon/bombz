@@ -34,11 +34,12 @@ RoomController.prototype.GetPlayerFromSocket = function( socket )
   return undefined;
 }
 
-RoomController.prototype.Broadcast = function( message, data )
+RoomController.prototype.Broadcast = function( message, data, excludeSocket )
 {
   var players = this._room.GetPlayers();
   for ( var i in players )
-    players[ i ].GetSocket().emit( message, data );
+    if ( players[ i ].GetSocket() !== excludeSocket )
+      players[ i ].GetSocket().emit( message, data );
 }
 
 // add player to room - only possible during WAITING state
@@ -63,7 +64,7 @@ RoomController.prototype.AddPlayer = function( socket )
   this.CreatePlayerListeners( socket );
 
   // send update to everyone else but new player since he would have gotten it from room message
-  this.Broadcast( MessageDefinitions.UPDATE, this.Serialize() );
+  this.Broadcast( MessageDefinitions.UPDATE, this.Serialize(), socket );
 }
 
 // remove player from room
@@ -79,11 +80,11 @@ RoomController.prototype.RemovePlayer = function( socket )
 
   if ( this._room.GetState() === Room.State.WAITING ) // waiting room
   {
-    this.Broadcast( MessageDefinitions.UPDATE, this.Serialize() );
+    this.Broadcast( MessageDefinitions.UPDATE, this.Serialize(), socket );
   }
   else // game room
   {
-    this.Broadcast( MessageDefinitions.LEAVE, { id: player.GetID() } );
+    this.Broadcast( MessageDefinitions.LEAVE, { id: player.GetID() }, socket );
 
     // all players left room, reset it to waiting state. otherwise, check if anyone has won or powerups need to drop
     if ( this._room.GetPlayerCount() === 0 )
@@ -197,7 +198,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.MOVE, function( data )
     {
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
-      roomController.Broadcast( MessageDefinitions.MOVE, data );
+      roomController.Broadcast( MessageDefinitions.MOVE, data, socket );
     });
 
     // player plants a bomb
@@ -207,7 +208,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       var data = {};
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
 
-      roomController.Broadcast( MessageDefinitions.BOMB, data );
+      roomController.Broadcast( MessageDefinitions.BOMB, data, socket );
     });
 
     // player shoots a fireball
