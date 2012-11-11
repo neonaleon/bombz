@@ -19,12 +19,7 @@ var SpriteDefinitions = {
 	
 	TILE_WIDTH: 40,
 	TILE_HEIGHT: 40,
-	/*
-	BLUE: 'blue',
-	GREEN: 'green',
-	RED: 'red',
-	PINK: 'pink',
-	*/
+	
 	BLUE: 0,
 	GREEN: 1,
 	RED: 2,

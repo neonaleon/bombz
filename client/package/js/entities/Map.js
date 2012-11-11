@@ -50,7 +50,6 @@ var Map = {
 Map.generate = function(mapData)
 {
 	Map._spawnPositions = Map.SPAWN_POSITIONS.slice();
-	Map._powerups = Map.POWERUPS.slice();
 
 	var map = Entities.Map(mapData.name);
 	Map._instance = map;
@@ -88,13 +87,19 @@ Map.generate = function(mapData)
 	
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
-	
+
 	// TODO: test
 	Map.spawnPowerup(EntityDefinitions.POWERUP_KICK, 5, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_BLAST, 1, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_SPEED, 3, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_EGGLIMIT, 2, 0);
-	
+
+	var powerups = mapData.powerups;
+	for (var i = 0; i < powerups.length; i++)
+	{
+		var powerup = powerups[i];
+		Map.spawnPowerup( EntityDefinitions.POWERUP_SPRITES[ powerup.type ], powerup.x , powerup.y );	
+	}
 	return map;
 };
 
