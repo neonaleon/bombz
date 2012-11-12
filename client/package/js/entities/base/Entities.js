@@ -136,7 +136,7 @@ Entities.Egg = function(dragon)
 						.bind('burn', function(){ this.trigger('explode'); })
 						.egg(dragon.blastRadius, 1500);
 	//TODO fix the chaining
-	egg.addComponent("Collision, WiredHitBox");
+	egg.addComponent("Collision, WiredHitBox").collision([10, 10], [30, 10], [30, 30], [10, 30]);
 	egg.owner = dragon;
 	return egg;
 };
@@ -151,7 +151,7 @@ Entities.Powerup = function(type)
 	
 	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, " + type)
 							.powerup(type);
-	powerup.addComponent("Collision");
+	powerup.addComponent("Collision, WireHitBox").collision([10, 10], [30, 10], [30, 30], [10, 30]);
 	return powerup;
 }
 
