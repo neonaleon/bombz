@@ -24,6 +24,8 @@ RoomController.prototype.Reset = function( socket )
   this._map = new Map( 19, 15, 40, 40, [] );
 }
 
+
+
 RoomController.prototype.GetPlayerFromSocket = function( socket )
 {
   var players = this._room.GetPlayers();
@@ -99,7 +101,7 @@ RoomController.prototype.RemovePlayer = function( socket )
 }
 
 // start the game
-RoomController.prototype.StartGame = function()
+RoomController.prototype.CanStartGame = function()
 {
   var room = this._room;
 
@@ -125,7 +127,17 @@ RoomController.prototype.StartGame = function()
   }
   return true;
 };
+/*
+RoomController.prototype.StartGame = function()
+{
+  var room = this._room;
 
+  while ( true )
+  {
+    console.log( )
+  }
+};
+*/
 // end the game
 RoomController.prototype.EndGame = function()
 {
@@ -143,8 +155,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     // client indicates he is ready to play
     socket.on( MessageDefinitions.START, function( data )
     {
-      var start = roomController.StartGame();
-      if ( start )
+      if ( roomController.CanStartGame() )
       {
         roomController.GetMap().Generate();
         roomController.Broadcast( MessageDefinitions.START, { map: roomController.GetMap().Serialize() } );
@@ -160,6 +171,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
         // add playing state listeners
         for ( var i in players )
           roomController.CreatePlayerListeners( players[ i ].GetSocket() );
+
       }
     });
 
@@ -199,24 +211,34 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     // player moves
     socket.on( MessageDefinitions.MOVE, function( data )
     {
-      data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
+      var player = roomController.GetPlayerFromSocket( socket );
+      player.SetDirection( data.dir );
+      player.SetPosition( data.x, data.y );
+
+      data.pid = player.GetID();
+      data.speed = player.GetSpeed();
       roomController.Broadcast( MessageDefinitions.MOVE, data, socket );
     });
 
     // player plants a bomb
     socket.on( MessageDefinitions.BOMB, function( data )
     {
+      var player = roomController.GetPlayerFromSocket( socket );
+      var position = player.GetPosition();
+
+      var bomb = new Bomb( position.x, position.y, player.GetBombRange(), player.GetID() );
+      roomController.GetMap().AddBomb( bomb );
+
       // set timer till bomb explodes and check again??
       var data = {};
-      data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
+      data.pid = player.GetID();
 
-      roomController.Broadcast( MessageDefinitions.BOMB, data, socket );
+      roomController.Broadcast( MessageDefinitions.BOMB, bomb.Serialize(), socket );
     });
 
     // player shoots a fireball
     socket.on( MessageDefinitions.FIREBALL, function( data )
     {
-      console.log( 'onFireball' );
       var data = {};
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
 

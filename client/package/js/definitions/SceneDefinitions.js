@@ -152,10 +152,10 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 var handler_Time = function(data)
 {
 	var time = ( new Date() ).getTime();
-	var RTT = time - data.clientTime;
+	var RTT = time - parseInt( data.clientTime );
 	var delay = parseInt( RTT / 2 );
-	var delta = data.serverTime - time + delay;
-	console.log( "Wall Clock Time: " + ( new Date() ).getTime() + delta );
+	var delta = parseInt( data.serverTime ) - time + delay;
+	console.log( "Wall Clock Time: " + parseInt( ( new Date() ).getTime() + delta ) );
 };
 var handler_Move = function(data)
 {
@@ -165,7 +165,7 @@ var handler_Move = function(data)
 };
 var handler_Bomb = function(data)
 {
-	Map.spawnEgg( dragons[ data.pid ] );
+	Map.spawnEgg( dragons[ data.owner ] );
 };
 var handler_Powerup = function(powerup)
 {

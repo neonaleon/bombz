@@ -30,11 +30,6 @@ var Map = {
 	
 	// 4 corner spawn positions
 	SPAWN_POSITIONS: [[0, 0], [14, 0], [0, 10], [14, 10]],
-	// 2 of each powerup
-	POWERUPS: [	Entities.POWERUP_KICK, Entities.POWERUP_KICK,
-				Entities.POWERUP_SPEED, Entities.POWERUP_SPEED, 
-				Entities.POWERUP_BLAST, Entities.POWERUP_BLAST,
-				Entities.POWERUP_EGGLIMIT, Entities.POWERUP_EGGLIMIT ], 
 	
 	_spawnPositions: undefined,
 	_powerups: undefined,
@@ -98,8 +93,10 @@ Map.generate = function(mapData)
 	for (var i = 0; i < powerups.length; i++)
 	{
 		var powerup = powerups[i];
+		//_powerups[ powerup.id ] = powerup;
 		Map.spawnPowerup( EntityDefinitions.POWERUP_SPRITES[ powerup.type ], powerup.x , powerup.y );	
 	}
+
 	return map;
 };
 

@@ -3,6 +3,7 @@ module.exports = Config;
 
 // Game
 Config.Game = {};
+Config.Game.FPS = 30;
 Config.Game.WIDTH = 1000;
 Config.Game.HEIGHT = 600;
 
