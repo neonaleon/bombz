@@ -165,7 +165,7 @@ Crafty.c('Fire', {
 		this.animate("fire_explode", def['anim_fire']);
         this.bind("NewEntity", function(data){
         	// play once upon spawn
-        	if (data.id == this[0] && !this.isPlaying("fire_explode")) this.stop().animate("fire_explode", 18, 1);
+        	if (data.id == this[0] && !this.isPlaying("fire_explode")) this.stop().animate("fire_explode", 24, 1);
         });
 		return this;
 	},
@@ -273,7 +273,7 @@ Crafty.c('Powerup', {
 				var dragon = hitDragon[0].obj;
 				if (!dragon.has(this.type))
 				{
-					dragon.addComponent(this.type);
+					dragon.addComponent(this.type)[this.type]();
 					dragon.trigger('applyPowerup');
 					this.destroy();
 				}
@@ -288,13 +288,11 @@ Crafty.c('Powerup', {
  */
 Crafty.c(EntityDefinitions.POWERUP_KICK, {
 	init: function(){
-		this.bind("applyPowerup", this.apply);
-		this.bind("unapplyPowerup", this.unapply);
 		return this;
 	},
-	apply: function(){},
-	unapply: function(){
-		this.removeComponent(EntityDefinitions.POWERUP_KICK);
+	kick: function(){
+		this.bind("applyPowerup", function(){});
+		this.bind("unapplyPowerup", function(){ this.removeComponent(EntityDefinitions.POWERUP_KICK); });
 	},
 });
 
@@ -303,15 +301,11 @@ Crafty.c(EntityDefinitions.POWERUP_KICK, {
  */
 Crafty.c(EntityDefinitions.POWERUP_SPEED, {
 	init: function(){
-		this.bind("applyPowerup", this.apply);
-		this.bind("unapplyPowerup", this.unapply);
 		return this;
 	},
-	apply: function(){
-		this.moveSpeed = 10;
-	},
-	unapply: function(){
-		this.moveSpeed = 5;
+	speed: function(){
+		this.bind("applyPowerup", function(){ this.moveSpeed = 10; });
+		this.bind("unapplyPowerup", function(){ this.moveSpeed = 5; });	
 	}
 });
 
@@ -320,15 +314,11 @@ Crafty.c(EntityDefinitions.POWERUP_SPEED, {
  */
 Crafty.c(EntityDefinitions.POWERUP_BLAST, {
 	init: function(){
-		this.bind("applyPowerup", this.apply);
-		this.bind("unapplyPowerup", this.unapply);
 		return this;
 	},
-	apply: function(){
-		this.blastRadius = 6;
-	},
-	unapply: function(){
-		this.blastRadius = 3;
+	blast: function(){
+		this.bind("applyPowerup", function(){ this.blastRadius = 6; });
+		this.bind("unapplyPowerup", function(){ this.blastRadius = 3; });
 	}
 });
 
@@ -337,14 +327,10 @@ Crafty.c(EntityDefinitions.POWERUP_BLAST, {
  */
 Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT, {
 	init: function(){
-		this.bind("applyPowerup", this.apply);
-		this.bind("unapplyPowerup", this.unapply);
 		return this;
 	},
-	apply: function(){
-		this.eggLimit = 6;
-	},
-	unapply: function(){
-		this.eggLimit = 3;
+	egg_limit: function(){
+		this.bind("applyPowerup", function(){ this.eggLimit = 6; });
+		this.bind("unapplyPowerup", function(){ this.eggLimit = 3; });		
 	}
 });
