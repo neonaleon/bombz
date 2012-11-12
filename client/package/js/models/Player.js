@@ -7,17 +7,18 @@ function Player( id, socket )
 //// PRIVATE VARIABLES
   this._id = id;	      		 // int - identifier - [0 to Room.MAX - 1]
   this._socket = socket;	   // socket
-
   
   // this._x;                // int - player's x co-ordinates in pixels
   // this._y;                // int - player's y co-ordinates in pixels
   // this._speed;            // int - movement speed
-  // this._color;            // Player.color - player avatar color
+  // this._direction;        // Player.Direction - direction player is facing
+  // this._color;            // Player.Color - player avatar color
   // this._bombs;            // Bomb[] - bombs currently active in game map
   // this._bomb_range;       // int - number of grids bomb explodes
   // this._bomb_limit;       // int - number of bombs user can use at once
   // this._powerups;         // Powerup[] - powerups player has - starts with none
   // this._ability_kickbomb; // bool - whether player has ability to kick bombs
+
   this.Reset();
 }
 
@@ -43,13 +44,14 @@ Player.Direction =
 
 Player.Default =
 {
-  SPEED: 1,
+  SPEED: 5,
   BOMBS: [],
   POWERUPS: [],
-  BOMB_RANGE: 1,
-  BOMB_LIMIT: 1,
+  BOMB_RANGE: 3,
+  BOMB_LIMIT: 3,
   ABILITY_KICKBOMB: false,
   COLOR: Player.Color.NONE,
+  DIRECTION: Player.Direction.Down,
 };
 
 
@@ -82,6 +84,27 @@ Player.prototype.GetColor = function()
 Player.prototype.SetColor = function( color )
 {
   this._color = color;
+}
+
+Player.prototype.GetDirection = function()
+{
+  return this._direction;
+}
+
+Player.prototype.SetDirection = function( direction )
+{
+  this._direction = direction;
+}
+
+Player.prototype.GetPosition = function()
+{
+  return { x: this._x, y: this._y };
+}
+
+Player.prototype.SetPosition = function( x, y )
+{
+  this._x = x;
+  this._y = y;
 }
 
 Player.prototype.GetBombRange = function()
@@ -138,6 +161,7 @@ Player.prototype.Reset = function()
   this._color = Player.Default.COLOR;
   this._speed = Player.Default.SPEED;
   this._bombs = Player.Default.BOMBS.slice();
+  this._direction = Player.Default.DIRECTION;
   this._bomb_range = Player.Default.BOMB_RANGE;
   this._bomb_limit = Player.Default.BOMB_LIMIT;
   this._powerups = Player.Default.POWERUPS.slice();
@@ -164,6 +188,7 @@ Player.prototype.Serialize = function()
     range: this._bomb_range,
     limit: this._bomb_limit,
     powerups: this._powerups,
+    direction: this._direction,
   };
 }
 
@@ -175,6 +200,7 @@ Player.prototype.Deserialize = function( data )
   this._bomb_range = data.range;
   this._bomb_limit = data.limit;
   this._powerups = data.powerups;
+  this._direction = data.direction;
 }
 
 

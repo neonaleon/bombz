@@ -23,19 +23,6 @@ Entities.DestructibleBlock = function()
 {
 	return Crafty.e("2D, DOM, Destructible, Burnable, solid, tileD")
 					.bind('burn', function(){ this.destroy(); });
-	/*
-					.bind('burn', function(){
-					map.attach(
-					Entities.BurntBlock().attr({ x: this.x, y: this.y, z: Map.Z_DESTRUCTIBLE }));
-					this.destroy(); 
-					});
-};
-
-Entities.BurntBlock = function()
-{
-	return Crafty.e("2D, DOM, Destructible, Burnable, solid, tileI")
-					.bind('burn', function(){ this.destroy(); });
-					*/
 };
 
 Entities.SolidBlock = function()

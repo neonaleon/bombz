@@ -40,8 +40,6 @@ Crafty.c('Dragon', {
 					this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
 					this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
 
-					// use DR to check if need to update
-
 					NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 				});
 				this.bind('NewDirection', function(newdir){
@@ -63,6 +61,14 @@ Crafty.c('Dragon', {
 
                     this.direction = direction;
                     this.trigger( "ChangeDirection", direction );
+
+
+                    // TODO: DR
+                    // currently sending update as long as direction changes
+                    // want to make it so that only if successfully turn around the corner then send
+                    // 1. spamming left - right
+                    // 2. walking against solid blocks / walls
+
 
                     if ( direction === Player.Direction.NONE )
                     	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
@@ -261,6 +267,7 @@ Crafty.c('Kickable', {
  */
 Crafty.c('Powerup', {
 	init: function(){
+		this.id = undefined;
 		this.type = undefined;
 		return this;
 	},
@@ -275,6 +282,8 @@ Crafty.c('Powerup', {
 				{
 					dragon.addComponent(this.type)[this.type]();
 					dragon.trigger('applyPowerup');
+					// send message to inform on collection
+					//NetworkManager.SendMessage(MessageDefinitions.POWERUP, { id: this.id });
 					this.destroy();
 				}
 			}
