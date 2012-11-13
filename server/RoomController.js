@@ -21,10 +21,8 @@ function RoomController( id )
 RoomController.prototype.Reset = function( socket )
 {
   this._room.Reset();
-  this._map = new Map( 19, 15, 40, 40, [] );
+  this._map = new Map( 19, 15, 40, 40 );
 }
-
-
 
 RoomController.prototype.GetPlayerFromSocket = function( socket )
 {
@@ -127,17 +125,21 @@ RoomController.prototype.CanStartGame = function()
   }
   return true;
 };
-/*
+
 RoomController.prototype.StartGame = function()
 {
-  var room = this._room;
+  var roomController = this;
 
-  while ( true )
+  setInterval( function()
   {
-    console.log( )
-  }
+    if ( roomController.GetMap().GetPowerupCount() <= 10 )
+    {
+      var powerup = roomController.GetMap().SpawnPowerup();
+      roomController.Broadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
+    }
+  }, 5000 );
 };
-*/
+
 // end the game
 RoomController.prototype.EndGame = function()
 {
@@ -172,6 +174,8 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
         for ( var i in players )
           roomController.CreatePlayerListeners( players[ i ].GetSocket() );
 
+        // start game
+        roomController.StartGame();
       }
     });
 
@@ -226,7 +230,9 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       var player = roomController.GetPlayerFromSocket( socket );
       var position = player.GetPosition();
 
-      var bomb = new Bomb( position.x, position.y, player.GetBombRange(), player.GetID() );
+      data.x += 2;
+      data.y += 2;
+      var bomb = new Bomb( data.x, data.y, player.GetBombRange(), player.GetID() );
       roomController.GetMap().AddBomb( bomb );
 
       // set timer till bomb explodes and check again??

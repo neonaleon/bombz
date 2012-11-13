@@ -120,7 +120,7 @@ Crafty.c('Dragon', {
 		{
 			this.eggCount += 1;
 			//console.log("planted: " + this.eggCount);
-			NetworkManager.SendMessage(MessageDefinitions.BOMB);
+			NetworkManager.SendMessage(MessageDefinitions.BOMB, Map.pixelToTile({x: this.x, y: this.y}));
 			Map.spawnEgg(this);
 		};
 	},

@@ -13,11 +13,13 @@ function Player( id, socket )
   // this._speed;            // int - movement speed
   // this._direction;        // Player.Direction - direction player is facing
   // this._color;            // Player.Color - player avatar color
-  // this._bombs;            // Bomb[] - bombs currently active in game map
+  // this._bombs;            // int - number of bombs owned by player currently active in game map
   // this._bomb_range;       // int - number of grids bomb explodes
   // this._bomb_limit;       // int - number of bombs user can use at once
   // this._powerups;         // Powerup[] - powerups player has - starts with none
   // this._ability_kickbomb; // bool - whether player has ability to kick bombs
+
+  // this._lastUpdateTime;
 
   this.Reset();
 }
@@ -45,7 +47,7 @@ Player.Direction =
 Player.Default =
 {
   SPEED: 5,
-  BOMBS: [],
+  BOMBS: 0,
   POWERUPS: [],
   BOMB_RANGE: 3,
   BOMB_LIMIT: 3,
@@ -158,9 +160,9 @@ Player.prototype.Reset = function()
 {
   this._x = 0;
   this._y = 0;
+  this._bombs = 0;
   this._color = Player.Default.COLOR;
   this._speed = Player.Default.SPEED;
-  this._bombs = Player.Default.BOMBS.slice();
   this._direction = Player.Default.DIRECTION;
   this._bomb_range = Player.Default.BOMB_RANGE;
   this._bomb_limit = Player.Default.BOMB_LIMIT;
