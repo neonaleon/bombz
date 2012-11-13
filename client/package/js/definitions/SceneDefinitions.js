@@ -146,6 +146,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	{
 		var player = players[ i ];
 		dragons[ player.GetID() ] = Map.spawnPlayer( player.GetColor() );
+		// add networked player component to sync state of remote players
 		if (player.GetID() != GameState.GetLocalPlayer().GetID()) dragons[player.GetID()].addComponent('NetworkedPlayer');
 	}
 
