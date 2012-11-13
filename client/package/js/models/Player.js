@@ -20,6 +20,7 @@ function Player( id, socket )
   // this._ability_kickbomb; // bool - whether player has ability to kick bombs
 
   // this._lastUpdateTime;
+  // 
 
   this.Reset();
 }

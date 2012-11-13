@@ -228,18 +228,18 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.BOMB, function( data )
     {
       var player = roomController.GetPlayerFromSocket( socket );
-      var position = player.GetPosition();
+      // var position = player.GetPosition();
 
-      data.x += 2;
-      data.y += 2;
-      var bomb = new Bomb( data.x, data.y, player.GetBombRange(), player.GetID() );
+      //data.x += 2;
+      //data.y += 2;
+      var bomb = new Bomb( data.x + 2, data.y + 2, player.GetBombRange(), player.GetID() );
       roomController.GetMap().AddBomb( bomb );
 
       // set timer till bomb explodes and check again??
-      var data = {};
-      data.pid = player.GetID();
+      data.owner = player.GetID();
+      data.range = player.GetBombRange();
 
-      roomController.Broadcast( MessageDefinitions.BOMB, bomb.Serialize(), socket );
+      roomController.Broadcast( MessageDefinitions.BOMB, data, socket );
     });
 
     // player shoots a fireball
