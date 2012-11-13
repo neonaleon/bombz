@@ -14,7 +14,7 @@ function Bomb( x, y, range, owner )
 
 
 //// CONSTANTS
-Bomb.DURATION = 3000;
+Bomb.DURATION = 1500;
 
 
 //// PUBLIC FUNCTIONS

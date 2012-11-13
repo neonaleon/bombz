@@ -21,13 +21,13 @@ Entities.Map = function(map_name)
 
 Entities.DestructibleBlock = function()
 {
-	return Crafty.e("2D, DOM, Destructible, Burnable, solid, tileD")
+	return Crafty.e(Properties.RENDERER + ", 2D, Destructible, Burnable, solid, tileD")
 					.bind('burn', function(){ this.destroy(); });
 };
 
 Entities.SolidBlock = function()
 {
-	return Crafty.e("2D, DOM, solid, tileI");
+	return Crafty.e(Properties.RENDERER + ", 2D, solid, tileI");
 };
 
 Entities.FloorTile = function()
@@ -37,7 +37,7 @@ Entities.FloorTile = function()
 
 Entities.SDBlock = function()
 {
-	var block = Crafty.e("2D, DOM, solid, tileI");
+	var block = Crafty.e(Properties.RENDERER + ", 2D, solid, tileI");
 	block.moved = 0;
 	block.addComponent("Collision")
 		.bind("Move", function(){
@@ -143,10 +143,11 @@ Entities.Powerup = function(type)
 {
 	var def = SpriteDefinitions['powerup'];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
-	
-	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, " + type)
-							.powerup(type);
-	powerup.addComponent("Collision, WiredHitBox").collision([0, 0], [40, 0], [40, 40], [0, 40]);
+
+	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, Destructible, Burnable, " + type)
+							.powerup(type)
+							.bind('burn', function(){ this.destroy(); });
+	powerup.addComponent("Collision, WiredHitBox,").collision([0, 0], [40, 0], [40, 40], [0, 40]);
 	return powerup;
 }
 

@@ -2,12 +2,11 @@
 
 
 
-function Powerup( id, type, x, y )
+function Powerup( type, x, y )
 {
 //// PRIVATE VARIABLES
   this._x = x;       // int - x grid object is on
   this._y = y;       // int - y grid object is on
-  this._id = id;     // int - unique id of powerup
   this._type = type; // enum Powerup.Type - type of powerup
 }
 
@@ -20,6 +19,8 @@ Powerup.Type =
   BUFF_CAPACITY: 2,
   ABILITY_KICKBOMB: 3
 };
+
+Powerup.MAX_IN_PLAY = 10; // maximum number at one time in game area
 
 
 //// PUBLIC FUNCTIONS
@@ -72,7 +73,6 @@ Powerup.prototype.Serialize = function()
   return {
     x: this._x,
     y: this._y,
-    id: this._id,
     type: this._type
   };
 }
