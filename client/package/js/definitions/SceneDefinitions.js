@@ -160,7 +160,7 @@ var handler_Time = function(data)
 	var delta = parseInt( data.serverTime ) - time + delay;
 	//console.log( "Wall Clock Time: " + parseInt( ( new Date() ).getTime() + delta ) );
 
-	var newTime = parseInt( ( new Date() ).getTime() + delta );
+	var newTime = delay + parseInt( ( new Date() ).getTime() + delta );
 
 	NetworkManager.SendMessage(MessageDefinitions.TIME, { syncedTime: newTime, clientTime: ( new Date() ).getTime() } );
 };
