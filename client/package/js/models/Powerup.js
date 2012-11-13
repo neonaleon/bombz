@@ -20,6 +20,8 @@ Powerup.Type =
   ABILITY_KICKBOMB: 3
 };
 
+Powerup.MAX_IN_PLAY = 10; // maximum number at one time in game area
+
 
 //// PUBLIC FUNCTIONS
 

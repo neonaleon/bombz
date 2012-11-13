@@ -132,7 +132,7 @@ RoomController.prototype.StartGame = function()
 
   setInterval( function()
   {
-    if ( roomController.GetMap().GetPowerupCount() <= 10 )
+    if ( roomController.GetMap().GetPowerupCount() <= Powerup.MAX_IN_PLAY )
     {
       var powerup = roomController.GetMap().SpawnPowerup();
       roomController.Broadcast( MessageDefinitions.POWERUP, powerup.Serialize() );

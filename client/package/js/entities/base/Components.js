@@ -24,8 +24,8 @@ Crafty.c('Dragon', {
 		this.canKick = false;
 		this.eggCount = 0;
 		this.health = 3;
+		this.hasFireball = true;
 		this.powerups = [];
-		this.dead = false;
 		this.direction = undefined;
 
 		this.pdu = undefined;
@@ -44,9 +44,7 @@ Crafty.c('Dragon', {
 					if (this.onEgg && this.hit('Egg').length == 1)
                 	{
                 		if (this.hit('solid'))
-	                	{
 	                		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
-	                	}
                 	}
                 	else 
                 	{
@@ -61,8 +59,6 @@ Crafty.c('Dragon', {
 	                		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
 	                	}
                 	}
-
-					NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 				});
 				this.bind('NewDirection', function(newdir){
 					var direction;
@@ -90,10 +86,10 @@ Crafty.c('Dragon', {
                     // want to make it so that only if successfully turn around the corner then send
                     // 1. spamming left - right
                     // 2. walking against solid blocks / walls
+                    // NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 
-
-                    if ( direction === Player.Direction.NONE )
-                    	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+                    //if ( direction === Player.Direction.NONE )
+                    //	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 				});
 				this.bind('KeyDown', function(keyEvent){
 					if (keyEvent.key == Crafty.keys['A'])
@@ -110,8 +106,7 @@ Crafty.c('Dragon', {
 		this.health -= 1;
 		if (this.health == 0)
 		{
-			this.dead = true;
-			this.destroy(); // temp TODO: shift player to dodgeball area
+			this.trigger('killed');
 		}
 		console.log("lose health: " + this.health);
 	},
@@ -125,7 +120,16 @@ Crafty.c('Dragon', {
 		};
 	},
 	spitFireball:function(){
-		//console.log("SPIT FIRE!");
+		console.log("SPIT FIRE!");
+		if (this.hasFireball)
+		{
+			var pos = Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}));
+			pos.x += this.direction.x;
+			pos.y += this.direction.y;
+			Entities.Fireball().fireball(this.direction)
+								.attr(pos);
+		}
+		
 		NetworkManager.SendMessage(MessageDefinitions.FIREBALL);
 	},
 	clearEgg: function(){
@@ -211,7 +215,22 @@ Crafty.c('Fireball', {
 	init: function(){
 		return this;
 	},
-	fireball: function(){
+	fireball: function(dir){
+		this.bind("EnterFrame", function()
+		{
+			if (this.hit('Dragon'))
+			{
+				this.hit('Dragon')[0].obj.trigger('burn');
+				this.destroy();
+			}
+			if (this.hit('Egg'))
+			{
+				this.hit('Egg')[0].obj.trigger('burn');
+				this.destroy();
+			}
+			this.x += dir.x * EntityDefinitions.FIREBALL_MOVE_SPEED;
+			this.y += dir.y * EntityDefinitions.FIREBALL_MOVE_SPEED;
+		});
 		return this;
 	},
 });
@@ -368,3 +387,57 @@ Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup", {
 		return this;
 	},
 });
+
+Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
+	init: function(){
+		this.bind("applyPowerup", function(){ this.hasFireball = true; });
+		this.bind("unapplyPowerup", function(){});
+		return this;
+	}
+})
+
+/*=======================
+ * Network related components
+ ========================*/
+Crafty.c("NetworkedPlayer", {
+	init: function(){
+		this.bind("network_update", function(data){
+			this.updateState(data);
+		});
+		this.bind("EnterFrame", function(){
+			this.simulate();
+		});
+		return this;
+	},
+	simulate: function()
+	{
+		switch ( this.direction )
+        {
+        	case Player.Direction.UP:
+        		this.move('n', this.moveSpeed);
+        		if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
+        		break;
+        	case Player.Direction.DOWN:
+        		this.move('s', this.moveSpeed);
+        		if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
+        		break;
+        	case Player.Direction.LEFT:
+        		this.move('w', this.moveSpeed);
+        		if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 6, -1);
+        		break;
+        	case Player.Direction.RIGHT:
+        		this.move('e', this.moveSpeed);
+        		if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 6, -1);
+        		break;
+        	case Player.Direction.NONE:
+        		this.stop();
+        		break;
+        }
+	},
+	updateState: function(data)
+	{
+		this.direction = data.dir;
+	}
+})
+
+

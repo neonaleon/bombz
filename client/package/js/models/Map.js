@@ -35,9 +35,9 @@ Map.SPAWN_POSITIONS = [ { x: 0, y: 0 }, { x: 14, y: 0 }, { x: 0, y: 10 }, { x: 1
 Map.Default =
 {
   POWERUPS: [
-    Powerup.Type.BUFF_SPEED, Powerup.Type.BUFF_SPEED, Powerup.Type.BUFF_SPEED,
-    Powerup.Type.BUFF_RANGE, Powerup.Type.BUFF_RANGE, Powerup.Type.BUFF_RANGE,
-    Powerup.Type.BUFF_CAPACITY, Powerup.Type.BUFF_CAPACITY, Powerup.Type.BUFF_CAPACITY,
+    Powerup.Type.BUFF_SPEED, Powerup.Type.BUFF_SPEED,// Powerup.Type.BUFF_SPEED,
+    Powerup.Type.BUFF_RANGE, Powerup.Type.BUFF_RANGE,// Powerup.Type.BUFF_RANGE,
+    Powerup.Type.BUFF_CAPACITY, Powerup.Type.BUFF_CAPACITY,// Powerup.Type.BUFF_CAPACITY,
   ],
 };
 

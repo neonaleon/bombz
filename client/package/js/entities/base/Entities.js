@@ -37,21 +37,20 @@ Entities.FloorTile = function()
 
 Entities.SDBlock = function()
 {
-	var block = Entities.SolidBlock("2D, DOM, solid, tileI");
-	block.addComponent("Collision");
-	block.bind("EnterFrame", function(data){
-		//if (data.id == this[0])
-		//{
-			var hitDragon = this.hit("Dragon");
+	var block = Crafty.e("2D, DOM, solid, tileI");
+	block.moved = 0;
+	block.addComponent("Collision")
+		.bind("Move", function(){
+			this.moved += 1;
+	       	var hitDragon = this.hit('Dragon');
 			if (hitDragon)
 			{
 				for (var i = 0; i < hitDragon.length; i++)
-				{
 					hitDragon[i].obj.trigger('killed');
-				}
 			}
-		//}
-	});
+			if (this.moved == 2)
+				this.collision([-10, -10], [50, -10], [50, 50], [-10, 50]);
+	    });;
 	return block;
 }
 
@@ -89,19 +88,6 @@ Entities.Dragon = function(color)
 				.animate("speed_down", def['anim_wing_down'])
 				.animate("speed_left", def['anim_wing_left'])
 				*/
-				/*
-				.bind("NewDirection", function (newdir) {
-                    if (newdir.x < 0)
-                        if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 6, -1);
-                    if (newdir.x > 0)
-                        if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 6, -1);   
-                    if (newdir.y < 0)
-                        if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
-                    if (newdir.y > 0)
-                        if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
-
-                    if(!newdir.x && !newdir.y) this.stop();
-                })*/
 				.bind("ChangeDirection", function (direction) {
                     switch ( direction )
                     {
@@ -129,7 +115,7 @@ Entities.Dragon = function(color)
                 .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
                 .bind('killed', function(){ 
                 	console.log("KILLED"); 
-                	// animate death? then spawn player outside
+                	// TODO: animate death? then spawn player outside, notify server
                 	Map.movePlayerOutside(this);
                 });
 	return dragon;
@@ -169,7 +155,7 @@ Entities.Powerup = function(type)
  */
 Entities.Fireball = function()
 {
-	var fireball = undefined;
-	console.log("entity fireball not yet implemented");
+	var fireball = Crafty.e('Fireball, 2egg');
+	fireball.addComponent("Collision");
 	return fireball;
 }
