@@ -37,7 +37,22 @@ Entities.FloorTile = function()
 
 Entities.SDBlock = function()
 {
-	
+	var block = Entities.SolidBlock("2D, DOM, solid, tileI");
+	block.addComponent("Collision");
+	block.bind("EnterFrame", function(data){
+		//if (data.id == this[0])
+		//{
+			var hitDragon = this.hit("Dragon");
+			if (hitDragon)
+			{
+				for (var i = 0; i < hitDragon.length; i++)
+				{
+					hitDragon[i].obj.trigger('killed');
+				}
+			}
+		//}
+	});
+	return block;
 }
 
 Entities.Extents = function()
@@ -111,33 +126,12 @@ Entities.Dragon = function(color)
                     		break;
                     }
                 })
-                .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; });
-                /*
-                .bind('Moved', function(oldpos) {
-                	if (this.onEgg && this.hit('Egg').length == 1)
-                	{
-                		if (this.hit('solid'))
-	                	{
-	                		console.log(this.x, this.y);
-	                		this.x = oldpos.x;
-	                		this.y = oldpos.y;
-	                		console.log(this.x, this.y);
-	                	}
-                	}
-                	else 
-                	{
-                		if (this.hit('solid') || this.hit('Egg'))
-	                	{
-	                		var egg = this.hit('Egg');
-	                		//TODO: KICK
-	                		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
-	                		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
-	                		this.x = oldpos.x;
-	                		this.y = oldpos.y;
-	                	}
-                	}
+                .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
+                .bind('killed', function(){ 
+                	console.log("KILLED"); 
+                	// animate death? then spawn player outside
+                	Map.movePlayerOutside(this);
                 });
-                */
 	return dragon;
 };
 

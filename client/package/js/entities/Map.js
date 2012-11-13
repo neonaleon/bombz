@@ -220,7 +220,7 @@ function spawn_sd_block(x, y)
 {
 	var tile = Map.tileToPixel({x: x, y: y});
 	tile.z = Map.Z_INDESTRUCTIBLE;
-	Entities.SolidBlock().attr(tile);
+	Entities.SDBlock().attr(tile);
 }
 
 Map.pixelToTile = function(dict)
