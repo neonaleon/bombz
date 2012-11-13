@@ -42,6 +42,40 @@ RoomController.prototype.Broadcast = function( message, data, excludeSocket )
       players[ i ].GetSocket().emit( message, data );
 }
 
+RoomController.prototype.FairBroadcast = function( message, data )
+{
+  var delays = [];
+  var players = this._room.GetPlayers();
+  for ( var i in players )
+  {
+    var player = players[ i ];
+    delays.push( { id: player.GetID(), delay: player.GetDelay() } );
+  }
+
+  delays.sort( function( a, b )
+  {
+    return b.delay - a.delay;
+  });
+
+// console.log(delays);
+
+  var sum = 0;
+  for ( var i = 0; i < delays.length; i++ )
+  {
+    var entry = delays[ i ];
+    var delay = entry.delay;
+    var player = this._room.GetPlayer( entry.id );
+
+    if ( i !== 0 )
+      sum += ( delays[ i - 1 ].delay - delay );
+
+    setTimeout( function()
+    {
+      player.GetSocket().emit( message, data );
+    }, sum );
+  }
+}
+
 // add player to room - only possible during WAITING state
 RoomController.prototype.AddPlayer = function( socket )
 {
@@ -135,7 +169,7 @@ RoomController.prototype.StartGame = function()
     if ( roomController.GetMap().GetPowerupCount() <= Powerup.MAX_IN_PLAY )
     {
       var powerup = roomController.GetMap().SpawnPowerup();
-      roomController.Broadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
+      roomController.FairBroadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
     }
   }, 5000 );
 };
@@ -208,8 +242,17 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
   {
     socket.on( MessageDefinitions.TIME, function( data )
     {
-      data.serverTime = ( new Date() ).getTime();
-      socket.emit( MessageDefinitions.TIME, data );
+      var time = ( new Date() ).getTime();
+      if ( data.timestamp !== undefined )
+      {
+        var delay = time - data.timestamp;
+        roomController.GetPlayerFromSocket( socket ).SetDelay( delay );
+      }
+      else if ( data.clientTime !== undefined )
+      {
+        data.serverTime = time;
+        socket.emit( MessageDefinitions.TIME, data );
+      }
     });
 
     // player moves
@@ -218,6 +261,10 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       var player = roomController.GetPlayerFromSocket( socket );
       player.SetDirection( data.dir );
       player.SetPosition( data.x, data.y );
+
+      var delay = ( new Date() ).getTime() - data.timestamp;
+      player.WeightedAverageDelay( delay );
+      console.log(player.GetDelay())
 
       data.pid = player.GetID();
       data.speed = player.GetSpeed();
@@ -228,17 +275,13 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.BOMB, function( data )
     {
       var player = roomController.GetPlayerFromSocket( socket );
-      // var position = player.GetPosition();
 
-      //data.x += 2;
-      //data.y += 2;
-      var bomb = new Bomb( data.x + 2, data.y + 2, player.GetBombRange(), player.GetID() );
-      roomController.GetMap().AddBomb( bomb );
+      //var bomb = new Bomb( data.x + 2, data.y + 2, player.GetBombRange(), player.GetID() );
+      //roomController.GetMap().AddBomb( bomb );
 
       // set timer till bomb explodes and check again??
       data.owner = player.GetID();
       data.range = player.GetBombRange();
-
       roomController.Broadcast( MessageDefinitions.BOMB, data, socket );
     });
 
@@ -247,16 +290,17 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     {
       var data = {};
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
-
       roomController.Broadcast( MessageDefinitions.FIREBALL, data, socket );
     });
 
+    /*
     // player kicks a bomb
     socket.on( MessageDefinitions.KICK, function( data )
     {
       // CHECK If PLAYER HAS ABILITY
       console.log( 'onKickBomb' );
     });
+    */
   }
 }
 

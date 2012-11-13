@@ -20,7 +20,7 @@ function Player( id, socket )
   // this._ability_kickbomb; // bool - whether player has ability to kick bombs
 
   // this._lastUpdateTime;
-  // 
+  // this._delay;
 
   this.Reset();
 }
@@ -49,6 +49,7 @@ Player.Default =
 {
   SPEED: 5,
   BOMBS: 0,
+  DELAY: 150,
   POWERUPS: [],
   BOMB_RANGE: 3,
   BOMB_LIMIT: 3,
@@ -87,6 +88,21 @@ Player.prototype.GetColor = function()
 Player.prototype.SetColor = function( color )
 {
   this._color = color;
+}
+
+Player.prototype.GetDelay = function()
+{
+  return this._delay;
+}
+
+Player.prototype.SetDelay = function( delay )
+{
+  this._delay = delay;
+}
+
+Player.prototype.WeightedAverageDelay = function( newDelay )
+{
+  this._delay = parseInt( 0.9 * this._delay + 0.1 * newDelay );
 }
 
 Player.prototype.GetDirection = function()
@@ -162,6 +178,7 @@ Player.prototype.Reset = function()
   this._x = 0;
   this._y = 0;
   this._bombs = 0;
+  this._delay = Player.Default.DELAY;
   this._color = Player.Default.COLOR;
   this._speed = Player.Default.SPEED;
   this._direction = Player.Default.DIRECTION;

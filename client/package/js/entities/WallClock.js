@@ -16,6 +16,9 @@ WallClock.sync = function()
 		wallClock._delta = parseInt( data.serverTime ) - time + delay;
 
 		NetworkManager.ClearListeners(MessageDefinitions.TIME);
+
+		data.timestamp = wallClock.getTime();
+		NetworkManager.SendMessage(MessageDefinitions.TIME, data );
 	});
 	NetworkManager.SendMessage(MessageDefinitions.TIME, { clientTime: ( new Date() ).getTime() } );
 }
