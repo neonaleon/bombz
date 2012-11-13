@@ -9,6 +9,8 @@ var socket = undefined;
 NetworkManager.sendRate = 0;
 NetworkManager.connected = false;
 
+NetworkManager.localLag = 100;
+
 NetworkManager.Connect = function (ip, port, handler)
 {
 	socket = io.connect(ip);
