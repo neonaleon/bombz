@@ -31,35 +31,38 @@ Crafty.c('Dragon', {
 		this.pdu = undefined;
 		this.lastUpdate = undefined;
 		this.expectedPosition = undefined;
+		
+		// perform collision detection when the entity is being moved
+		this.bind('Moved', function(oldpos)
+		{
+			this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
+			this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
 
-		this.bind('NewComponent', function(component){
+			if (this.onEgg && this.hit('Egg').length == 1)
+        	{
+        		if (this.hit('solid'))
+            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+        	}
+        	else 
+        	{
+        		if (this.hit('solid') || this.hit('Egg'))
+            	{
+            		var egg = this.hit('Egg');
+            		//TODO: KICK
+            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+            		//this.x = oldpos.x;
+            		//this.y = oldpos.y;
+            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+            	}
+        	}
+		});	
+
+		this.bind('NewComponent', function(component)
+		{
 			// if a controllable component was added to this player
 			if ('Controllable' in this.__c)
-			{		
-				this.bind('Moved', function(oldpos){
-					
-					this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
-					this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
-
-					if (this.onEgg && this.hit('Egg').length == 1)
-                	{
-                		if (this.hit('solid'))
-	                		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
-                	}
-                	else 
-                	{
-                		if (this.hit('solid') || this.hit('Egg'))
-	                	{
-	                		var egg = this.hit('Egg');
-	                		//TODO: KICK
-	                		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
-	                		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
-	                		//this.x = oldpos.x;
-	                		//this.y = oldpos.y;
-	                		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
-	                	}
-                	}
-				});
+			{
 				this.bind('NewDirection', function(newdir){
 					var direction;
 					
@@ -86,10 +89,11 @@ Crafty.c('Dragon', {
                     // want to make it so that only if successfully turn around the corner then send
                     // 1. spamming left - right
                     // 2. walking against solid blocks / walls
-                    // NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
-
-                    //if ( direction === Player.Direction.NONE )
-                    //	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+                    NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+/*
+                  	if ( direction === Player.Direction.NONE )
+                    	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+                    	*/
 				});
 				this.bind('KeyDown', function(keyEvent){
 					if (keyEvent.key == Crafty.keys['A'])
@@ -402,6 +406,7 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 Crafty.c("NetworkedPlayer", {
 	init: function(){
 		this.bind("network_update", function(data){
+			console.log("network update", data);
 			this.updateState(data);
 		});
 		this.bind("EnterFrame", function(){
@@ -411,32 +416,38 @@ Crafty.c("NetworkedPlayer", {
 	},
 	simulate: function()
 	{
+		var oldpos = { x: this.x, y: this.y };
 		switch ( this.direction )
         {
         	case Player.Direction.UP:
-        		this.move('n', this.moveSpeed);
-        		if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
+        		this.y -= 1;
+        		//if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
         		break;
         	case Player.Direction.DOWN:
-        		this.move('s', this.moveSpeed);
-        		if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
+        		this.y += 1;
+        		//if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
         		break;
         	case Player.Direction.LEFT:
-        		this.move('w', this.moveSpeed);
-        		if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 6, -1);
+        		this.x -= 1;
+        		//if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 6, -1);
         		break;
         	case Player.Direction.RIGHT:
-        		this.move('e', this.moveSpeed);
-        		if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 6, -1);
+        		this.x += 1;
+        		//if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 6, -1);
         		break;
         	case Player.Direction.NONE:
-        		this.stop();
+        		//this.stop();
         		break;
         }
+        this.trigger('Moved', oldpos);
 	},
 	updateState: function(data)
 	{
+		this.x = data.x;
+		this.y = data.y;
+		this.moveSpeed = data.speed;
 		this.direction = data.dir;
+		this.trigger('ChangeDirection', data.dir);
 	}
 })
 
