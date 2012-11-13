@@ -35,6 +35,11 @@ Entities.FloorTile = function()
 	return Crafty.e("2D, DOM, floor");
 };
 
+Entities.Extents = function()
+{
+	return Crafty.e("2D, DOM, Color, solid, extents");
+}
+
 /*
  * @entity Dragon
  * 

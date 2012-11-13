@@ -24,21 +24,6 @@ BUGS: // report any bugs here, please include a description and the steps to rep
 	-----for some reason, Collision component must always be added after everything, otherwise something funny happens
 	-----see TODO in server\RoomController.js
 
-GRAPHICS:
-	fireball - 3 frames
-	destructible blocks - 3 frames
-	dpad/joystick
-	button A, B
-	gui border for padding area
-
-AUDIO:
-	check this out http://www.bfxr.net/
-	bgm - looping
-	pickup powerup - <1s 
-	kick bomb - <1s 
-	plant bomb - <1s
-	bomb explode - 1s
-
 NOTES:
 	currently all player state have been added inside @comp Dragon, maybe can extract out later
 
@@ -68,6 +53,18 @@ NAT:
 	side bar (player right, fill up white area)
 	destructing tiles
 
-	sound for sudden death 
-	sound for spitting fireball
-	sound for button press
+	GRAPHICS:
+		fireball - 3 frames (important)
+		destructible blocks - 3 frames
+		dpad/joystick (important)
+		button A, B (important)
+		gui border for padding area
+
+	AUDIO:
+		check this out http://www.bfxr.net/
+		bgm - looping
+		pickup powerup - <1s 
+		kick bomb - <1s 
+		plant bomb - <1s
+		bomb explode - 1s
+		spit fireball

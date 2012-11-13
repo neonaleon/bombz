@@ -146,7 +146,8 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	// setup GUI
 	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400});
 	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
-	
+	//dragons[ GameState.GetLocalPlayer().GetID() ].attr({x: Map._instance.x, y:0 } );
+	//Map.movePlayerOutside(dragons[ GameState.GetLocalPlayer().GetID() ]);
 	var pad = GUI.Dpad(dragons[ GameState.GetLocalPlayer().GetID() ] ).attr({x:50, y:400}); // allow player to control the dragon
 });
 var handler_Time = function(data)

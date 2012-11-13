@@ -84,7 +84,17 @@ Map.generate = function(mapData)
 	
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
-
+	
+	// build the 4 extents
+	// left
+	Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: 0, y: 0});
+	// right
+	Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: map.x + Map.MAP_WIDTH, y: 0});
+	// top
+	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: -10});
+	// bottom
+	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: Properties.DEVICE_HEIGHT});
+	
 	// TODO: test
 	/*
 	Map.spawnPowerup(EntityDefinitions.POWERUP_KICK, 5, 0);
@@ -150,9 +160,26 @@ Map.spawnPowerup = function(type, x, y)
 	return powerup;
 }
 
-Map.movePlayerOutside = function()
+Map.movePlayerOutside = function(dragon)
 {
-	//TODO: MOVE PLAYER OUTSIDE ON DEATH
+	var pos = {x:0, y:0};
+	if (Math.random() > 0.5)
+	{
+		pos.x = (Math.random() > 0.5) ? 0 : Map.MAP_OUTER_TILEW - 1; // left or right
+		pos.y = Math.floor(Math.random()*(Map.MAP_OUTER_TILEH - 1)); 
+	}
+	else
+	{
+		pos.x = Math.floor(Math.random()*(Map.MAP_OUTER_TILEW - 1));
+		pos.y = (Math.random() > 0.5) ? 0 : Map.MAP_OUTER_TILEH - 1; // top or bottom
+	}
+	Map._movePlayerOutside(dragon, pos);
+}
+// modify and use this when using server (refer to above function)
+Map._movePlayerOutside = function(dragon, pos)
+{
+	dragon.x = pos.x * Map.MAP_TILEWIDTH + Map._instance.x;
+	dragon.y = pos.y * Map.MAP_TILEHEIGHT;
 }
 
 Map.suddenDeath = function()
