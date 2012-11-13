@@ -1,22 +1,23 @@
 TODO:
 	MAP:
+		DR
+
 		fireball logic
-		-----dodgeball
-		suddendeath (spawning done, kill player logic not done)
-		
-		-----bomb limit, 
-		-----blastradius, 
-		-----movespeed, 
-		-----kicker
-		
 		gui elements for waiting room (need to reflect changes for player)
 
-		Entities, and Map has some TODOs
-
+LATEST CHANGES:
+	dodgeball done
+	suddendeath done
+		
+	bomb limit, done
+	blastradius, done
+	movespeed, done
+	kicker removed
 		
 
 BUGS: // report any bugs here, please include a description and the steps to repro it
-	movespeed powerup causes character to get stuck
+	sudden death block issue
+	-----movespeed powerup causes character to get stuck
 
 	-----Egg is kickable, but if add collision component, cannot chain explosion
 	-----Kick egg, then quickly plant another egg, will bug

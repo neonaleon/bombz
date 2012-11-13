@@ -37,12 +37,12 @@ Entities.FloorTile = function()
 
 Entities.SDBlock = function()
 {
-	var block = Entities.SolidBlock("2D, DOM, solid, tileI");
-	block.addComponent("Collision");
-	block.bind("EnterFrame", function(data){
-		//if (data.id == this[0])
-		//{
-			var hitDragon = this.hit("Dragon");
+	var block = Crafty.e("2D, DOM, solid, tileI");
+	block.moved = 0;
+	block.addComponent("Collision")
+		.bind("Move", function(){
+			this.moved += 1;
+	       	var hitDragon = this.hit('Dragon');
 			if (hitDragon)
 			{
 				for (var i = 0; i < hitDragon.length; i++)
@@ -50,8 +50,11 @@ Entities.SDBlock = function()
 					hitDragon[i].obj.trigger('killed');
 				}
 			}
-		//}
-	});
+			if (this.moved == 2)
+			{
+				this.collision([-10, -10], [50, -10], [50, 50], [-10, 50]);
+			}
+	    });;
 	return block;
 }
 
@@ -169,7 +172,7 @@ Entities.Powerup = function(type)
  */
 Entities.Fireball = function()
 {
-	var fireball = undefined;
-	console.log("entity fireball not yet implemented");
+	var fireball = Crafty.e('Fireball, 2egg');
+	fireball.addComponent("Collision");
 	return fireball;
 }

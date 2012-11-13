@@ -24,8 +24,8 @@ Crafty.c('Dragon', {
 		this.canKick = false;
 		this.eggCount = 0;
 		this.health = 3;
+		this.hasFireball = true;
 		this.powerups = [];
-		this.dead = false;
 		this.direction = undefined;
 
 		this.pdu = undefined;
@@ -110,8 +110,7 @@ Crafty.c('Dragon', {
 		this.health -= 1;
 		if (this.health == 0)
 		{
-			this.dead = true;
-			this.destroy(); // temp TODO: shift player to dodgeball area
+			this.trigger('killed');
 		}
 		console.log("lose health: " + this.health);
 	},
@@ -125,7 +124,16 @@ Crafty.c('Dragon', {
 		};
 	},
 	spitFireball:function(){
-		//console.log("SPIT FIRE!");
+		console.log("SPIT FIRE!");
+		if (this.hasFireball)
+		{
+			var pos = Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}));
+			pos.x += this.direction.x;
+			pos.y += this.direction.y;
+			Entities.Fireball().fireball(this.direction)
+								.attr(pos);
+		}
+		
 		NetworkManager.SendMessage(MessageDefinitions.FIREBALL);
 	},
 	clearEgg: function(){
@@ -211,7 +219,22 @@ Crafty.c('Fireball', {
 	init: function(){
 		return this;
 	},
-	fireball: function(){
+	fireball: function(dir){
+		this.bind("EnterFrame", function()
+		{
+			if (this.hit('Dragon'))
+			{
+				this.hit('Dragon')[0].obj.trigger('burn');
+				this.destroy();
+			}
+			if (this.hit('Egg'))
+			{
+				this.hit('Egg')[0].obj.trigger('burn');
+				this.destroy();
+			}
+			this.x += dir.x * EntityDefinitions.FIREBALL_MOVE_SPEED;
+			this.y += dir.y * EntityDefinitions.FIREBALL_MOVE_SPEED;
+		});
 		return this;
 	},
 });
@@ -368,3 +391,17 @@ Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup", {
 		return this;
 	},
 });
+
+Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
+	init: function(){
+		this.bind("applyPowerup", function(){ this.hasFireball = true; });
+		this.bind("unapplyPowerup", function(){});
+		return this;
+	}
+})
+
+/*=======================
+ * Map related components
+ ========================*/
+
+
