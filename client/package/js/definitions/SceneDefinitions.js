@@ -158,7 +158,11 @@ var handler_Time = function(data)
 	var RTT = time - parseInt( data.clientTime );
 	var delay = parseInt( RTT / 2 );
 	var delta = parseInt( data.serverTime ) - time + delay;
-	console.log( "Wall Clock Time: " + parseInt( ( new Date() ).getTime() + delta ) );
+	//console.log( "Wall Clock Time: " + parseInt( ( new Date() ).getTime() + delta ) );
+
+	var newTime = parseInt( ( new Date() ).getTime() + delta );
+
+	NetworkManager.SendMessage(MessageDefinitions.TIME, { syncedTime: newTime, clientTime: ( new Date() ).getTime() } );
 };
 var handler_Move = function(data)
 {

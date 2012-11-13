@@ -209,6 +209,13 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.TIME, function( data )
     {
       data.serverTime = ( new Date() ).getTime();
+
+
+
+      if ( data.syncedTime !== undefined )
+        console.log( parseInt( data.serverTime - data.syncedTime ));
+
+
       socket.emit( MessageDefinitions.TIME, data );
     });
 
@@ -251,12 +258,14 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       roomController.Broadcast( MessageDefinitions.FIREBALL, data, socket );
     });
 
+    /*
     // player kicks a bomb
     socket.on( MessageDefinitions.KICK, function( data )
     {
       // CHECK If PLAYER HAS ABILITY
       console.log( 'onKickBomb' );
     });
+    */
   }
 }
 

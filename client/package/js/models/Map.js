@@ -12,7 +12,6 @@ function Map( width, height, grid_width, grid_height )
   this._grid_width = grid_width;      // int - size of grids horizontally
   this._grid_height = grid_height;    // int - size of grids vertically
 
-  this._cells = [];                   // 
   this._bombs = [];                   // Bomb[] - list of bombs currently on map
   this._powerups = [];                // Powerup[] - list of powerups currently on map
 }
