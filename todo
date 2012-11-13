@@ -1,12 +1,12 @@
 TODO:
 	MAP:
 		fireball logic
-		dodgeball
+		-----dodgeball
 		suddendeath (spawning done, kill player logic not done)
 		
-		bomb limit, 
-		blastradius, 
-		movespeed, 
+		-----bomb limit, 
+		-----blastradius, 
+		-----movespeed, 
 		-----kicker
 		
 		gui elements for waiting room (need to reflect changes for player)

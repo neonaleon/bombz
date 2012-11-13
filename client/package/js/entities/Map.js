@@ -162,6 +162,7 @@ Map.spawnPowerup = function(type, x, y)
 
 Map.movePlayerOutside = function(dragon)
 {
+	// actually this spawning code can be used for spawning fireballs as well hmm.
 	var pos = {x:0, y:0};
 	if (Math.random() > 0.5)
 	{

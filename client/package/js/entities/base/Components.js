@@ -35,10 +35,32 @@ Crafty.c('Dragon', {
 		this.bind('NewComponent', function(component){
 			// if a controllable component was added to this player
 			if ('Controllable' in this.__c)
-			{
+			{		
 				this.bind('Moved', function(oldpos){
+					
 					this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
 					this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
+
+					if (this.onEgg && this.hit('Egg').length == 1)
+                	{
+                		if (this.hit('solid'))
+	                	{
+	                		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+	                	}
+                	}
+                	else 
+                	{
+                		if (this.hit('solid') || this.hit('Egg'))
+	                	{
+	                		var egg = this.hit('Egg');
+	                		//TODO: KICK
+	                		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+	                		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+	                		//this.x = oldpos.x;
+	                		//this.y = oldpos.y;
+	                		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+	                	}
+                	}
 
 					NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 				});
@@ -278,7 +300,7 @@ Crafty.c('Powerup', {
 			if (hitDragon)
 			{
 				var dragon = hitDragon[0].obj;
-				if (!dragon.has(this.type))
+				if (!dragon.has(this.type + "_powerup"))
 				{
 					dragon.addComponent(this.type + "_powerup");
 					dragon.trigger('applyPowerup');
@@ -311,8 +333,13 @@ Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
  */
 Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){ this.moveSpeed = 7.5; });
-		this.bind("unapplyPowerup", function(){ this.moveSpeed = 5; });
+		this.bind("applyPowerup", function(){
+			this.moveSpeed = 7.5; 
+		});
+		this.bind("unapplyPowerup", function(){ 
+			this.moveSpeed = 5;
+			this.removeComponent(EntityDefinitions.POWERUP_SPEED + "_powerup");
+		});
 		return this;
 	},
 });
@@ -323,7 +350,10 @@ Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
 Crafty.c(EntityDefinitions.POWERUP_BLAST + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){ this.blastRadius = 6; });
-		this.bind("unapplyPowerup", function(){ this.blastRadius = 3; });
+		this.bind("unapplyPowerup", function(){ 
+			this.blastRadius = 3;
+			this.removeComponent(EntityDefinitions.POWERUP_BLAST + "_powerup");
+		});
 		return this;
 	},
 });

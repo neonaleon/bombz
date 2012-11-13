@@ -35,6 +35,11 @@ Entities.FloorTile = function()
 	return Crafty.e("2D, DOM, floor");
 };
 
+Entities.SDBlock = function()
+{
+	
+}
+
 Entities.Extents = function()
 {
 	return Crafty.e("2D, DOM, Color, solid, extents");
@@ -83,7 +88,6 @@ Entities.Dragon = function(color)
                     if(!newdir.x && !newdir.y) this.stop();
                 })*/
 				.bind("ChangeDirection", function (direction) {
-                    
                     switch ( direction )
                     {
                     	case Player.Direction.UP:
@@ -107,14 +111,17 @@ Entities.Dragon = function(color)
                     		break;
                     }
                 })
-                .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
+                .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; });
+                /*
                 .bind('Moved', function(oldpos) {
                 	if (this.onEgg && this.hit('Egg').length == 1)
                 	{
                 		if (this.hit('solid'))
 	                	{
+	                		console.log(this.x, this.y);
 	                		this.x = oldpos.x;
 	                		this.y = oldpos.y;
+	                		console.log(this.x, this.y);
 	                	}
                 	}
                 	else 
@@ -130,7 +137,7 @@ Entities.Dragon = function(color)
 	                	}
                 	}
                 });
-
+                */
 	return dragon;
 };
 
@@ -159,7 +166,7 @@ Entities.Powerup = function(type)
 	
 	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, " + type)
 							.powerup(type);
-	powerup.addComponent("Collision, WiredHitBox").collision([10, 10], [30, 10], [30, 30], [10, 30]);
+	powerup.addComponent("Collision, WiredHitBox").collision([0, 0], [40, 0], [40, 40], [0, 40]);
 	return powerup;
 }
 
