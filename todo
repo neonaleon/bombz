@@ -2,7 +2,7 @@ TODO:
 	MAP:
 		fireball logic
 		dodgeball
-		suddendeath
+		suddendeath (spawning done, kill player logic not done)
 		
 		bomb limit, 
 		blastradius, 
