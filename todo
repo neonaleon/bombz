@@ -1,7 +1,7 @@
 TODO:
 	MAP:
 		DR
-
+		player death
 		fireball logic
 		gui elements for waiting room (need to reflect changes for player)
 
@@ -24,24 +24,6 @@ BUGS: // report any bugs here, please include a description and the steps to rep
 
 	-----for some reason, Collision component must always be added after everything, otherwise something funny happens
 	-----see TODO in server\RoomController.js
-
-NOTES:
-	currently all player state have been added inside @comp Dragon, maybe can extract out later
-
-	Dragons are Burnable (however now, running back onto fire after egg exploded doesnt work)
-	Eggs are Burnable
-	Destructible blocks are Burnable
-
-	Collision Types:
-	Dragon
-	Egg
-	solid
-	Powerup
-
-	hmm
-	Controlled by network manager
-	LocalPlayer id
-	Players[id] to get state
 
 NAT:
 	burnt dragon
@@ -69,3 +51,7 @@ NAT:
 		plant bomb - <1s
 		bomb explode - 1s
 		spit fireball
+
+
+NOTES:
+	remoteplayers simulated, listen for updates from networkmanager

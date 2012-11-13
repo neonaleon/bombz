@@ -44,9 +44,7 @@ Crafty.c('Dragon', {
 					if (this.onEgg && this.hit('Egg').length == 1)
                 	{
                 		if (this.hit('solid'))
-	                	{
 	                		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
-	                	}
                 	}
                 	else 
                 	{
@@ -61,8 +59,6 @@ Crafty.c('Dragon', {
 	                		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
 	                	}
                 	}
-
-					NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 				});
 				this.bind('NewDirection', function(newdir){
 					var direction;
@@ -90,10 +86,10 @@ Crafty.c('Dragon', {
                     // want to make it so that only if successfully turn around the corner then send
                     // 1. spamming left - right
                     // 2. walking against solid blocks / walls
+                    // NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 
-
-                    if ( direction === Player.Direction.NONE )
-                    	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+                    //if ( direction === Player.Direction.NONE )
+                    //	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
 				});
 				this.bind('KeyDown', function(keyEvent){
 					if (keyEvent.key == Crafty.keys['A'])
@@ -401,7 +397,47 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 })
 
 /*=======================
- * Map related components
+ * Network related components
  ========================*/
+Crafty.c("NetworkedPlayer", {
+	init: function(){
+		this.bind("network_update", function(data){
+			this.updateState(data);
+		});
+		this.bind("EnterFrame", function(){
+			this.simulate();
+		});
+		return this;
+	},
+	simulate: function()
+	{
+		switch ( this.direction )
+        {
+        	case Player.Direction.UP:
+        		this.move('n', this.moveSpeed);
+        		if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
+        		break;
+        	case Player.Direction.DOWN:
+        		this.move('s', this.moveSpeed);
+        		if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
+        		break;
+        	case Player.Direction.LEFT:
+        		this.move('w', this.moveSpeed);
+        		if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 6, -1);
+        		break;
+        	case Player.Direction.RIGHT:
+        		this.move('e', this.moveSpeed);
+        		if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 6, -1);
+        		break;
+        	case Player.Direction.NONE:
+        		this.stop();
+        		break;
+        }
+	},
+	updateState: function(data)
+	{
+		this.direction = data.dir;
+	}
+})
 
 

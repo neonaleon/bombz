@@ -141,6 +141,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	{
 		var player = players[ i ];
 		dragons[ player.GetID() ] = Map.spawnPlayer( player.GetColor() );
+		if (player.GetID() != GameState.GetLocalPlayer().GetID()) dragons[player.GetID()].addComponent('NetworkedPlayer');
 	}
 
 	// setup GUI
@@ -148,7 +149,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
 	//dragons[ GameState.GetLocalPlayer().GetID() ].attr({x: Map._instance.x, y:0 } );
 	//Map.movePlayerOutside(dragons[ GameState.GetLocalPlayer().GetID() ]);
-	Map.suddenDeath();
+	//Map.suddenDeath();
 	var pad = GUI.Dpad(dragons[ GameState.GetLocalPlayer().GetID() ] ).attr({x:50, y:400}); // allow player to control the dragon
 });
 var handler_Time = function(data)
@@ -161,9 +162,11 @@ var handler_Time = function(data)
 };
 var handler_Move = function(data)
 {
-	var dragon = dragons[ data.pid ];
-	dragon.attr({ x: data.x, y: data.y });
-	dragon.trigger( "ChangeDirection", data.dir );
+	//var dragon = dragons[ data.pid ];
+	//dragon.attr({ x: data.x, y: data.y });
+	//dragon.trigger( "ChangeDirection", data.dir );
+	var dragon = dragons[data.pid];
+	dragon.trigger('network_update', data);
 };
 var handler_Bomb = function(data)
 {

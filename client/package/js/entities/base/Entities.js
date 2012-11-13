@@ -46,14 +46,10 @@ Entities.SDBlock = function()
 			if (hitDragon)
 			{
 				for (var i = 0; i < hitDragon.length; i++)
-				{
 					hitDragon[i].obj.trigger('killed');
-				}
 			}
 			if (this.moved == 2)
-			{
 				this.collision([-10, -10], [50, -10], [50, 50], [-10, 50]);
-			}
 	    });;
 	return block;
 }
@@ -92,19 +88,6 @@ Entities.Dragon = function(color)
 				.animate("speed_down", def['anim_wing_down'])
 				.animate("speed_left", def['anim_wing_left'])
 				*/
-				/*
-				.bind("NewDirection", function (newdir) {
-                    if (newdir.x < 0)
-                        if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 6, -1);
-                    if (newdir.x > 0)
-                        if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 6, -1);   
-                    if (newdir.y < 0)
-                        if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
-                    if (newdir.y > 0)
-                        if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
-
-                    if(!newdir.x && !newdir.y) this.stop();
-                })*/
 				.bind("ChangeDirection", function (direction) {
                     switch ( direction )
                     {
@@ -132,7 +115,7 @@ Entities.Dragon = function(color)
                 .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
                 .bind('killed', function(){ 
                 	console.log("KILLED"); 
-                	// animate death? then spawn player outside
+                	// TODO: animate death? then spawn player outside, notify server
                 	Map.movePlayerOutside(this);
                 });
 	return dragon;
