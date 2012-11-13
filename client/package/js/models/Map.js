@@ -179,9 +179,6 @@ console.log(x,y);
             break;
           }
         }
-
-
-
         console.log("nothing");
       }
       else if ( tile == Map.Tile.DESTRUCTIBLE )
@@ -238,15 +235,15 @@ Map.prototype.Generate = function()
   for ( var i in Map.SPAWN_POSITIONS )
   {
     var spawn = Map.SPAWN_POSITIONS[ i ];
-    spawn.x += 2;
-    spawn.y += 2;
-    this.SetTile( spawn.x, spawn.y, Map.Tile.EMPTY );
+    spawnX = spawn.x + 2;
+    spawnY = spawn.y + 2;
+    this.SetTile( spawnX, spawnY, Map.Tile.EMPTY );
 
     for ( var d in Map.DIRECTIONS )
     {
       var direction = Map.DIRECTIONS[ d ];
-      var x = spawn.x + direction.x;
-      var y = spawn.y + direction.y;
+      var x = spawnX + direction.x;
+      var y = spawnY + direction.y;
 
       if ( this.GetTile( x, y ) === Map.Tile.DESTRUCTIBLE )
         this.SetTile( x, y, Map.Tile.EMPTY );

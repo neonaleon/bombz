@@ -117,6 +117,11 @@ var handler_StartResponse = function(data)
  * GAME SCENE
  * Game scene is where the game will be played
  */
+var delta;
+function getWallClockTime()
+{
+	return parseInt( ( new Date() ).getTime() + delta );
+}
 SceneDefinitions.GameScene = new Scene("GameScene", function()
 {
 	console.log("game scene running");
@@ -157,8 +162,9 @@ var handler_Time = function(data)
 	var time = ( new Date() ).getTime();
 	var RTT = time - parseInt( data.clientTime );
 	var delay = parseInt( RTT / 2 );
-	var delta = parseInt( data.serverTime ) - time + delay;
-	console.log( "Wall Clock Time: " + parseInt( ( new Date() ).getTime() + delta ) );
+	delta = parseInt( data.serverTime ) - time + delay;
+	
+	//var wallClockTime = parseInt( ( new Date() ).getTime() + delta );
 };
 var handler_Move = function(data)
 {
