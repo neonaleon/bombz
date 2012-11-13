@@ -280,10 +280,10 @@ Crafty.c('Powerup', {
 				var dragon = hitDragon[0].obj;
 				if (!dragon.has(this.type))
 				{
-					dragon.addComponent(this.type)[this.type]();
+					dragon.addComponent(this.type + "_powerup");
 					dragon.trigger('applyPowerup');
 					// send message to inform on collection
-					//NetworkManager.SendMessage(MessageDefinitions.POWERUP, { id: this.id });
+					// NetworkManager.SendMessage(MessageDefinitions.POWERUP, { id: this.id });
 					this.destroy();
 				}
 			}
@@ -294,52 +294,47 @@ Crafty.c('Powerup', {
 
 /*
  * @comp kick
+ * NOT USED
  */
-Crafty.c(EntityDefinitions.POWERUP_KICK, {
+/*
+Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
 	init: function(){
-		return this;
-	},
-	kick: function(){
 		this.bind("applyPowerup", function(){});
 		this.bind("unapplyPowerup", function(){ this.removeComponent(EntityDefinitions.POWERUP_KICK); });
+		return this;
 	},
 });
+*/
 
 /*
  * @comp speed
  */
-Crafty.c(EntityDefinitions.POWERUP_SPEED, {
+Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
 	init: function(){
+		this.bind("applyPowerup", function(){ this.moveSpeed = 7.5; });
+		this.bind("unapplyPowerup", function(){ this.moveSpeed = 5; });
 		return this;
 	},
-	speed: function(){
-		this.bind("applyPowerup", function(){ this.moveSpeed = 10; });
-		this.bind("unapplyPowerup", function(){ this.moveSpeed = 5; });	
-	}
 });
 
 /*
  * @comp blast
  */
-Crafty.c(EntityDefinitions.POWERUP_BLAST, {
+Crafty.c(EntityDefinitions.POWERUP_BLAST + "_powerup", {
 	init: function(){
-		return this;
-	},
-	blast: function(){
 		this.bind("applyPowerup", function(){ this.blastRadius = 6; });
 		this.bind("unapplyPowerup", function(){ this.blastRadius = 3; });
-	}
+		return this;
+	},
 });
 
 /*
  * @comp egg_limit
  */
-Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT, {
+Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup", {
 	init: function(){
+		this.bind("applyPowerup", function(){ this.eggLimit = 6; });
+		this.bind("unapplyPowerup", function(){ this.eggLimit = 3; });
 		return this;
 	},
-	egg_limit: function(){
-		this.bind("applyPowerup", function(){ this.eggLimit = 6; });
-		this.bind("unapplyPowerup", function(){ this.eggLimit = 3; });		
-	}
 });

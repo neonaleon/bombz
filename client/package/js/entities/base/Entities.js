@@ -106,7 +106,9 @@ Entities.Dragon = function(color)
                 		if (this.hit('solid') || this.hit('Egg'))
 	                	{
 	                		var egg = this.hit('Egg');
-	                		if (egg && this.has(EntityDefinitions.POWERUP_KICK)) egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+	                		//TODO: KICK
+	                		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+	                		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
 	                		this.x = oldpos.x;
 	                		this.y = oldpos.y;
 	                	}
@@ -126,7 +128,7 @@ Entities.Egg = function(dragon)
 						.bind('burn', function(){ this.trigger('explode'); })
 						.egg(dragon.blastRadius, 1500);
 	//TODO fix the chaining
-	egg.addComponent("Collision, WiredHitBox").collision([10, 10], [30, 10], [30, 30], [10, 30]);
+	// egg.addComponent("Collision, WiredHitBox").collision([10, 10], [30, 10], [30, 30], [10, 30]);
 	egg.owner = dragon;
 	return egg;
 };
@@ -141,7 +143,7 @@ Entities.Powerup = function(type)
 	
 	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, " + type)
 							.powerup(type);
-	powerup.addComponent("Collision, WireHitBox").collision([10, 10], [30, 10], [30, 30], [10, 30]);
+	powerup.addComponent("Collision, WiredHitBox").collision([10, 10], [30, 10], [30, 30], [10, 30]);
 	return powerup;
 }
 

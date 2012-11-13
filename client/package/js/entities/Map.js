@@ -84,11 +84,12 @@ Map.generate = function(mapData)
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 
 	// TODO: test
+	/*
 	Map.spawnPowerup(EntityDefinitions.POWERUP_KICK, 5, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_BLAST, 1, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_SPEED, 3, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_EGGLIMIT, 2, 0);
-
+	*/
 	var powerups = mapData.powerups;
 	for (var i = 0; i < powerups.length; i++)
 	{
@@ -145,6 +146,11 @@ Map.spawnPowerup = function(type, x, y)
 	var powerup = Entities.Powerup(type).attr(Map.tileToPixel({ x: x, y: y }));
 	powerup.z = Map.Z_POWERUP;
 	return powerup;
+}
+
+Map.movePlayerOutside = function()
+{
+	//TODO: MOVE PLAYER OUTSIDE ON DEATH
 }
 
 Map.suddenDeath = function()

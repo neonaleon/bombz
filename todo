@@ -1,6 +1,8 @@
 TODO:
 	MAP:
 		fireball logic
+		dodgeball
+		suddendeath
 		
 		bomb limit, 
 		blastradius, 
@@ -11,10 +13,11 @@ TODO:
 
 		Entities, and Map has some TODOs
 
-		dodgeball
-		suddendeath
+		
 
 BUGS: // report any bugs here, please include a description and the steps to repro it
+	movespeed powerup causes character to get stuck
+
 	Egg is kickable, but if add collision component, cannot chain explosion
 	Kick egg, then quickly plant another egg, will bug
 
