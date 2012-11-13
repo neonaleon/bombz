@@ -50,6 +50,11 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 		'anim_walk_right':[[2, i], [3, i], [4, i]],
 		'anim_walk_down':[[5, i], [6, i]],
 		'anim_walk_left':[[9, i], [8, i], [7, i]],
+		
+		'anim_wing_up':[[0, 7], [1, 7]],
+		'anim_wing_right':[[2, 7], [3, 7], [4, 7]],
+		'anim_wing_down':[[5, 7], [6, 7]],
+		'anim_wing_left':[[9, 7], [8, 7], [7, 7]],
 	};
 }
 

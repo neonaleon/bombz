@@ -18,11 +18,11 @@ TODO:
 BUGS: // report any bugs here, please include a description and the steps to repro it
 	movespeed powerup causes character to get stuck
 
-	Egg is kickable, but if add collision component, cannot chain explosion
-	Kick egg, then quickly plant another egg, will bug
+	-----Egg is kickable, but if add collision component, cannot chain explosion
+	-----Kick egg, then quickly plant another egg, will bug
 
-	for some reason, Collision component must always be added after everything, otherwise something funny happens
-	see TODO in server\RoomController.js
+	-----for some reason, Collision component must always be added after everything, otherwise something funny happens
+	-----see TODO in server\RoomController.js
 
 GRAPHICS:
 	fireball - 3 frames
@@ -67,3 +67,7 @@ NAT:
 	wingz
 	side bar (player right, fill up white area)
 	destructing tiles
+
+	sound for sudden death 
+	sound for spitting fireball
+	sound for button press

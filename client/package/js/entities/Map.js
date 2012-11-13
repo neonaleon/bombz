@@ -99,7 +99,7 @@ Map.generate = function(mapData)
 		//_powerups[ powerup.id ] = powerup;
 		Map.spawnPowerup( EntityDefinitions.POWERUP_SPRITES[ powerup.type ], powerup.x , powerup.y );	
 	}
-	Map.suddenDeath();
+	
 	return map;
 };
 
@@ -157,7 +157,6 @@ Map.movePlayerOutside = function()
 
 Map.suddenDeath = function()
 {
-	//TODO: ACTIVATE SUDDEN DEATH!!!!
 	defer_spawn_block(0, 14, 10, 0, 0, 0, Map.SUDDEN_DEATH_RATE);
 }
 function defer_spawn_block(up, right, down, left, row, col, delay)
@@ -189,7 +188,6 @@ function defer_spawn_block(up, right, down, left, row, col, delay)
 		else console.log("END");
 	}, delay); 
 }
-
 function spawn_sd_block(x, y)
 {
 	var tile = Map.tileToPixel({x: x, y: y});
