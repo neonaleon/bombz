@@ -1,6 +1,8 @@
 TODO:
 	MAP:
-		DR
+		DR (zero order now)
+		artificial delay (eldo)
+		local lag and lpf (leon) 250 bomb fuse
 		player death
 		fireball logic
 		gui elements for waiting room (need to reflect changes for player)
@@ -54,4 +56,4 @@ NAT:
 
 
 NOTES:
-	remoteplayers simulated, listen for updates from networkmanager
+	remoteplayers simulated, listen for updates from networkmanager 

@@ -35,13 +35,19 @@ Crafty.c('Dragon', {
 		// perform collision detection when the entity is being moved
 		this.bind('Moved', function(oldpos)
 		{
+			this.timeout(function(){
+				this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
+				this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
+			}, NetworkManager.localLag);
+			console.log(NetworkManager.localLag);
+			/*
 			this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
 			this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
 	
 			if (this.onEgg && this.hit('Egg').length == 1)
 	    	{
 	    		if (this.hit('solid'))
-	        		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+	        		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
 	    	}
 	    	else 
 	    	{
@@ -53,11 +59,12 @@ Crafty.c('Dragon', {
 	        		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
 	        		//this.x = oldpos.x;
 	        		//this.y = oldpos.y;
-	        		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+	        		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
 	        	}
-	    	}		
+	    	}
+	    	*/
 		});	
-
+		
 		this.bind('NewComponent', function(component)
 		{
 			// if a controllable component was added to this dragon
@@ -428,7 +435,7 @@ Crafty.c("NetworkedPlayer", {
         	case Player.Direction.NONE:
         		break;
         }
-        this.trigger('Moved', oldpos);
+        //this.trigger('Moved', oldpos);
 	},
 	updateState: function(data)
 	{
