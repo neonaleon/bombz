@@ -77,6 +77,8 @@ Map.generate = function(mapData)
 					break;
 
 				default:
+					map.attach(
+		    			Entities.SolidBlock().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
 					break;
 			}
 		}
