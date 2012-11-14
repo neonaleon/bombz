@@ -171,7 +171,32 @@ var handler_Bomb = function(data)
 };
 var handler_Powerup = function(powerup)
 {
-	Map.spawnPowerup(EntityDefinitions.POWERUP_SPRITES[powerup.type], powerup.x, powerup.y);
+	if (powerup.pid !== undefined)
+	{
+		console.log(powerup);
+
+		// need to search for powerup at x and y and remove them if not already destroyed
+		var powerups = Crafty("Powerup");
+		for (var i = 0; i < powerups.length; i++)
+		{
+			var p = Crafty(powerups[ i ]);
+			var tile = Map.pixelToTile({ x: p.x, y: p.y });
+			if (tile.x === powerup.x && tile.y === powerup.y)
+			{
+				p.destroy();
+				break;
+			}
+		}
+
+
+		var dragon = dragons[ powerup.pid ];
+		dragon.addComponent(EntityDefinitions.POWERUP_SPRITES[ powerup.type ] + "_powerup");
+		dragon.trigger('applyPowerup');
+	}
+	else
+	{
+		Map.spawnPowerup(EntityDefinitions.POWERUP_SPRITES[powerup.type], powerup.x, powerup.y);
+	}
 };
 var handler_Kick = function(data)
 {

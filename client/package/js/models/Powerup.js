@@ -31,15 +31,15 @@ Powerup.prototype.ApplyEffect = function( player )
   switch ( this._type )
   {
     case Powerup.Type.BUFF_SPEED:
-      player.SetSpeed( player.GetSpeed() + 5 );
+      player.SetSpeed( player.GetSpeed() + 2.5 );
       break;
 
     case Powerup.Type.BUFF_RANGE:
-      player.SetBombRange( player.GetBombRange() + 5 );
+      player.SetBombRange( player.GetBombRange() + 3 );
       break;
   
     case Powerup.Type.BUFF_CAPACITY:
-      player.SetBombLimit( player.GetBombLimit() + 5 );
+      player.SetBombLimit( player.GetBombLimit() + 3 );
       break;
 
     case Powerup.Type.ABILITY_KICKBOMB:

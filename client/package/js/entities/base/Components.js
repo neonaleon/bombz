@@ -28,7 +28,6 @@ Crafty.c('Dragon', {
 		this.powerups = [];
 		this.direction = undefined;
 
-		this.pdu = undefined;
 		this.lastUpdate = undefined;
 		this.expectedPosition = undefined;
 		
@@ -334,10 +333,18 @@ Crafty.c('Powerup', {
 				var dragon = hitDragon[0].obj;
 				if (!dragon.has(this.type + "_powerup"))
 				{
-					dragon.addComponent(this.type + "_powerup");
-					dragon.trigger('applyPowerup');
+					// effects don't apply until message returns
+					//dragon.addComponent(this.type + "_powerup");
+					//dragon.trigger('applyPowerup');
+
 					// send message to inform on collection
-					// NetworkManager.SendMessage(MessageDefinitions.POWERUP, { id: this.id });
+					var data = Map.pixelToTile( { x: this.x, y: this.y } );
+					data.timestamp = WallClock.getTime();
+
+					// only send update if local dragon
+					if ('Controllable' in dragon.__c)
+						NetworkManager.SendMessage(MessageDefinitions.POWERUP, data);
+
 					this.destroy();
 				}
 			}
