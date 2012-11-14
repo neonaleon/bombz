@@ -127,14 +127,13 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	console.log("game scene running");
 
 	// network messages
-	NetworkManager.AddListener(MessageDefinitions.TIME, handler_Time);
+	WallClock.sync(); // sync wallclock with server so we can use timestamps
 	NetworkManager.AddListener(MessageDefinitions.MOVE, handler_Move);
 	NetworkManager.AddListener(MessageDefinitions.BOMB, handler_Bomb);
 	NetworkManager.AddListener(MessageDefinitions.KICK, handler_Kick);
 	NetworkManager.AddListener(MessageDefinitions.LEAVE, handler_Leave); // player leaves/disconnects
 	NetworkManager.AddListener(MessageDefinitions.POWERUP, handler_Powerup);
 	NetworkManager.AddListener(MessageDefinitions.FIREBALL, handler_Fireball);
-	NetworkManager.SendMessage(MessageDefinitions.TIME, { clientTime: ( new Date() ).getTime() } );
 
 	// generate map and entities
 	Map.generate(GameState.GetMap());
@@ -158,15 +157,6 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	//Map.suddenDeath();
 	var pad = GUI.Dpad(dragons[ GameState.GetLocalPlayer().GetID() ] ).attr({x:50, y:400}); // allow player to control the dragon
 });
-var handler_Time = function(data)
-{
-	var time = ( new Date() ).getTime();
-	var RTT = time - parseInt( data.clientTime );
-	var delay = parseInt( RTT / 2 );
-	delta = parseInt( data.serverTime ) - time + delay;
-	
-	//var wallClockTime = parseInt( ( new Date() ).getTime() + delta );
-};
 var handler_Move = function(data)
 {
 	//var dragon = dragons[ data.pid ];

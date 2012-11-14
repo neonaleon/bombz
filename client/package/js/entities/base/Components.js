@@ -95,7 +95,12 @@ Crafty.c('Dragon', {
                     // want to make it so that only if successfully turn around the corner then send
                     // 1. spamming left - right
                     // 2. walking against solid blocks / walls
-                    NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+
+                    NetworkManager.SendMessage(MessageDefinitions.MOVE, { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: this.direction });
+/*
+                  	if ( direction === Player.Direction.NONE )
+                    	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+                    	*/
 				});
 				this.bind('KeyDown', function(keyEvent){
 					if (keyEvent.key == Crafty.keys['A'])
@@ -123,9 +128,12 @@ Crafty.c('Dragon', {
 	layEgg: function(){
 		if (!this.onEgg && this.eggCount < this.eggLimit)
 		{
-			NetworkManager.SendMessage(MessageDefinitions.BOMB, Map.pixelToTile({x: this.x, y: this.y}));
-			
 			this.eggCount += 1;
+			//console.log("planted: " + this.eggCount);
+
+			var data = Map.pixelToTile({x: this.x, y: this.y});
+			data.timestamp = WallClock.getTime();
+			NetworkManager.SendMessage(MessageDefinitions.BOMB, data);
 			Map.spawnEgg(this);
 		};
 	},
@@ -140,7 +148,7 @@ Crafty.c('Dragon', {
 								.attr(pos);
 		}
 		
-		NetworkManager.SendMessage(MessageDefinitions.FIREBALL);
+		NetworkManager.SendMessage(MessageDefinitions.FIREBALL, { timestamp: WallClock.getTime() });
 	},
 	clearEgg: function(){
 		this.eggCount -= 1;
