@@ -167,7 +167,7 @@ var handler_Move = function(data)
 };
 var handler_Bomb = function(data)
 {
-	Map.spawnEgg( dragons[ data.owner ] );
+	Map.spawnEggOnTile( dragons[ data.owner ], { x: data.x, y: data.y } );
 };
 var handler_Powerup = function(powerup)
 {
@@ -187,7 +187,6 @@ var handler_Powerup = function(powerup)
 				break;
 			}
 		}
-
 
 		var dragon = dragons[ powerup.pid ];
 		dragon.addComponent(EntityDefinitions.POWERUP_SPRITES[ powerup.type ] + "_powerup");
