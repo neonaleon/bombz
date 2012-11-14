@@ -24,10 +24,11 @@ var SpriteDefinitions = {
 	GREEN: 1,
 	RED: 2,
 	PINK: 3,
+	BURNT: 4,
 
-	DRAGONS: ['bluedragon', 'greendragon', 'reddragon', 'pinkdragon'],
+	DRAGONS: ['bluedragon', 'greendragon', 'reddragon', 'pinkdragon', 'burntdragon'],
 	//COLORS: ['blue', 'green', 'red', 'pink'], // follows order on the spritesheet
-	COLORS: [0, 1, 2, 3], // follows order on the spritesheet
+	COLORS: [0, 1, 2, 3, 4], // follows order on the spritesheet
 	
 	MAP_1: 'map1',
 	
@@ -44,6 +45,7 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 			var elements = {};
 			elements[color + 'dragon'] = [5, i];
 			elements[color + 'egg'] = [10, i];
+			elements['cloud'] = [1, 8];
 			return elements;
 		})(),
 		'anim_walk_up':[[0, i], [1, i]],
@@ -62,29 +64,32 @@ SpriteDefinitions['effects'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
 	'elements': {
-		fire: [5, 4],
+		fire: [6, 5],
 	},
-	'anim_fire':[[3,4], [4,4], [5,4], [6,4], [7,4], [8,4]],
+	'anim_fire':[[6,5], [7,5], [8,5], [9,5], [10,5], [11,5]],
+	'anim_fireball':[[2,8], [3,8], [4,8]],
 };
 
 SpriteDefinitions['map1'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
 	'elements': {
-		floor: [0, 4],
-		tileD: [1, 4],
-		tileI: [2, 4],
-		tileB: [3, 4],
-	}
+		floor: [0, 5],
+		tileD: [1, 5],
+		tileI: [2, 5],
+		tileB: [3, 5],
+		tileDB: [0, 8],
+	},
+	'anim_tile_burn':[[3,5], [4,5], [5,5]],
 };
 
 SpriteDefinitions['gui'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
 	'elements': {
-		dpad: [0, 4],
-		buttonA: [1, 4],
-		buttonB: [2, 4],
+		dpad: [0, 5],
+		buttonA: [1, 5],
+		buttonB: [2, 5],
 	}
 };
 
@@ -92,9 +97,9 @@ SpriteDefinitions['powerup'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
 	'elements': {
-		kick: [0,5],
-		blast: [1,5],
-		egg_limit: [2,5],
-		speed: [3,5],
+		kick: [0,6],
+		blast: [1,6],
+		egg_limit: [2,6],
+		speed: [3,6],
 	}
 };

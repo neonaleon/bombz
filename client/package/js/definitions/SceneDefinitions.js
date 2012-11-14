@@ -5,51 +5,12 @@
  * This file contains definitions for the scenes we will use in the game
  */
 
+var SceneDefinitions = {};
+
 function Scene(sceneName, initializer)
 {
 	this.sceneName = sceneName;
 	this.initializer = initializer;
-};
-
-var SceneDefinitions = {};
-
-/*
- * SPLASH SCENE
- * Splash an image when the app is started
- */
-SceneDefinitions.SplashScene = new Scene("SplashScene", function()
-{ 
-	console.log("splash scene running");
-	// show some splash image
-	// connect to server
-	// some duration later change scene, we might want to use this duration to load assets etc
-	setTimeout(function(){ SceneManager.ChangeScene(SceneDefinitions.WaitingRoomScene) }, Properties.SPLASH_DURATION);
-});
-
-/*
- * LOAD SCENE
- * Display a loading image while app loads resources for the next scene
- */
-SceneDefinitions.LoadScene = new Scene("LoadScene", function()
-{ 
-	console.log("load scene running");
-});
-
-// The Lobby for getting game information and connecting to games
-SceneDefinitions.LobbyScene = new Scene("LobbyScene", function()
-{ 
-	console.log("lobby scene running");
-	GUI.Button("Find Games", handler_FindGames).attr({	x:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_WIDTH/2,
-														y:Properties.DEVICE_HEIGHT/2-GUIDefinitions.BUTTON_HEIGHT/2});
-});
-var handler_FindGames = function(obj)
-{
-	console.log("clicked=", obj);
-	NetworkManager.RequestGameList(handler_PopulateGameLobby);
-};
-var handler_PopulateGameLobby = function (data)
-{
-	console.log("populate game lobby with=", data);
 };
 
 // The Waiting Room
@@ -78,20 +39,6 @@ var handler_Connect = function()
 	NetworkManager.AddListener(MessageDefinitions.UPDATE, handler_UpdateResponse);
 	NetworkManager.AddListener(MessageDefinitions.ENTER_ROOM, handler_EnterRoomResponse);
 };
-var handler_EnterRoomResponse = function(data)
-{
-	GameState.UpdateRoom( data );
-};
-var handler_UpdateResponse = function(data)
-{
-	GameState.UpdateRoom( data );
-};
-
-// players seats on a colour
-var handler_Seat = function( buttonIndex, value )
-{
-	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: value ? buttonIndex : Player.Color.NONE });
-};
 // broadcast receiver for reponses to all players seatting on color
 var handler_SeatResponse = function(player)
 {
@@ -100,17 +47,29 @@ var handler_SeatResponse = function(player)
 	else
 		console.log( "P" + ( player.id + 1 ) + " sat on " + player.color );
 };
-
-// request for game to start (on leader will see the button)
-var handler_Start = function(obj)
-{
-	NetworkManager.SendMessage(MessageDefinitions.START, {})
-};
 // broadcast response when game is starting
 var handler_StartResponse = function(data)
 {
 	GameState.SetMap( data.map );
 	SceneManager.ChangeScene( SceneDefinitions.GameScene );
+};
+var handler_UpdateResponse = function(data)
+{
+	GameState.UpdateRoom( data );
+};
+var handler_EnterRoomResponse = function(data)
+{
+	GameState.UpdateRoom( data );
+};
+// request for game to start (on leader will see the button)
+var handler_Start = function(obj)
+{
+	NetworkManager.SendMessage(MessageDefinitions.START, {})
+};
+// players seats on a colour
+var handler_Seat = function( buttonIndex, value )
+{
+	NetworkManager.SendMessage(MessageDefinitions.SEAT, { color: value ? buttonIndex : Player.Color.NONE });
 };
 
 /* 
@@ -211,4 +170,41 @@ var handler_Leave = function(data)
 	console.log( "P" + ( data.id + 1 ) + " has left the game." ) ;
 
 	// message should have more things like powerups dropped by player
+};
+
+/*
+ * SPLASH SCENE
+ * Splash an image when the app is started
+ */
+SceneDefinitions.SplashScene = new Scene("SplashScene", function()
+{ 
+	console.log("splash scene running");
+	// show some splash image
+	// connect to server
+	// some duration later change scene, we might want to use this duration to load assets etc
+	setTimeout(function(){ SceneManager.ChangeScene(SceneDefinitions.WaitingRoomScene) }, Properties.SPLASH_DURATION);
+});
+/*
+ * LOAD SCENE
+ * Display a loading image while app loads resources for the next scene
+ */
+SceneDefinitions.LoadScene = new Scene("LoadScene", function()
+{ 
+	console.log("load scene running");
+});
+// The Lobby for getting game information and connecting to games
+SceneDefinitions.LobbyScene = new Scene("LobbyScene", function()
+{ 
+	console.log("lobby scene running");
+	GUI.Button("Find Games", handler_FindGames).attr({	x:Properties.DEVICE_WIDTH/2-GUIDefinitions.BUTTON_WIDTH/2,
+														y:Properties.DEVICE_HEIGHT/2-GUIDefinitions.BUTTON_HEIGHT/2});
+});
+var handler_FindGames = function(obj)
+{
+	console.log("clicked=", obj);
+	NetworkManager.RequestGameList(handler_PopulateGameLobby);
+};
+var handler_PopulateGameLobby = function (data)
+{
+	console.log("populate game lobby with=", data);
 };
