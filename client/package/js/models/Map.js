@@ -1,10 +1,12 @@
 //// IMPORTS
+var Bomb = require( './Bomb' );
 var Powerup = require( './Powerup' );
 
-function Map( width, height, grid_width, grid_height, tiles )
+
+function Map( width, height, grid_width, grid_height )
 {
 //// PRIVATE VARIABLES
-  this._tiles = tiles;                // Map.Tile[] - array of tiles
+  this._tiles = [];                   // Map.Tile[] - array of tiles
   this._width = width;                // int - number of grids horizontally
   this._height = height;              // int - number of grids vertically
   this._grid_width = grid_width;      // int - size of grids horizontally
@@ -27,13 +29,15 @@ Map.Tile =
   INDESTRUCTIBLE: 2,
 };
 
+Map.DIRECTIONS = [{ x: -1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 0, y: -1 }];
+Map.SPAWN_POSITIONS = [ { x: 0, y: 0 }, { x: 14, y: 0 }, { x: 0, y: 10 }, { x: 14, y: 10 } ];
+
 Map.Default =
 {
   POWERUPS: [
-    Powerup.Type.BUFF_SPEED, Powerup.Type.BUFF_SPEED, 
-    Powerup.Type.BUFF_RANGE, Powerup.Type.BUFF_RANGE,
-    Powerup.Type.BUFF_CAPACITY, Powerup.Type.BUFF_CAPACITY,
-    Powerup.Type.ABILITY_KICKBOMB, Powerup.Type.ABILITY_KICKBOMB
+    Powerup.Type.BUFF_SPEED, Powerup.Type.BUFF_SPEED,// Powerup.Type.BUFF_SPEED,
+    Powerup.Type.BUFF_RANGE, Powerup.Type.BUFF_RANGE,// Powerup.Type.BUFF_RANGE,
+    Powerup.Type.BUFF_CAPACITY, Powerup.Type.BUFF_CAPACITY,// Powerup.Type.BUFF_CAPACITY,
   ],
 };
 
@@ -60,15 +64,67 @@ Map.prototype.SetTile = function( x, y, type )
 // add a bomb to the map
 Map.prototype.AddBomb = function( bomb )
 {
-  var tile = GetTile( bomb.GetX(), bomb.GetY() );
+  var map = this;
 
+  //var tile = GetTile( bomb.GetX(), bomb.GetY() );
+  this._bombs.push( bomb );
+
+  setTimeout( function()
+  {
+    map.HandleBomb( bomb );
+
+  }, Bomb.DURATION );
+}
+
+Map.prototype.HandleBomb = function( bomb )
+{
+
+  this.BombExplode( bomb );
+  this.RemoveBomb( bomb );
 }
 
 // removes a bomb from the map
 Map.prototype.RemoveBomb = function( bomb )
 {
-  
+  this._bombs.splice( this._bombs.indexOf( bomb ), 1 );
 }
+
+Map.prototype.GetPowerupCount = function()
+{
+  return this._powerups.length;
+}
+
+// add a powerup to the map if it is a valid grid for a powerup
+Map.prototype.SpawnPowerup = function()
+{
+  var x;
+  var y;
+  var reroll;
+  do 
+  {
+    // roll unique position
+    var pos = Math.floor( Math.random() * 116 );
+    x = pos % 13 + 1;
+    y = parseInt( pos / 13 ) + 1;
+    reroll = false;
+
+    for ( var i in this._powerups )
+    {
+      var powerup = this._powerups[ i ];
+      if ( powerup.GetX() === x && powerup.GetY() === y )
+      {
+        reroll = true;
+        break;
+      }
+    }
+  }
+  while ( reroll === true || ( ( x % 2 !== 0 ) && ( y % 2 !== 0 ) ) )
+
+  var powerup = new Powerup( Math.floor( Math.random() * 3 ), x, y )
+  this._powerups.push( powerup );
+  return powerup;
+}
+
 
 // add a powerup to the map if it is a valid grid for a powerup
 Map.prototype.AddPowerup = function( powerup )
@@ -79,7 +135,7 @@ Map.prototype.AddPowerup = function( powerup )
 // removes a powerup from the map if it is a valid grid for a powerup
 Map.prototype.RemovePowerup = function( powerup )
 {
-  
+  this._bombs.splice( this._bombs.indexOf( powerup ), 1 );
 }
 
 // update map according to a bomb explosion if it is a valid grid for a powerup
@@ -87,44 +143,55 @@ Map.prototype.BombExplode = function( bomb )
 {
   var bomb_owner = bomb.GetOwner();
 
-  // directions left, up, right, down
-  var directions = [{ x: -1, y: 0 }, { x: 0, y: 1 }, { x: 1, y: 0 }, { x: 0, y: -1 }];
-
+  // directions left, down, right, up
   var affected = [];
 
   // need to deal with bomb box?
 
-
-
   // for each direction, expand outwards and evaluate
-  for ( var index in directions )
+  for ( var index in Map.DIRECTIONS )
   {
     var x = bomb.GetX();
     var y = bomb.GetY();
-    var direction = directions[ index ];
+    var range = bomb.GetRange();
+    var direction = Map.DIRECTIONS[ index ];
 
-    for ( var range = 1; range <= bomb.GetRange(); range++ )
+    for ( var r = 1; r < range; r++ )
     {
       x += direction.x;
       y += direction.y;
-      var tile = GetTile( x, y );
 
+      if ( x < 0 || x >= this._width || y < 0 || y >= this._height )
+        break;
+
+      var tile = this.GetTile( x, y );
+console.log(x,y);
       if ( tile == Map.Tile.EMPTY )
       {
-
+        // check if explosion hits any powerups
+        for ( var i in this._powerups )
+        {
+          var powerup = this._powerups[ i ];
+          if ( ( powerup.GetX() + 2 ) === x && ( powerup.GetY() + 2 ) === y )
+          {
+            console.log("powerup");
+            this.RemovePowerup( powerup );
+            break;
+          }
+        }
+        console.log("nothing");
       }
       else if ( tile == Map.Tile.DESTRUCTIBLE )
       {
-        
+        console.log("block/stop");
+        this.SetTile( x, y, Map.Tile.EMPTY );
+        break;
       }
       else if ( tile == Map.Tile.INDESTRUCTIBLE )
       {
+        console.log("hard/stop")
         // stop exploding in this direction
         break;
-      }
-      else
-      {
-
       }
     }
   }
@@ -135,8 +202,6 @@ Map.prototype.BombExplode = function( bomb )
 
 Map.prototype.Generate = function()
 { 
-  // Map._spawnPositions = Map.SPAWN_POSITIONS.slice();
-  
   this._tiles = [];
   
   for ( var y = 0; y < this._height; y++ )
@@ -166,6 +231,25 @@ Map.prototype.Generate = function()
     }
   }
 
+  // remove blocks that are near spawn positions
+  for ( var i in Map.SPAWN_POSITIONS )
+  {
+    var spawn = Map.SPAWN_POSITIONS[ i ];
+    spawnX = spawn.x + 2;
+    spawnY = spawn.y + 2;
+    this.SetTile( spawnX, spawnY, Map.Tile.EMPTY );
+
+    for ( var d in Map.DIRECTIONS )
+    {
+      var direction = Map.DIRECTIONS[ d ];
+      var x = spawnX + direction.x;
+      var y = spawnY + direction.y;
+
+      if ( this.GetTile( x, y ) === Map.Tile.DESTRUCTIBLE )
+        this.SetTile( x, y, Map.Tile.EMPTY );
+    }
+  }
+
   // spawn powerups
   var powerup_positions = [];
   var powerups = Map.Default.POWERUPS.slice();
@@ -183,7 +267,8 @@ Map.prototype.Generate = function()
     } while ( powerup_positions.indexOf( pos ) > 0 || ( ( x % 2 !== 0 ) && ( y % 2 !== 0 ) ) )
     
     powerup_positions.push( pos );
-    this._powerups.push( { type: powerups[ i ], x: x, y: y } );
+
+    this._powerups.push( new Powerup( powerups[ i ], x, y ) );
   }
 };
 
@@ -192,12 +277,16 @@ Map.prototype.Generate = function()
 // non-visible power ups (within blocks) are not included here otherwide players can cheat
 Map.prototype.Serialize = function()
 {
+  var powerups = [];
+  for ( var i in this._powerups )
+    powerups.push( this._powerups[ i ].Serialize() );
+
   return {
     name: 'map1',
     tiles: this._tiles,
     width: this._width,
     height: this._height,
-    powerups: this._powerups,
+    powerups: powerups,
   };
 }
 

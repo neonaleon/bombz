@@ -30,11 +30,8 @@ var Map = {
 	
 	// 4 corner spawn positions
 	SPAWN_POSITIONS: [[0, 0], [14, 0], [0, 10], [14, 10]],
-	// 2 of each powerup
-	POWERUPS: [	Entities.POWERUP_KICK, Entities.POWERUP_KICK,
-				Entities.POWERUP_SPEED, Entities.POWERUP_SPEED, 
-				Entities.POWERUP_BLAST, Entities.POWERUP_BLAST,
-				Entities.POWERUP_EGGLIMIT, Entities.POWERUP_EGGLIMIT ], 
+	
+	SUDDEN_DEATH_RATE: 300, // number of millis between spawning each block
 	
 	_spawnPositions: undefined,
 	_powerups: undefined,
@@ -89,19 +86,32 @@ Map.generate = function(mapData)
 	
 	// center the map
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
-
+	
+	// build the 4 extents
+	// left
+	Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: 0, y: 0});
+	// right
+	Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: map.x + Map.MAP_WIDTH, y: 0});
+	// top
+	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: -10});
+	// bottom
+	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: Properties.DEVICE_HEIGHT});
+	
 	// TODO: test
+	/*
 	Map.spawnPowerup(EntityDefinitions.POWERUP_KICK, 5, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_BLAST, 1, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_SPEED, 3, 0);
 	Map.spawnPowerup(EntityDefinitions.POWERUP_EGGLIMIT, 2, 0);
-
+	*/
 	var powerups = mapData.powerups;
 	for (var i = 0; i < powerups.length; i++)
 	{
 		var powerup = powerups[i];
+		//_powerups[ powerup.id ] = powerup;
 		Map.spawnPowerup( EntityDefinitions.POWERUP_SPRITES[ powerup.type ], powerup.x , powerup.y );	
 	}
+	
 	return map;
 };
 
@@ -152,9 +162,67 @@ Map.spawnPowerup = function(type, x, y)
 	return powerup;
 }
 
+Map.movePlayerOutside = function(dragon)
+{
+	// actually this spawning code can be used for spawning fireballs as well hmm.
+	var pos = {x:0, y:0};
+	if (Math.random() > 0.5)
+	{
+		pos.x = (Math.random() > 0.5) ? 0 : Map.MAP_OUTER_TILEW - 1; // left or right
+		pos.y = Math.floor(Math.random()*(Map.MAP_OUTER_TILEH - 1)); 
+	}
+	else
+	{
+		pos.x = Math.floor(Math.random()*(Map.MAP_OUTER_TILEW - 1));
+		pos.y = (Math.random() > 0.5) ? 0 : Map.MAP_OUTER_TILEH - 1; // top or bottom
+	}
+	Map._movePlayerOutside(dragon, pos);
+}
+// modify and use this when using server (refer to above function)
+Map._movePlayerOutside = function(dragon, pos)
+{
+	dragon.x = pos.x * Map.MAP_TILEWIDTH + Map._instance.x;
+	dragon.y = pos.y * Map.MAP_TILEHEIGHT;
+}
+
 Map.suddenDeath = function()
 {
-	//TODO: ACTIVATE SUDDEN DEATH!!!!
+	defer_spawn_block(0, 14, 10, 0, 0, 0, Map.SUDDEN_DEATH_RATE);
+}
+function defer_spawn_block(up, right, down, left, row, col, delay)
+{
+	spawn_sd_block(col, row);
+	// 0-14 in columns, 0-10 in rows	
+	setTimeout(function() {
+		if (row == up && col != right) 
+		{
+			col += 1;
+			if (col == right) up += 1;
+		}
+		else if (col == right && row != down)
+		{
+			row += 1;
+			if (row == down) right -= 1;
+		}
+		else if (row == down && col != left)
+		{
+			col -= 1;
+			if (col == left) down -= 1;
+		}
+		else if (col == left && row != up)
+		{
+			row -= 1;
+			if (row == up) left += 1;
+		}
+		if (!(up == 6 && right == 9 && down == 4 && left == 5)) defer_spawn_block(up, right, down, left, row, col, delay);
+		else console.log("END");
+	}, delay); 
+}
+function spawn_sd_block(x, y)
+{
+	var tile = Map.tileToPixel({x: x, y: y});
+	tile.z = Map.Z_INDESTRUCTIBLE;
+	Entities.SDBlock().attr(tile);
 }
 
 Map.pixelToTile = function(dict)

@@ -1,0 +1,66 @@
+TODO:
+	MAP:
+		fireball logic
+		
+		bomb limit, 
+		blastradius, 
+		movespeed, 
+		-----kicker
+		
+		gui elements for waiting room (need to reflect changes for player)
+
+		Entities, and Map has some TODOs
+
+		dodgeball
+		suddendeath
+
+BUGS: // report any bugs here, please include a description and the steps to repro it
+	Egg is kickable, but if add collision component, cannot chain explosion
+	Kick egg, then quickly plant another egg, will bug
+	see TODO in server\RoomController.js
+
+GRAPHICS:
+	fireball - 3 frames
+	destructible blocks - 3 frames
+	dpad/joystick
+	button A, B
+	gui border for padding area
+
+AUDIO:
+	check this out http://www.bfxr.net/
+	bgm - looping
+	pickup powerup - <1s 
+	kick bomb - <1s 
+	plant bomb - <1s
+	bomb explode - 1s
+
+NOTES:
+	for some reason, Collision component must always be added after everything, otherwise something funny happens
+
+	currently all player state have been added inside @comp Dragon, maybe can extract out later
+
+	Dragons are Burnable (however now, running back onto fire after egg exploded doesnt work)
+	Eggs are Burnable
+	Destructible blocks are Burnable
+
+	Collision Types:
+	Dragon
+	Egg
+	solid
+	Powerup
+
+	hmm
+	Controlled by network manager
+	LocalPlayer id
+	Players[id] to get state
+
+NAT:
+	burnt dragon
+	fireball pickup (after death), enable button to shoot
+	fireball animation (before death)
+	waiting room, playerX selection, ready button, start button
+	egg crack
+	directional pad + action button
+	wingz
+	side bar (player right, fill up white area)
+	destructing tiles

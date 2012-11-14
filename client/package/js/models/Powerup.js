@@ -2,7 +2,7 @@
 
 
 
-function Powerup( x, y, type )
+function Powerup( type, x, y )
 {
 //// PRIVATE VARIABLES
   this._x = x;       // int - x grid object is on
@@ -19,6 +19,8 @@ Powerup.Type =
   BUFF_CAPACITY: 2,
   ABILITY_KICKBOMB: 3
 };
+
+Powerup.MAX_IN_PLAY = 10; // maximum number at one time in game area
 
 
 //// PUBLIC FUNCTIONS

@@ -24,26 +24,45 @@ Crafty.c('Dragon', {
 		this.canKick = false;
 		this.eggCount = 0;
 		this.health = 3;
+		this.hasFireball = true;
 		this.powerups = [];
-		this.dead = false;
 		this.direction = undefined;
 
 		this.pdu = undefined;
 		this.lastUpdate = undefined;
 		this.expectedPosition = undefined;
+		
+		// perform collision detection when the entity is being moved
+		this.bind('Moved', function(oldpos)
+		{
+			this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
+			this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
 
-		this.bind('NewComponent', function(component){
+			if (this.onEgg && this.hit('Egg').length == 1)
+        	{
+        		if (this.hit('solid'))
+            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+        	}
+        	else 
+        	{
+        		if (this.hit('solid') || this.hit('Egg'))
+            	{
+            		var egg = this.hit('Egg');
+            		//TODO: KICK
+            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+            		//this.x = oldpos.x;
+            		//this.y = oldpos.y;
+            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+            	}
+        	}
+		});	
+
+		this.bind('NewComponent', function(component)
+		{
 			// if a controllable component was added to this player
 			if ('Controllable' in this.__c)
 			{
-				this.bind('Moved', function(oldpos){
-					this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
-					this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
-
-					// use DR to check if need to update
-
-					NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
-				});
 				this.bind('NewDirection', function(newdir){
 					var direction;
 					
@@ -64,8 +83,17 @@ Crafty.c('Dragon', {
                     this.direction = direction;
                     this.trigger( "ChangeDirection", direction );
 
-                    if ( direction === Player.Direction.NONE )
+
+                    // TODO: DR
+                    // currently sending update as long as direction changes
+                    // want to make it so that only if successfully turn around the corner then send
+                    // 1. spamming left - right
+                    // 2. walking against solid blocks / walls
+                    NetworkManager.SendMessage(MessageDefinitions.MOVE, { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: this.direction });
+/*
+                  	if ( direction === Player.Direction.NONE )
                     	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
+                    	*/
 				});
 				this.bind('KeyDown', function(keyEvent){
 					if (keyEvent.key == Crafty.keys['A'])
@@ -82,8 +110,7 @@ Crafty.c('Dragon', {
 		this.health -= 1;
 		if (this.health == 0)
 		{
-			this.dead = true;
-			this.destroy(); // temp TODO: shift player to dodgeball area
+			this.trigger('killed');
 		}
 		console.log("lose health: " + this.health);
 	},
@@ -92,13 +119,25 @@ Crafty.c('Dragon', {
 		{
 			this.eggCount += 1;
 			//console.log("planted: " + this.eggCount);
-			NetworkManager.SendMessage(MessageDefinitions.BOMB);
+
+			var data = Map.pixelToTile({x: this.x, y: this.y});
+			data.timestamp = WallClock.getTime();
+			NetworkManager.SendMessage(MessageDefinitions.BOMB, data);
 			Map.spawnEgg(this);
 		};
 	},
 	spitFireball:function(){
-		//console.log("SPIT FIRE!");
-		NetworkManager.SendMessage(MessageDefinitions.FIREBALL);
+		console.log("SPIT FIRE!");
+		if (this.hasFireball)
+		{
+			var pos = Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}));
+			pos.x += this.direction.x;
+			pos.y += this.direction.y;
+			Entities.Fireball().fireball(this.direction)
+								.attr(pos);
+		}
+		
+		NetworkManager.SendMessage(MessageDefinitions.FIREBALL, { timestamp: WallClock.getTime() });
 	},
 	clearEgg: function(){
 		this.eggCount -= 1;
@@ -165,7 +204,7 @@ Crafty.c('Fire', {
 		this.animate("fire_explode", def['anim_fire']);
         this.bind("NewEntity", function(data){
         	// play once upon spawn
-        	if (data.id == this[0] && !this.isPlaying("fire_explode")) this.stop().animate("fire_explode", 18, 1);
+        	if (data.id == this[0] && !this.isPlaying("fire_explode")) this.stop().animate("fire_explode", 24, 1);
         });
 		return this;
 	},
@@ -183,7 +222,22 @@ Crafty.c('Fireball', {
 	init: function(){
 		return this;
 	},
-	fireball: function(){
+	fireball: function(dir){
+		this.bind("EnterFrame", function()
+		{
+			if (this.hit('Dragon'))
+			{
+				this.hit('Dragon')[0].obj.trigger('burn');
+				this.destroy();
+			}
+			if (this.hit('Egg'))
+			{
+				this.hit('Egg')[0].obj.trigger('burn');
+				this.destroy();
+			}
+			this.x += dir.x * EntityDefinitions.FIREBALL_MOVE_SPEED;
+			this.y += dir.y * EntityDefinitions.FIREBALL_MOVE_SPEED;
+		});
 		return this;
 	},
 });
@@ -261,6 +315,7 @@ Crafty.c('Kickable', {
  */
 Crafty.c('Powerup', {
 	init: function(){
+		this.id = undefined;
 		this.type = undefined;
 		return this;
 	},
@@ -271,10 +326,12 @@ Crafty.c('Powerup', {
 			if (hitDragon)
 			{
 				var dragon = hitDragon[0].obj;
-				if (!dragon.has(this.type))
+				if (!dragon.has(this.type + "_powerup"))
 				{
-					dragon.addComponent(this.type);
+					dragon.addComponent(this.type + "_powerup");
 					dragon.trigger('applyPowerup');
+					// send message to inform on collection
+					// NetworkManager.SendMessage(MessageDefinitions.POWERUP, { id: this.id });
 					this.destroy();
 				}
 			}
@@ -285,66 +342,116 @@ Crafty.c('Powerup', {
 
 /*
  * @comp kick
+ * NOT USED
  */
-Crafty.c(EntityDefinitions.POWERUP_KICK, {
+/*
+Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", this.apply);
-		this.bind("unapplyPowerup", this.unapply);
+		this.bind("applyPowerup", function(){});
+		this.bind("unapplyPowerup", function(){ this.removeComponent(EntityDefinitions.POWERUP_KICK); });
 		return this;
 	},
-	apply: function(){},
-	unapply: function(){
-		this.removeComponent(EntityDefinitions.POWERUP_KICK);
-	},
 });
+*/
 
 /*
  * @comp speed
  */
-Crafty.c(EntityDefinitions.POWERUP_SPEED, {
+Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", this.apply);
-		this.bind("unapplyPowerup", this.unapply);
+		this.bind("applyPowerup", function(){
+			this.moveSpeed = 7.5; 
+		});
+		this.bind("unapplyPowerup", function(){ 
+			this.moveSpeed = 5;
+			this.removeComponent(EntityDefinitions.POWERUP_SPEED + "_powerup");
+		});
 		return this;
 	},
-	apply: function(){
-		this.moveSpeed = 10;
-	},
-	unapply: function(){
-		this.moveSpeed = 5;
-	}
 });
 
 /*
  * @comp blast
  */
-Crafty.c(EntityDefinitions.POWERUP_BLAST, {
+Crafty.c(EntityDefinitions.POWERUP_BLAST + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", this.apply);
-		this.bind("unapplyPowerup", this.unapply);
+		this.bind("applyPowerup", function(){ this.blastRadius = 6; });
+		this.bind("unapplyPowerup", function(){ 
+			this.blastRadius = 3;
+			this.removeComponent(EntityDefinitions.POWERUP_BLAST + "_powerup");
+		});
 		return this;
 	},
-	apply: function(){
-		this.blastRadius = 6;
-	},
-	unapply: function(){
-		this.blastRadius = 3;
-	}
 });
 
 /*
  * @comp egg_limit
  */
-Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT, {
+Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", this.apply);
-		this.bind("unapplyPowerup", this.unapply);
+		this.bind("applyPowerup", function(){ this.eggLimit = 6; });
+		this.bind("unapplyPowerup", function(){ this.eggLimit = 3; });
 		return this;
 	},
-	apply: function(){
-		this.eggLimit = 6;
-	},
-	unapply: function(){
-		this.eggLimit = 3;
-	}
 });
+
+Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
+	init: function(){
+		this.bind("applyPowerup", function(){ this.hasFireball = true; });
+		this.bind("unapplyPowerup", function(){});
+		return this;
+	}
+})
+
+/*=======================
+ * Network related components
+ ========================*/
+Crafty.c("NetworkedPlayer", {
+	init: function(){
+		this.bind("network_update", function(data){
+			console.log("network update", data);
+			this.updateState(data);
+		});
+		this.bind("EnterFrame", function(){
+			this.simulate();
+		});
+		return this;
+	},
+	simulate: function()
+	{
+		var oldpos = { x: this.x, y: this.y };
+		switch ( this.direction )
+        {
+        	case Player.Direction.UP:
+        		this.y -= 1;
+        		//if (!this.isPlaying("walk_up")) this.stop().animate("walk_up", 4, -1);
+        		break;
+        	case Player.Direction.DOWN:
+        		this.y += 1;
+        		//if (!this.isPlaying("walk_down")) this.stop().animate("walk_down", 4, -1);
+        		break;
+        	case Player.Direction.LEFT:
+        		this.x -= 1;
+        		//if (!this.isPlaying("walk_left")) this.stop().animate("walk_left", 6, -1);
+        		break;
+        	case Player.Direction.RIGHT:
+        		this.x += 1;
+        		//if (!this.isPlaying("walk_right")) this.stop().animate("walk_right", 6, -1);
+        		break;
+        	case Player.Direction.NONE:
+        		//this.stop();
+        		break;
+        }
+        this.trigger('Moved', oldpos);
+	},
+	updateState: function(data)
+	{
+		this.x = data.x;
+		this.y = data.y;
+		this.moveSpeed = data.speed;
+		this.direction = data.dir;
+		this.trigger('ChangeDirection', data.dir);
+	}
+})
+
+

@@ -13,8 +13,11 @@ function Bomb( x, y, range, owner )
 }
 
 
-//// PUBLIC FUNCTIONS
+//// CONSTANTS
+Bomb.DURATION = 1500;
 
+
+//// PUBLIC FUNCTIONS
 Bomb.prototype.GetX = function()
 {
   return this._x;
@@ -42,7 +45,7 @@ Bomb.prototype.Serialize = function()
     x: this._x,
     y: this._y,
     range: this._range,
-    //owner: this._owner
+    owner: this._owner,
   };
 }
 

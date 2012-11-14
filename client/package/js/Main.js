@@ -7,6 +7,6 @@ window.onload = function()
 	Crafty.background("#FFFFFF");
 	
 	SceneManager.RunWithScene(SceneDefinitions.WaitingRoomScene);
-	// SceneManager.RunWithScene(SceneDefinitions.GameScene);
+	//SceneManager.RunWithScene(SceneDefinitions.GameScene);
 	//SceneManager.RunWithScene(SceneDefinitions.SplashScene);
 };
