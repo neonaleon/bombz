@@ -34,6 +34,14 @@ RoomController.prototype.GetPlayerFromSocket = function( socket )
   return undefined;
 }
 
+RoomController.prototype.SendDelayed = function( socket, message, data, delay )
+{
+  setTimeout( function()
+  {
+    socket.emit( message, data );
+  }, delay );
+}
+
 RoomController.prototype.Broadcast = function( message, data, excludeSocket )
 {
   var players = this._room.GetPlayers();
@@ -49,30 +57,22 @@ RoomController.prototype.FairBroadcast = function( message, data )
   for ( var i in players )
   {
     var player = players[ i ];
-    delays.push( { id: player.GetID(), delay: player.GetDelay() } );
+    delays.push( { player: player, delay: player.GetDelay() } );
   }
 
+  // sort in to descending delay, slowest to fastest player
   delays.sort( function( a, b )
   {
     return b.delay - a.delay;
   });
-
-// console.log(delays);
-
-  var sum = 0;
+  
+  // delay everyone's packet relative to slowest player
   for ( var i = 0; i < delays.length; i++ )
   {
     var entry = delays[ i ];
-    var delay = entry.delay;
-    var player = this._room.GetPlayer( entry.id );
-
-    if ( i !== 0 )
-      sum += ( delays[ i - 1 ].delay - delay );
-
-    setTimeout( function()
-    {
-      player.GetSocket().emit( message, data );
-    }, sum );
+    var player = entry.player;
+    var delay = delays[ 0 ].delay - entry.delay;
+    this.SendDelayed( player.GetSocket(), message, data, delay );
   }
 }
 
@@ -171,7 +171,7 @@ RoomController.prototype.StartGame = function()
       var powerup = roomController.GetMap().SpawnPowerup();
       roomController.FairBroadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
     }
-  }, 5000 );
+  }, 10000 );
 };
 
 // end the game
@@ -264,7 +264,6 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
 
       var delay = ( new Date() ).getTime() - data.timestamp;
       player.WeightedAverageDelay( delay );
-      console.log(player.GetDelay())
 
       data.pid = player.GetID();
       data.speed = player.GetSpeed();
@@ -291,6 +290,25 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       var data = {};
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
       roomController.Broadcast( MessageDefinitions.FIREBALL, data, socket );
+    });
+
+    // player picks a fireball
+    socket.on( MessageDefinitions.POWERUP, function( data )
+    {
+      var powerup = roomController.GetMap().GetPowerup( data.x, data.y );
+
+      if ( powerup !== undefined )
+      {
+        // need to put into queue instead
+
+        var player = roomController.GetPlayerFromSocket( socket );
+        delete data.timestamp;
+        data.pid = player.GetID();
+        data.type = powerup.GetType();
+        powerup.ApplyEffect( player );
+        roomController.GetMap().RemovePowerup( powerup );
+        roomController.Broadcast( MessageDefinitions.POWERUP, data );
+      }
     });
 
     /*

@@ -61,6 +61,17 @@ Map.prototype.SetTile = function( x, y, type )
   this._tiles[ ( this._width * y ) + x ] = type;
 }
 
+Map.prototype.GetPowerup = function( x, y )
+{
+  for ( var i in this._powerups )
+  {
+    var powerup = this._powerups[ i ];
+    if ( powerup.GetX() === x && powerup.GetY() === y )
+      return powerup;
+  }
+  return undefined;
+}
+
 // add a bomb to the map
 Map.prototype.AddBomb = function( bomb )
 {
