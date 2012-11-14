@@ -155,6 +155,14 @@ Map.spawnEgg = function(dragon)
 	return egg;
 }
 
+Map.spawnEggOnTile = function(dragon, tile)
+{
+	// spawn egg on the dragon making the egg
+	var egg = Entities.Egg(dragon).attr(Map.tileToPixel(tile)); 
+	egg.z = Map.Z_EGG;
+	return egg;
+}
+
 Map.spawnPowerup = function(type, x, y)
 {
 	var powerup = Entities.Powerup(type).attr(Map.tileToPixel({ x: x, y: y }));
