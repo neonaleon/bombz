@@ -275,9 +275,6 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     {
       var player = roomController.GetPlayerFromSocket( socket );
 
-      //var bomb = new Bomb( data.x + 2, data.y + 2, player.GetBombRange(), player.GetID() );
-      //roomController.GetMap().AddBomb( bomb );
-
       // set timer till bomb explodes and check again??
       data.owner = player.GetID();
       data.range = player.GetBombRange();
