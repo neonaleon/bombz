@@ -308,14 +308,18 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       }
     });
 
-    /*
-    // player kicks a bomb
-    socket.on( MessageDefinitions.KICK, function( data )
+    // player dies
+    socket.on( MessageDefinitions.DEATH, function( data )
     {
-      // CHECK If PLAYER HAS ABILITY
-      console.log( 'onKickBomb' );
+      var player = roomController.GetPlayerFromSocket( socket );
+      data.pid = player.GetID();
+
+      var position = roomController.GetMap().RandomDodgeballSpawnPosition();
+      data.x = position.x;
+      data.y = position.y;
+
+      roomController.Broadcast( MessageDefinitions.DEATH, data );
     });
-    */
   }
 }
 

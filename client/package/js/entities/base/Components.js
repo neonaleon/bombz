@@ -112,7 +112,11 @@ Crafty.c('Dragon', {
 		this.health -= 1;
 		if (this.health == 0)
 		{
-			this.trigger('killed');
+			//this.trigger('killed');
+
+			// only send update if local dragon
+			if ('Controllable' in this.__c)
+				NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
 		}
 		console.log("lose health: " + this.health);
 	},

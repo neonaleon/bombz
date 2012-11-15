@@ -145,10 +145,10 @@ Entities.Dragon = function(color)
                     }
                 })
                 .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
-                .bind('killed', function(){ 
-                	console.log("KILLED"); 
+                .bind('killed', function( data ){ 
+                	console.log("KILLED");
                 	// TODO: animate death? then spawn player outside, notify server
-                	Map.movePlayerOutside(this);
+                	Map.movePlayerOutside(this, data);
                 });
 	return dragon;
 };
