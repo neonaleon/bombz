@@ -42,7 +42,7 @@ Entities.BurningBlock = function()
 					{
 						this.played = true;
 						this.stop().animate("tile_burn", 12, 0);
-						this.timeout(function(){ this.destroy(); }, 600)
+						this.timeout(function(){ this.destroy(); }, 500)
 					}
 				 });
 };
@@ -54,7 +54,7 @@ Entities.SolidBlock = function()
 
 Entities.DodgeBallBlock = function()
 {
-	return Crafty.e(Properties.RENDERER + ", 2D, solid, tileDB");
+	return Crafty.e(Properties.RENDERER + ", 2D, tileDB");
 };
 
 Entities.FloorTile = function()
@@ -64,7 +64,7 @@ Entities.FloorTile = function()
 
 Entities.Sidebar = function()
 {
-	return Crafty.e("2D, DOM, Image").image("/img/sidebar.png");
+	return Crafty.e("2D, DOM, solid, Image").image("/img/sidebar.png");
 };
 
 Entities.SDBlock = function()
@@ -104,7 +104,7 @@ Entities.Dragon = function(color)
 	// create dragon entity
 	var dragon = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Dragon, " + color + 'dragon')
 						.setName(color + 'dragon')
-						.bind('burn', function(){ console.log("s");dragon.loseHealth(); })
+						.bind('burn', function(){ console.log("burnt"); this.loseHealth(); })
 						.dragon(color);
 
 	// add animation and collision logic
@@ -178,8 +178,11 @@ Entities.Powerup = function(type)
 
 	var powerup = Crafty.e(Properties.RENDERER + ", 2D, Powerup, Destructible, Burnable, " + type)
 							.powerup(type)
-							.bind('burn', function(){ this.destroy(); });
-	powerup.addComponent("Collision, WiredHitBox,").collision([0, 0], [40, 0], [40, 40], [0, 40]);
+							.bind('burn', function(){
+								this.destroy();
+								Entities.BurningBlock().attr({ x: this.x, y: this.y, z: Map.Z_BURNING });
+							});
+	powerup.addComponent("Collision");
 	return powerup;
 }
 
