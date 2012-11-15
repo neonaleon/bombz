@@ -91,15 +91,7 @@ Crafty.c('Dragon', {
                     // want to make it so that only if successfully turn around the corner then send
                     // 1. spamming left - right
                     // 2. walking against solid blocks / walls
-                    NetworkManager.SendMessage(MessageDefinitions.MOVE, { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: this.direction });
-/*
-                  	if ( direction === Player.Direction.NONE )
-                    	NetworkManager.SendMessage(MessageDefinitions.MOVE, { x: this.x, y: this.y, dir: this.direction });
-                    
-=======
                     NetworkManager.SendMessage(MessageDefinitions.MOVE, { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction });
->>>>>>> 9b047dd8f2de4e014b1c9043a5e3cbd22cd3117b
-*/
 				});
 				this.bind('KeyDown', function(keyEvent){
 					if (keyEvent.key == Crafty.keys['A'])
