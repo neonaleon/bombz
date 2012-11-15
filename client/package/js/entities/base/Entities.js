@@ -109,8 +109,6 @@ Entities.Dragon = function(color)
 							this.removeComponent('Burnable', false); 
 							this.die(); })
 						.dragon(color);
-	//TODO		
-	//dragon.bind('Move', function(){console.log("hello world")});
 
 	// add animation and collision logic
 	dragon.addComponent("SpriteAnimation, Collision, WiredHitBox")
@@ -152,7 +150,6 @@ Entities.Dragon = function(color)
                 .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
                 .bind('killed', function( data ){
                 	this.unbind('killed');
-                	console.log("KILLED");
                 	// TODO: animate death? then spawn player outside, notify server
                 	Map.movePlayerOutside(this, data);
                 });

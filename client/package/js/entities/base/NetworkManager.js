@@ -41,24 +41,3 @@ NetworkManager.ClearListeners = function (msg)
 {
 	socket.removeAllListeners(msg);
 }
-
-/* NYI
-// Request to join a Room
-NetworkManager.JoinGame = function (gameID)
-{
-	socket.emit("joingame", { "gameID": gameID });
-};
-
-// Request for a list of available Rooms
-NetworkManager.RequestGameList = function (handler)
-{
-	handler(null); //TEST
-	// request for game list from server, async
-	socket.on("gamelist", function(data){
-		socket.removeAllListeners("gamelist");
-		handler(data);
-	});
-};
-*/
-
-
