@@ -76,11 +76,6 @@ var handler_Seat = function( buttonIndex, value )
  * GAME SCENE
  * Game scene is where the game will be played
  */
-var delta;
-function getWallClockTime()
-{
-	return parseInt( ( new Date() ).getTime() + delta );
-}
 SceneDefinitions.GameScene = new Scene("GameScene", function()
 {
 	console.log("game scene running");
@@ -106,8 +101,9 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 		dragons[ player.GetID() ] = Map.spawnPlayer( player.GetColor() );
 		// add networked player component to sync state of remote players
 		if (player.GetID() != GameState.GetLocalPlayer().GetID()) dragons[player.GetID()].addComponent('NetworkedPlayer');
-		else dragons[player.GetID()].addComponent('LocalPlayer');
 	}
+	
+	dragons[GameState.GetLocalPlayer().GetID()].addComponent('LocalPlayer');
 
 	// setup GUI
 	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400});

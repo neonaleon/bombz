@@ -1,5 +1,6 @@
 var WallClock = {
 	_delta: undefined,
+	delay: undefined,
 };
 
 
@@ -11,7 +12,7 @@ WallClock.sync = function()
 	{
 		var time = ( new Date() ).getTime();
 		var RTT = time - parseInt( data.clientTime );
-		var delay = parseInt( RTT / 2 );
+		wallClock.delay = parseInt( RTT / 2 );
 
 		wallClock._delta = parseInt( data.serverTime ) - time + delay;
 

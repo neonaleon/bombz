@@ -106,6 +106,8 @@ Entities.Dragon = function(color)
 						.setName(color + 'dragon')
 						.bind('burn', function(){ this.removeComponent('Burnable'); this.die(); })
 						.dragon(color);
+						
+	dragon.bind('Move', function(){console.log("hello world")});
 
 	// add animation and collision logic
 	dragon.addComponent("SpriteAnimation, Collision, WiredHitBox")
@@ -145,7 +147,8 @@ Entities.Dragon = function(color)
                     }
                 })
                 .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
-                .bind('killed', function( data ){ 
+                .bind('killed', function( data ){
+                	this.unbind('killed');
                 	console.log("KILLED");
                 	// TODO: animate death? then spawn player outside, notify server
                 	Map.movePlayerOutside(this, data);
