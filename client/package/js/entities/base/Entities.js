@@ -64,7 +64,9 @@ Entities.FloorTile = function()
 
 Entities.Sidebar = function()
 {
-	return Crafty.e("2D, DOM, solid, Image").image("/img/sidebar.png");
+	var def = SpriteDefinitions['tempgui'];
+	Crafty.sprite(def['tile'], def['tileh'], def['file'], def['elements']);
+	return Crafty.e("2D, DOM, solid, sidebar");
 };
 
 Entities.SDBlock = function()

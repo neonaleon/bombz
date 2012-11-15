@@ -93,6 +93,15 @@ SpriteDefinitions['gui'] = {
 	}
 };
 
+SpriteDefinitions['tempgui'] = {
+	'file': '/img/sidebar.png',
+	'tile': 137,
+	'tileh': 600,
+	'elements': {
+		sidebar: [0, 0],
+	}
+};
+
 SpriteDefinitions['powerup'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
