@@ -22,9 +22,9 @@ Crafty.c('Dragon', {
 		this.blastRadius = 3;
 		this.moveSpeed = 5;
 		this.eggLimit = 3;
-		this.canKick = false;
+		//this.canKick = false;
 		this.eggCount = 0;
-		this.health = 3;
+		this.health = 1;
 		this.hasFireball = true;
 		this.powerups = [];
 		this.direction = undefined;
@@ -160,7 +160,8 @@ Crafty.c('Egg', {
 	init: function(){
 		this.owner = undefined;
 		this.bind('explode', this.explode);
-		this.bind('MouseDown', this.kick);
+		//this.bind('MouseDown', this.kick);
+		/*
 		this.bind('Moved', function(oldpos)
 		{
 			this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
@@ -170,9 +171,11 @@ Crafty.c('Egg', {
         	{
         		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
         	}
-        });	
+        });
+        */	
 		return this;
 	},
+	/*
 	kick: function(){
 		if (this.owner.canKick) {
 			this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
@@ -180,6 +183,7 @@ Crafty.c('Egg', {
 
 		}
 	},
+	*/
 	explode: function(){
 		Crafty.audio.play(AudioDefinitions.EXPLODE);
 
@@ -196,8 +200,15 @@ Crafty.c('Egg', {
 				var fire = Crafty.e('Fire').fire(500);
 				fire.z = Map.Z_FIRE;
 				fire.attr(Map.tileToPixel({ x: eggPos.x + j*dir[0], y: eggPos.y + j*dir[1]}));
-				if (fire.hit('Burnable')) { fire.hit('Burnable')[0].obj.trigger('burn'); break; };
-				if (fire.hit('solid')) { fire.destroy(); break; };
+				var dragons = fire.hit('Dragon');
+				if (dragons)
+				{
+					for (var i = 0; i < dragons.length; i++)
+						dragons[i].obj.trigger('burn'); 
+				}
+				var blocks = fire.hit('Burnable');
+				if (blocks) { if (!blocks[0].obj.has('Dragon')) blocks[0].obj.trigger('burn'); break; }
+				if (fire.hit('solid')) { fire.destroy(); break; }
 			}
 		}
 		this.owner.clearEgg();
@@ -218,7 +229,7 @@ Crafty.c('Fire', {
 	init: function(){
 		var def = SpriteDefinitions['effects'];
 		Crafty.sprite(def['tile'], def['file'], def['elements']);
-		this.requires(Properties.RENDERER + ", 2D, SpriteAnimation, Collision, fire");
+		this.requires(Properties.RENDERER + ", 2D, fire, SpriteAnimation, Collision");
 		this.animate("fire_explode", def['anim_fire']);
         this.bind("NewEntity", function(data){
         	// play once upon spawn
@@ -374,10 +385,10 @@ Crafty.c('Powerup', {
 Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){
-			this.canKick = true;
+			//this.canKick = true;
 		});
 		this.bind("unapplyPowerup", function(){ 
-			this.canKick = false;
+			//this.canKick = false;
 			this.removeComponent(EntityDefinitions.POWERUP_KICK); 
 		});
 		return this;
@@ -468,7 +479,7 @@ Crafty.c("NetworkedPlayer", {
         	case Player.Direction.NONE:
         		break;
         }
-        //this.trigger('Moved', oldpos);
+        this.trigger('Moved', oldpos);
 	},
 	updateState: function(data)
 	{
