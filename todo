@@ -2,7 +2,7 @@ TODO:
 	MAP:
 		-----DR (zero order now)
 		artificial delay (eldo)
-		local lag and lpf (leon) 250 bomb fuse
+		local lag and lpf (leon) 250 bomb fuse, burnable powerups
 		player death
 		fireball logic
 		gui elements for waiting room (need to reflect changes for player)

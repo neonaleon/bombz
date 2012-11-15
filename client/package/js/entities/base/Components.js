@@ -35,12 +35,6 @@ Crafty.c('Dragon', {
 		// perform collision detection when the entity is being moved
 		this.bind('Moved', function(oldpos)
 		{
-			this.timeout(function(){
-				this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
-				this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
-			}, NetworkManager.localLag);
-			console.log(NetworkManager.localLag);
-			/*
 			this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
 			this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
 	
@@ -63,7 +57,6 @@ Crafty.c('Dragon', {
             		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
             	}
         	}
-        	*/
 		});	
 		
 		this.bind('NewComponent', function(component)

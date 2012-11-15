@@ -36,12 +36,14 @@ Entities.BurningBlock = function()
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	return Crafty.e(Properties.RENDERER + ", 2D, SpriteAnimation, tileB")
 				 .animate("tile_burn", def['anim_tile_burn'])
-				 .bind('NewEntity', function(data){
-					if (!this.isPlaying("tile_burn")) {
+				 .attr({ played: false })
+				 .bind('EnterFrame', function(data){
+					if (!this.played)
+					{
+						this.played = true;
 						this.stop().animate("tile_burn", 12, 0);
-					} else
-						console.log(data.id + " " + this[0]);
-					this.timeout(function(){ this.destroy(); }, 500)
+						this.timeout(function(){ this.destroy(); }, 600)
+					}
 				 });
 };
 
