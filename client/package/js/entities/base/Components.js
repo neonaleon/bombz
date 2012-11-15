@@ -22,11 +22,8 @@ Crafty.c('Dragon', {
 		this.blastRadius = 3;
 		this.moveSpeed = 5;
 		this.eggLimit = 3;
-		//this.canKick = false;
 		this.eggCount = 0;
-		this.health = 1;
 		this.hasFireball = true;
-		this.powerups = [];
 		this.direction = undefined;
 
 		this.lastUpdate = undefined;
@@ -108,16 +105,11 @@ Crafty.c('Dragon', {
 		this.color = color;
 		return this;
 	},
-	loseHealth: function(){
-		this.health -= 1;
-		if (this.health == 0)
-		{
-			//this.trigger('killed');
-
-			// only send update if local dragon
-			if ('Controllable' in this.__c)
-				NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
-		}
+	die: function(){
+		// only send update if local dragon
+		if (this.has('LocalPlayer'))
+			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
+		
 		console.log("lose health: " + this.health);
 	},
 	layEgg: function(){
