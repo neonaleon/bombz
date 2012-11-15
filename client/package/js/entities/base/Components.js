@@ -107,10 +107,10 @@ Crafty.c('Dragon', {
 	},
 	die: function(){
 		// only send update if local dragon
-		if (this.has('LocalPlayer'))
+		if (this.has('LocalPlayer')) 
+		{
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
-		
-		console.log("DIE BITCH");
+		}
 	},
 	layEgg: function(){
 		if (!this.onEgg && this.eggCount < this.eggLimit)
@@ -187,11 +187,11 @@ Crafty.c('Egg', {
 				var dragons = fire.hit('Dragon');
 				if (dragons)
 				{
-					for (var i = 0; i < dragons.length; i++)
-						dragons[i].obj.trigger('burn'); 
+					for (var k = 0; k < dragons.length; k++)
+						dragons[k].obj.trigger('burn'); 
 				}
 				var blocks = fire.hit('Burnable');
-				if (blocks) { if (!blocks[0].obj.has('Dragon')) blocks[0].obj.trigger('burn'); break; }
+				if (blocks) { if (!blocks[0].obj.has('Dragon')) { blocks[0].obj.trigger('burn'); break; }}
 				if (fire.hit('solid')) { fire.destroy(); break; }
 			}
 		}

@@ -14,7 +14,7 @@ WallClock.sync = function()
 		var RTT = time - parseInt( data.clientTime );
 		wallClock.delay = parseInt( RTT / 2 );
 
-		wallClock._delta = parseInt( data.serverTime ) - time + delay;
+		wallClock._delta = parseInt( data.serverTime ) - time + wallClock.delay;
 
 		NetworkManager.ClearListeners(MessageDefinitions.TIME);
 

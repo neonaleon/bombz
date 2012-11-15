@@ -104,10 +104,13 @@ Entities.Dragon = function(color)
 	// create dragon entity
 	var dragon = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Dragon, " + color + 'dragon')
 						.setName(color + 'dragon')
-						.bind('burn', function(){ this.removeComponent('Burnable'); this.die(); })
+						.bind('burn', function(){ 
+							this.unbind('burn'); 
+							this.removeComponent('Burnable', false); 
+							this.die(); })
 						.dragon(color);
-						
-	dragon.bind('Move', function(){console.log("hello world")});
+	//TODO		
+	//dragon.bind('Move', function(){console.log("hello world")});
 
 	// add animation and collision logic
 	dragon.addComponent("SpriteAnimation, Collision, WiredHitBox")
