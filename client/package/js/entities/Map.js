@@ -61,8 +61,12 @@ Map.generate = function(mapData)
 			switch ( tile )
 			{
 				case 0: // outermost border for dodge ballers
+				if (!(dy==0 || dy==mapData.height-1 || dx==0 || dx==mapData.width-1) )
 					map.attach(
 						Entities.FloorTile().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
+				else
+					map.attach(
+						Entities.DodgeBallBlock().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
 					break;
 
 				case 1: // floor with destructible tile
@@ -89,10 +93,14 @@ Map.generate = function(mapData)
 	map.shift(0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), 0);
 	
 	// build the 4 extents
-	// left
-	Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: 0, y: 0});
-	// right
-	Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: map.x + Map.MAP_WIDTH, y: 0});
+	// // left
+	// Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: 0, y: 0});
+	map.attach(
+		Entities.Sidebar().attr({ x: 0, y: 0, z: Map.Z_INDESTRUCTIBLE }));
+	// // right
+	// Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: map.x + Map.MAP_WIDTH, y: 0});
+	map.attach(
+		Entities.Sidebar().attr({x: map.x + Map.MAP_WIDTH, y: 0, z: Map.Z_INDESTRUCTIBLE }));
 	// top
 	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: -10});
 	// bottom

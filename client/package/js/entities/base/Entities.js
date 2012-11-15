@@ -52,9 +52,19 @@ Entities.SolidBlock = function()
 	return Crafty.e(Properties.RENDERER + ", 2D, solid, tileI");
 };
 
+Entities.DodgeBallBlock = function()
+{
+	return Crafty.e(Properties.RENDERER + ", 2D, solid, tileDB");
+};
+
 Entities.FloorTile = function()
 {
 	return Crafty.e("2D, DOM, floor");
+};
+
+Entities.Sidebar = function()
+{
+	return Crafty.e("2D, DOM, Image").image("/img/sidebar.png");
 };
 
 Entities.SDBlock = function()
