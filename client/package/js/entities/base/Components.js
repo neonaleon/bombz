@@ -448,6 +448,13 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 /*=======================
  * Network related components
  ========================*/
+Crafty.c("LocalPlayer", {
+	init: function(){
+		this.requires("Controllable");
+		return this;
+	}
+});
+
 Crafty.c("NetworkedPlayer", {
 	init: function(){
 		this.bind("network_update", function(data){

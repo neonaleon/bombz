@@ -3,7 +3,7 @@ TODO:
 		-----DR (zero order now)
 		artificial delay (eldo)
 		local lag and lpf (leon) 250 bomb fuse, burnable powerups
-		player death
+		player death (visual trick, use animation and .5 alpha to make player tp out)
 		fireball logic
 		gui elements for waiting room (need to reflect changes for player)
 
@@ -18,7 +18,7 @@ LATEST CHANGES:
 		
 
 BUGS: // report any bugs here, please include a description and the steps to repro it
-	sudden death block issue
+	-----sudden death block issue
 	-----movespeed powerup causes character to get stuck
 
 	-----Egg is kickable, but if add collision component, cannot chain explosion

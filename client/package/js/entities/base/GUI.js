@@ -52,11 +52,9 @@ GUI.ActionButton = function(button)
 }
 
 // Creates a dpad which moves the target entity with speed, and invokes button handlers when GUI.ACTION_BUTTON_A, or B is pressed.
-GUI.Dpad = function (entity, speed, aHandler, bHandler)
+GUI.Dpad = function (entity)
 {
    var dpad = Crafty.e('Controller, dpad').attr({z:GUIDefinitions.Z_GUI});
-   
-   	entity.addComponent("Controllable").controllable(speed, aHandler, bHandler);
    	
    	return dpad;
 }
@@ -258,10 +256,7 @@ Crafty.c('Controller', {
 Crafty.c('Controllable', {
 	init: function(){
 		this.requires("Keyboard, Multiway");
-		return this;
-	},
-	controllable: function(){
 		this.multiway(1, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
 		return this;
-	}
+	},
 })
