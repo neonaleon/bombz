@@ -95,12 +95,10 @@ Map.generate = function(mapData)
 	// build the 4 extents
 	// // left
 	// Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: 0, y: 0});
-	map.attach(
-		Entities.Sidebar().attr({ x: 0, y: 0, z: Map.Z_INDESTRUCTIBLE }));
+	Entities.Sidebar().attr({ x: 0, y: 0, z: Map.Z_INDESTRUCTIBLE });
 	// // right
 	// Entities.Extents().color("#000000").attr({w: 0.5*(Properties.DEVICE_WIDTH - Map.MAP_WIDTH), h: Properties.DEVICE_HEIGHT, x: map.x + Map.MAP_WIDTH, y: 0});
-	map.attach(
-		Entities.Sidebar().attr({x: map.x + Map.MAP_WIDTH, y: 0, z: Map.Z_INDESTRUCTIBLE }));
+	Entities.Sidebar().attr({x: map.x + Map.MAP_WIDTH, y: 0, z: Map.Z_INDESTRUCTIBLE });
 	// top
 	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: -10});
 	// bottom

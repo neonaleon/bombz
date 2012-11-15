@@ -128,7 +128,7 @@ Crafty.c('Dragon', {
 			var data = Map.pixelToTile({x: this.x, y: this.y});
 			data.timestamp = WallClock.getTime();
 			NetworkManager.SendMessage(MessageDefinitions.BOMB, data);
-			Map.spawnEgg(this);
+			this.timeout(function (){ Map.spawnEggOnTile(this, data); }, NetworkManager.localLag);
 		};
 	},
 	spitFireball:function(){

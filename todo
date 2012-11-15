@@ -4,7 +4,7 @@ TODO:
 		artificial delay
 
 		(leon)
-		local lag
+		-----local lag done for movement and animation and bomb
 		lpf 250 bomb fuse, burnable powerups
 
 		player death (visual trick, use animation and .5 alpha to make player tp out)
