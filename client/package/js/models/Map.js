@@ -176,7 +176,7 @@ Map.prototype.BombExplode = function( bomb )
         break;
 
       var tile = this.GetTile( x, y );
-console.log(x,y);
+
       if ( tile == Map.Tile.EMPTY )
       {
         // check if explosion hits any powerups
@@ -282,6 +282,22 @@ Map.prototype.Generate = function()
     this._powerups.push( new Powerup( powerups[ i ], x, y ) );
   }
 };
+
+Map.prototype.RandomDodgeballSpawnPosition = function()
+{
+  var position = {};
+  if ( Math.random() > 0.5 )
+  {
+    position.x = ( Math.random() > 0.5 ) ? 0 : this._width - 1; // left or right
+    position.y = Math.floor( Math.random() * ( this._height - 1 ) ); 
+  }
+  else
+  {
+    position.x = Math.floor( Math.random() * ( this._width - 1 ) );
+    position.y = ( Math.random() > 0.5 ) ? 0 : this._height - 1; // top or bottom
+  }
+  return position;
+}
 
 // representation
 // used when map is just generated at start of game

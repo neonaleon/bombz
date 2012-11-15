@@ -104,7 +104,7 @@ Entities.Dragon = function(color)
 	// create dragon entity
 	var dragon = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Dragon, " + color + 'dragon')
 						.setName(color + 'dragon')
-						.bind('burn', function(){ dragon.loseHealth(); })
+						.bind('burn', function(){ console.log("s");dragon.loseHealth(); })
 						.dragon(color);
 
 	// add animation and collision logic
@@ -145,10 +145,10 @@ Entities.Dragon = function(color)
                     }
                 })
                 .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
-                .bind('killed', function(){ 
-                	console.log("KILLED"); 
+                .bind('killed', function( data ){ 
+                	console.log("KILLED");
                 	// TODO: animate death? then spawn player outside, notify server
-                	Map.movePlayerOutside(this);
+                	Map.movePlayerOutside(this, data);
                 });
 	return dragon;
 };

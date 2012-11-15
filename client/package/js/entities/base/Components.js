@@ -24,7 +24,7 @@ Crafty.c('Dragon', {
 		this.eggLimit = 3;
 		this.canKick = false;
 		this.eggCount = 0;
-		this.health = 3;
+		this.health = 1;
 		this.hasFireball = true;
 		this.powerups = [];
 		this.direction = undefined;
@@ -97,7 +97,7 @@ Crafty.c('Dragon', {
 					if (keyEvent.key == Crafty.keys['A'])
 						this.layEgg();
 					if (keyEvent.key == Crafty.keys['B'])
-						this.spitFireball();
+						NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });//this.spitFireball();
 				});
 				this.unbind('NewComponent');
 			}

@@ -179,27 +179,10 @@ Map.spawnPowerup = function(type, x, y)
 	return powerup;
 }
 
-Map.movePlayerOutside = function(dragon)
+Map.movePlayerOutside = function(dragon, position)
 {
-	// actually this spawning code can be used for spawning fireballs as well hmm.
-	var pos = {x:0, y:0};
-	if (Math.random() > 0.5)
-	{
-		pos.x = (Math.random() > 0.5) ? 0 : Map.MAP_OUTER_TILEW - 1; // left or right
-		pos.y = Math.floor(Math.random()*(Map.MAP_OUTER_TILEH - 1)); 
-	}
-	else
-	{
-		pos.x = Math.floor(Math.random()*(Map.MAP_OUTER_TILEW - 1));
-		pos.y = (Math.random() > 0.5) ? 0 : Map.MAP_OUTER_TILEH - 1; // top or bottom
-	}
-	Map._movePlayerOutside(dragon, pos);
-}
-// modify and use this when using server (refer to above function)
-Map._movePlayerOutside = function(dragon, pos)
-{
-	dragon.x = pos.x * Map.MAP_TILEWIDTH + Map._instance.x;
-	dragon.y = pos.y * Map.MAP_TILEHEIGHT;
+	dragon.x = position.x * Map.MAP_TILEWIDTH + Map._instance.x;
+	dragon.y = position.y * Map.MAP_TILEHEIGHT;
 }
 
 Map.suddenDeath = function()

@@ -89,7 +89,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	WallClock.sync(); // sync wallclock with server so we can use timestamps
 	NetworkManager.AddListener(MessageDefinitions.MOVE, handler_Move);
 	NetworkManager.AddListener(MessageDefinitions.BOMB, handler_Bomb);
-	NetworkManager.AddListener(MessageDefinitions.KICK, handler_Kick);
+	NetworkManager.AddListener(MessageDefinitions.DEATH, handler_Death);
 	NetworkManager.AddListener(MessageDefinitions.LEAVE, handler_Leave); // player leaves/disconnects
 	NetworkManager.AddListener(MessageDefinitions.POWERUP, handler_Powerup);
 	NetworkManager.AddListener(MessageDefinitions.FIREBALL, handler_Fireball);
@@ -128,6 +128,10 @@ var handler_Bomb = function(data)
 {
 	Map.spawnEggOnTile( dragons[ data.owner ], { x: data.x, y: data.y } );
 };
+var handler_Death = function(data)
+{
+	dragons[ data.pid ].trigger('killed', data);
+};
 var handler_Powerup = function(powerup)
 {
 	if (powerup.pid !== undefined)
@@ -155,10 +159,6 @@ var handler_Powerup = function(powerup)
 	{
 		Map.spawnPowerup(EntityDefinitions.POWERUP_SPRITES[powerup.type], powerup.x, powerup.y);
 	}
-};
-var handler_Kick = function(data)
-{
-
 };
 var handler_Fireball = function(data)
 {
