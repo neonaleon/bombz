@@ -24,9 +24,10 @@ var Map = {
 	Z_DESTRUCTIBLE:3,
 	Z_INDESTRUCTIBLE:4,
 	Z_FIRE: 5,
-	Z_EGG: 6,
-	Z_FIREBALL: 7,
-	Z_DRAGON: 8,
+	Z_BURNING: 6,
+	Z_EGG: 7,
+	Z_FIREBALL: 8,
+	Z_DRAGON: 9,
 	
 	// 4 corner spawn positions
 	SPAWN_POSITIONS: [[0, 0], [14, 0], [0, 10], [14, 10]],
@@ -77,8 +78,8 @@ Map.generate = function(mapData)
 					break;
 
 				default:
-					map.attach(
-		    			Entities.SolidBlock().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
+					// map.attach(
+		   //  			Entities.SolidBlock().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_INDESTRUCTIBLE }));
 					break;
 			}
 		}

@@ -1,6 +1,7 @@
 /*
  * Entities.js
  * @author: Leon Ho
+ * @coauther: Nat
  */
 
 var Entities = {};
@@ -22,7 +23,26 @@ Entities.Map = function(map_name)
 Entities.DestructibleBlock = function()
 {
 	return Crafty.e(Properties.RENDERER + ", 2D, Destructible, Burnable, solid, tileD")
-					.bind('burn', function(){ this.destroy(); });
+				 .bind('burn', function(){
+				 	this.removeComponent('Burnable', false);
+					this.destroy();
+					var burnBlock = Entities.BurningBlock().attr({ x: this.x, y: this.y, z: Map.Z_BURNING });
+				 });
+};
+
+Entities.BurningBlock = function()
+{
+	var def = SpriteDefinitions['map1']; //hard coded
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	return Crafty.e(Properties.RENDERER + ", 2D, SpriteAnimation, tileB")
+				 .animate("tile_burn", def['anim_tile_burn'])
+				 .bind('NewEntity', function(data){
+					if (!this.isPlaying("tile_burn")) {
+						this.stop().animate("tile_burn", 12, 0);
+					} else
+						console.log(data.id + " " + this[0]);
+					this.timeout(function(){ this.destroy(); }, 500)
+				 });
 };
 
 Entities.SolidBlock = function()

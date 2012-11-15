@@ -1,6 +1,7 @@
 /*
  * Components.js
  * @author: Leon Ho
+ * @coauthor: Nat
  * Contains components that are involved in game logic.
  * Generally used for creating our game entities in Entities.js
  */
@@ -44,24 +45,25 @@ Crafty.c('Dragon', {
 			this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
 	
 			if (this.onEgg && this.hit('Egg').length == 1)
-	    	{
-	    		if (this.hit('solid'))
-	        		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
-	    	}
-	    	else 
-	    	{
-	    		if (this.hit('solid') || this.hit('Egg'))
-	        	{
-	        		var egg = this.hit('Egg');
-	        		//TODO: KICK
-	        		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
-	        		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
-	        		//this.x = oldpos.x;
-	        		//this.y = oldpos.y;
-	        		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
-	        	}
-	    	}
-	    	*/
+        	{
+        		if (this.hit('solid'))
+            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+        	}
+        	else 
+        	{
+        		if (this.hit('solid') || this.hit('Egg'))
+            	{
+            		var egg = this.hit('Egg');
+            		//TODO: KICK
+            		// egg.trigger('kick');
+            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+            		//this.x = oldpos.x;
+            		//this.y = oldpos.y;
+            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+            	}
+        	}
+        	*/
 		});	
 		
 		this.bind('NewComponent', function(component)
@@ -173,7 +175,25 @@ Crafty.c('Egg', {
 	init: function(){
 		this.owner = undefined;
 		this.bind('explode', this.explode);
+		this.bind('MouseDown', this.kick);
+		this.bind('Moved', function(oldpos)
+		{
+			this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
+			this.y = oldpos.y + (this.y - oldpos.y) * EntityDefinitions.EGG_MOVE_SPEED;
+
+			if (this.hit('solid') || this.hit('Egg'))
+        	{
+        		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+        	}
+        });	
 		return this;
+	},
+	kick: function(){
+		if (this.owner.canKick) {
+			this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
+			this.y = oldpos.y + (this.y - oldpos.y) * EntityDefinitions.EGG_MOVE_SPEED;
+
+		}
 	},
 	explode: function(){
 		Crafty.audio.play(AudioDefinitions.EXPLODE);
@@ -365,15 +385,20 @@ Crafty.c('Powerup', {
  * @comp kick
  * NOT USED
  */
-/*
+
 Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){});
-		this.bind("unapplyPowerup", function(){ this.removeComponent(EntityDefinitions.POWERUP_KICK); });
+		this.bind("applyPowerup", function(){
+			this.canKick = true;
+		});
+		this.bind("unapplyPowerup", function(){ 
+			this.canKick = false;
+			this.removeComponent(EntityDefinitions.POWERUP_KICK); 
+		});
 		return this;
 	},
 });
-*/
+
 
 /*
  * @comp speed
