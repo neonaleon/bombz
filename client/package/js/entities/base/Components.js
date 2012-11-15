@@ -110,7 +110,7 @@ Crafty.c('Dragon', {
 		if (this.has('LocalPlayer'))
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
 		
-		console.log("lose health: " + this.health);
+		console.log("DIE BITCH");
 	},
 	layEgg: function(){
 		if (!this.onEgg && this.eggCount < this.eggLimit)
@@ -156,8 +156,6 @@ Crafty.c('Egg', {
 	init: function(){
 		this.owner = undefined;
 		this.bind('explode', this.explode);
-		//this.bind('MouseDown', this.kick);
-		/*
 		this.bind('Moved', function(oldpos)
 		{
 			this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
@@ -168,18 +166,8 @@ Crafty.c('Egg', {
         		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
         	}
         });
-        */	
 		return this;
 	},
-	/*
-	kick: function(){
-		if (this.owner.canKick) {
-			this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
-			this.y = oldpos.y + (this.y - oldpos.y) * EntityDefinitions.EGG_MOVE_SPEED;
-
-		}
-	},
-	*/
 	explode: function(){
 		Crafty.audio.play(AudioDefinitions.EXPLODE);
 
