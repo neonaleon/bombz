@@ -27,8 +27,9 @@ var SpriteDefinitions = {
 	BURNT: 4,
 
 	DRAGONS: ['bluedragon', 'greendragon', 'reddragon', 'pinkdragon', 'burntdragon'],
+	BUTTONS: ['bluebutton', 'greenbutton', 'redbutton', 'pinkbutton'],
 	//COLORS: ['blue', 'green', 'red', 'pink'], // follows order on the spritesheet
-	COLORS: [0, 1, 2, 3, 4], // follows order on the spritesheet
+	COLORS: [0, 1, 2, 3], // follows order on the spritesheet
 	
 	MAP_1: 'map1',
 	
@@ -107,15 +108,15 @@ SpriteDefinitions['tempgui'] = {
 for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 {
 	var color = SpriteDefinitions.COLORS[i];
-	SpriteDefinitions['gui-player'+color] = {
-		'file': '/img/waitingroom-p.png',
+	SpriteDefinitions['button'+color] = {
+		'file': '/img/button80x80.png',
 		'tile': SpriteDefinitions.TILE_WIDTH*2,
 		'elements':(function() {
 			var elements = {};
-			elements[color + 'dragon'] = [18, i];
+			elements[color + 'button'] = [18, i];
 			return elements;
-		})(),
-		'anim_spin':[[18, i], [19, i],[20, i], [21, i]], //and many more
+		})(), //35
+		'anim_spin':[[18, i], [19, i],[20, i], [21, i], [22,i], [23,i], [24,i], [25,i], [26,i], [27,i], [28,i], [29,i], [30,i], [31,i], [32,i], [33,i], [34,i], [35,i], [0,i], [1,i], [2,i], [3,i], [4,i], [5,i], [6,i], [7,i], [8,i], [9,i], [10,i], [11,i], [12,i], [13,i], [14,i], [15,i], [16,i], [17,i]], //and many more
 	};
 }
 
