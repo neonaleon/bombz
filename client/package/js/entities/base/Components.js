@@ -19,11 +19,11 @@ var Components = {};
 Crafty.c('Dragon', {
 	init: function() {
 		this.onEgg = false;
-		this.blastRadius = 3;
+		this.blastRadius = 2;
 		this.moveSpeed = 5;
-		this.eggLimit = 3;
+		this.eggLimit = 2;
 		this.eggCount = 0;
-		this.hasFireball = true;
+		this.hasFireball = false;
 		this.direction = undefined;
 
 		this.lastUpdate = undefined;
@@ -34,6 +34,8 @@ Crafty.c('Dragon', {
 			// if a controllable component was added to this dragon
 			if ('Controllable' in this.__c)
 			{
+				this.bind('KeyDown_A', this.layEgg);
+				
 				this.bind('NewDirection', function(newdir){
 					var direction;
 					
@@ -61,12 +63,6 @@ Crafty.c('Dragon', {
                     // 2. walking against solid blocks / walls
                     NetworkManager.SendMessage(MessageDefinitions.MOVE, { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction });
 				});
-				this.bind('KeyDown', function(keyEvent){
-					if (keyEvent.key == Crafty.keys['A'])
-						this.layEgg();
-					if (keyEvent.key == Crafty.keys['B'])
-						this.spitFireball();
-				});
 				this.unbind('NewComponent');
 			}
 		});
@@ -87,12 +83,10 @@ Crafty.c('Dragon', {
 		if (!this.onEgg && this.eggCount < this.eggLimit)
 		{
 			this.eggCount += 1;
-			//console.log("planted: " + this.eggCount);
-
 			var data = Map.pixelToTile({x: this.x, y: this.y});
 			data.timestamp = WallClock.getTime();
 			NetworkManager.SendMessage(MessageDefinitions.BOMB, data);
-			this.timeout(function (){ Map.spawnEggOnTile(this, data); }, NetworkManager.localLag);
+			this.timeout(function (){ Map.spawnEggOnTile(this, data, EntityDefinitions.LOCAL_FUSETIME); }, NetworkManager.localLag);
 		};
 	},
 	spitFireball:function(){
@@ -310,22 +304,19 @@ Crafty.c('Powerup', {
 			if (hitDragon)
 			{
 				var dragon = hitDragon[0].obj;
-				if (!dragon.has(this.type + "_powerup"))
-				{
-					// effects don't apply until message returns
-					//dragon.addComponent(this.type + "_powerup");
-					//dragon.trigger('applyPowerup');
+				// effects don't apply until message returns
+				//dragon.addComponent(this.type + "_powerup");
+				//dragon.trigger('applyPowerup');
 
-					// send message to inform on collection
-					var data = Map.pixelToTile( { x: this.x, y: this.y } );
-					data.timestamp = WallClock.getTime();
+				// send message to inform on collection
+				var data = Map.pixelToTile( { x: this.x, y: this.y } );
+				data.timestamp = WallClock.getTime();
 
-					// only send update if local dragon
-					if ('Controllable' in dragon.__c)
-						NetworkManager.SendMessage(MessageDefinitions.POWERUP, data);
+				// only send update if local dragon
+				if (dragon.has('LocalPlayer'))
+					NetworkManager.SendMessage(MessageDefinitions.POWERUP, data);
 
-					this.destroy();
-				}
+				this.destroy();
 			}
 		});
 		return this;
@@ -342,10 +333,6 @@ Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
 		this.bind("applyPowerup", function(){
 			//this.canKick = true;
 		});
-		this.bind("unapplyPowerup", function(){ 
-			//this.canKick = false;
-			this.removeComponent(EntityDefinitions.POWERUP_KICK); 
-		});
 		return this;
 	},
 });
@@ -356,12 +343,9 @@ Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
  */
 Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){
-			this.moveSpeed = 7.5; 
-		});
-		this.bind("unapplyPowerup", function(){ 
-			this.moveSpeed = 5;
-			this.removeComponent(EntityDefinitions.POWERUP_SPEED + "_powerup");
+		this.bind("applyPowerup", function(){ 
+			this.moveSpeed = Math.min(this.moveSpeed + 1, EntityDefinitions.MOVESPEED_CAP);
+			this.removeComponent(EntityDefinitions.POWERUP_SPEED + "_powerup"); 
 		});
 		return this;
 	},
@@ -372,10 +356,9 @@ Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
  */
 Crafty.c(EntityDefinitions.POWERUP_BLAST + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){ this.blastRadius = 6; });
-		this.bind("unapplyPowerup", function(){ 
-			this.blastRadius = 3;
-			this.removeComponent(EntityDefinitions.POWERUP_BLAST + "_powerup");
+		this.bind("applyPowerup", function(){ 
+			this.blastRadius = Math.min(this.blastRadius + 1, EntityDefinitions.BLAST_CAP);
+			this.removeComponent(EntityDefinitions.POWERUP_BLAST + "_powerup"); 
 		});
 		return this;
 	},
@@ -386,16 +369,20 @@ Crafty.c(EntityDefinitions.POWERUP_BLAST + "_powerup", {
  */
 Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){ this.eggLimit = 6; });
-		this.bind("unapplyPowerup", function(){ this.eggLimit = 3; });
+		this.bind("applyPowerup", function(){ 
+			this.eggLimit = Math.min(this.eggLimit + 1, EntityDefinitions.EGG_CAP);
+			this.removeComponent(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup"); 
+		});
 		return this;
 	},
 });
 
 Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){ this.hasFireball = true; });
-		this.bind("unapplyPowerup", function(){});
+		this.bind("applyPowerup", function(){ 
+			this.hasFireball = true;
+			this.removeComponent(EntityDefinitions.POWERUP_FIREBALL + "_powerup"); 
+		});
 		return this;
 	}
 })
@@ -405,8 +392,10 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
  ========================*/
 Crafty.c("LocalPlayer", {
 	init: function(){
+		// the local player can be controlled
 		this.requires("Controllable");
 		
+		// for local lag
 		this.delayLocalUpdate = function(dx, dy, obj)
 		{
 			this.timeout(function(){
@@ -442,7 +431,17 @@ Crafty.c("LocalPlayer", {
 			this.delayLocalUpdate(dx, dy, this);
 			this.x = oldpos.x;
 			this.y = oldpos.y;
-		});	
+		});
+		
+		this.bind('KeyDown', function(keyEvent){
+			if (keyEvent.key == Crafty.keys['A'])
+				this.trigger('KeyDown_A');
+				/*
+			if (keyEvent.key == Crafty.keys['B'])
+				this.spitFireball();
+				*/
+		});
+				
 		return this;
 	}
 });

@@ -163,11 +163,11 @@ Entities.Dragon = function(color)
  */
 Entities.Egg = function(dragon, fuseTime)
 {
-	var time = fuseTime || 1500;
+	var time = fuseTime || EntityDefinitions.REMOTE_FUSETIME;
 	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Kickable, Egg," + dragon.color + 'egg')
 						.setName(color + 'egg')
 						.bind('burn', function(){ this.trigger('explode'); })
-						.egg(dragon.blastRadius, fuseTime);
+						.egg(dragon.blastRadius, time);
 	egg.owner = dragon;
 	return egg;
 };
