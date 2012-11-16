@@ -75,7 +75,7 @@ SpriteDefinitions['effects'] = {
 		wings: [5, 7],
 	},
 	'anim_fire':[[6,5], [7,5], [8,5], [9,5], [10,5], [11,5]],
-	'anim_fireball':[[2,8], [3,8], [4,8]],
+	'anim_fireball':[[2,8], [3,8], [4,8], [3,8], [2,8]],
 };
 
 SpriteDefinitions['map1'] = {

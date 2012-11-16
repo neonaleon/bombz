@@ -10,7 +10,7 @@ TODO:
 		-----player during death animation still picking up powerups
 		-----problem with death animation (player has queued delayed local updates, which take effect after the player moves outside)
 		
-		fireball logic
+		-----fireball logic
 		
 		(nat)
 		gui elements for waiting room (need to reflect changes for player)
