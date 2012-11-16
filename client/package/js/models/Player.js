@@ -47,7 +47,7 @@ Player.Direction =
 
 Player.Default =
 {
-  SPEED: 5,
+  SPEED: 4,
   BOMBS: 0,
   DELAY: 150,
   POWERUPS: [],
@@ -57,6 +57,13 @@ Player.Default =
   COLOR: Player.Color.NONE,
   DIRECTION: Player.Direction.Down,
 };
+
+Player.Max =
+{
+  SPEED: 7,
+  BOMB_RANGE: 12,
+  BOMB_LIMIT: 6,
+}
 
 
 //// PUBLIC FUNCTIONS
@@ -77,7 +84,7 @@ Player.prototype.GetSpeed = function()
 
 Player.prototype.SetSpeed = function( speed )
 {
-  this._speed = speed;
+  this._speed = ( speed > Player.Max.SPEED ) ? Player.Max.SPEED : speed;
 }
 
 Player.prototype.GetColor = function()
@@ -143,7 +150,7 @@ Player.prototype.GetBombRange = function()
 
 Player.prototype.SetBombRange = function( range )
 {
-  this._bomb_range = range;
+  this._bomb_range = ( range > Player.Max.BOMB_RANGE ) ? Player.Max.BOMB_RANGE : range;
 }
 
 Player.prototype.GetBombLimit = function()
@@ -153,7 +160,7 @@ Player.prototype.GetBombLimit = function()
 
 Player.prototype.SetBombLimit = function( limit )
 {
-  this._bomb_limit = limit;
+  this._bomb_limit = ( limit > Player.Max.BOMB_LIMIT ) ? Player.Max.BOMB_LIMIT : limit;
 }
 
 Player.prototype.GetAbilityKickBomb = function()

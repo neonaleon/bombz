@@ -172,7 +172,7 @@ RoomController.prototype.StartGame = function()
   var room = this._room;
   var roomController = this;
 
-  // spawn normal & fireball powerups
+  // spawn normal powerups
   setInterval( function()
   {
     if ( room.GetState() !== Room.State.PLAYING )
@@ -191,6 +191,20 @@ RoomController.prototype.StartGame = function()
     }
 
   }, Powerup.SPAWN_RATE );
+
+  // spawn fireball powerups
+  setInterval( function()
+  {
+    if ( room.GetState() !== Room.State.PLAYING )
+      return;
+
+    if ( roomController.GetMap().GetFireballPowerupCount() < Powerup.MAX_FIREBALL_IN_PLAY )
+    {
+      var powerup = roomController.GetMap().SpawnFireballPowerup();
+      roomController.FairBroadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
+    }
+
+  }, Powerup.FIREBALL_SPAWN_RATE );
 };
 
 // end the game
@@ -362,6 +376,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.DEATH, function( data )
     {
       var player = roomController.GetPlayerFromSocket( socket );
+      player.Reset();
       player.SetAlive( false );
 
       data.pid = player.GetID();

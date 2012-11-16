@@ -22,6 +22,7 @@ Powerup.Type =
 };
 
 Powerup.SPAWN_RATE = 10000; // every 10 seconds
+Powerup.FIREBALL_SPAWN_RATE = 5000; // every 10 seconds
 Powerup.MAX_IN_PLAY = 8; // maximum number at one time in game area
 Powerup.MAX_FIREBALL_IN_PLAY = 5; // maximum number of fireball powerups at once in dodgeball area
 
@@ -33,15 +34,15 @@ Powerup.prototype.ApplyEffect = function( player )
   switch ( this._type )
   {
     case Powerup.Type.BUFF_SPEED:
-      player.SetSpeed( player.GetSpeed() + 2.5 );
+      player.SetSpeed( player.GetSpeed() + 1 );
       break;
 
     case Powerup.Type.BUFF_RANGE:
-      player.SetBombRange( player.GetBombRange() + 3 );
+      player.SetBombRange( player.GetBombRange() + 1 );
       break;
   
     case Powerup.Type.BUFF_CAPACITY:
-      player.SetBombLimit( player.GetBombLimit() + 3 );
+      player.SetBombLimit( player.GetBombLimit() + 1 );
       break;
 
     case Powerup.Type.ABILITY_KICKBOMB:

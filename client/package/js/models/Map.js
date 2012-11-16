@@ -213,7 +213,6 @@ Map.prototype.AddPowerup = function( powerup )
 Map.prototype.RemovePowerup = function( powerup )
 {
   this._powerups.splice( this._powerups.indexOf( powerup ), 1 );
-  console.log(this._powerups)
 }
 
 // update map according to a bomb explosion if it is a valid grid for a powerup
