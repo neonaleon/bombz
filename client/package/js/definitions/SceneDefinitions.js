@@ -87,6 +87,8 @@ var handler_EnterRoomResponse = function(data)
 var handler_Start = function(obj)
 {
 	NetworkManager.SendMessage(MessageDefinitions.START, {})
+	
+	SceneManager.LoadScene( SceneDefinitions.GameScene )
 };
 // players seats on a colour
 var handler_Seat = function( buttonIndex, value )
@@ -217,9 +219,16 @@ var handler_Leave = function(data)
 SceneDefinitions.SplashScene = new Scene("SplashScene", function()
 { 
 	console.log("splash scene running");
-	// show some splash image
-	// connect to server
-	// some duration later change scene, we might want to use this duration to load assets etc
+	
+	Crafty.e("2D, DOM, Image")
+			.image("/img/waitingbackground.png", "no-repeat")
+			.attr({x: 0, y: 0});
+			
+	//TEMP GAMENAME
+	Crafty.e("2D, DOM, Image")
+			.image("/img/gametitle600x200.png", "no-repeat")
+			.attr({x: (Properties.DEVICE_WIDTH/2)-(600/2), y: 100, w:600, h:200 });
+			
 	setTimeout(function(){ SceneManager.ChangeScene(SceneDefinitions.WaitingRoomScene) }, Properties.SPLASH_DURATION);
 });
 /*
@@ -229,6 +238,18 @@ SceneDefinitions.SplashScene = new Scene("SplashScene", function()
 SceneDefinitions.LoadScene = new Scene("LoadScene", function()
 { 
 	console.log("load scene running");
+	Crafty.e("2D, DOM, Image")
+			.image("/img/waitingbackground.png", "no-repeat")
+			.attr({x: 0, y: 0});
+
+	//TEMP GAMENAME
+	Crafty.e("2D, DOM, Image")
+			.image("/img/gametitle600x200.png", "no-repeat")
+			.attr({x: (Properties.DEVICE_WIDTH/2)-(600/2), y: 100, w:600, h:200 });
+			
+	Crafty.e("2D, DOM, Text")
+			.text("Loading...")
+			.attr({ x: Properties.DEVICE_WIDTH/2-60, y: Properties.DEVICE_HEIGHT/3*2 });
 });
 // The Lobby for getting game information and connecting to games
 SceneDefinitions.LobbyScene = new Scene("LobbyScene", function()

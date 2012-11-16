@@ -6,7 +6,7 @@ var SceneManager = {};
 SceneManager.previousScene = undefined;
 SceneManager.currentScene = undefined;
 
-SceneManager.debugMode = true;
+SceneManager.debugMode = false;
 SceneManager._debugScene = function (sceneName, initializer)
 {
 	return function() 
@@ -35,6 +35,16 @@ SceneManager.ChangeScene = function (scene)
 		Crafty.scene(sceneName, initializer);
 
 	Crafty.scene(sceneName);
+};
+
+SceneManager.LoadScene = function (scene)
+{
+	SceneManager.ChangeScene(SceneDefinitions.LoadScene);
+	
+	Crafty.load(['/img/sidebar.png', '/img/dpad150x150.png', '/img/sprite40x40.png', '/img/button80x80.png'], 
+		function(){
+			SceneManager.ChangeScene(scene);		
+		});
 };
 
 

@@ -104,7 +104,7 @@ SpriteDefinitions['gui'] = {
 };
 
 
-SpriteDefinitions['tempgui'] = {
+SpriteDefinitions['sidebar'] = {
 	'file': '/img/sidebar.png',
 	'tile': 137,
 	'tileh': 600,
