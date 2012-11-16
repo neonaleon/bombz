@@ -66,7 +66,7 @@ Entities.Sidebar = function()
 {
 	//var def = SpriteDefinitions['tempgui'];
 	//Crafty.sprite(def['tile'], def['tileh'], def['file'], def['elements']);
-	return Crafty.e("2D, DOM, solid, Image").image("/img/sidebar.png");
+	return Crafty.e("2D, DOM, solid, extents, Image").image("/img/sidebar.png").attr({z: GUIDefinitions.Z_GUI });
 };
 
 Entities.SDBlock = function()
@@ -90,7 +90,7 @@ Entities.SDBlock = function()
 
 Entities.Extents = function()
 {
-	return Crafty.e("2D, DOM, Color, solid, extents");
+	return Crafty.e("2D, DOM, Color, solid, extents").attr({z: GUIDefinitions.Z_GUI });
 }
 
 /*
@@ -182,9 +182,20 @@ Entities.Powerup = function(type)
  */
 Entities.Fireball = function()
 {
-	var fireball = Crafty.e('Fireball, 2egg');
+	var fireball = Crafty.e('2D, DOM, Fireball, fire');
 	fireball.addComponent("Collision");
+	fireball.z = Map.Z_FIRE;
 	return fireball;
+}
+
+Entities.Wings = function()
+{
+	var def = SpriteDefinitions['effects'];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	
+	var wings = Crafty.e('2D, DOM, wings, Tween')
+	wings.z = Map.Z_DRAGON - 1;
+	return wings;
 }
 
 Entities.Cloud = function()

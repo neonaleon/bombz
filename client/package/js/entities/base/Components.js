@@ -20,7 +20,7 @@ Crafty.c('Dragon', {
 	init: function() {
 		this.onEgg = false;
 		this.blastRadius = 2;
-		this.moveSpeed = 5;
+		this.moveSpeed = 4;
 		this.eggLimit = 2;
 		this.eggCount = 0;
 		this.hasFireball = false;
@@ -41,35 +41,6 @@ Crafty.c('Dragon', {
 		if (this.has('LocalPlayer')) 
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
 	},
-
-	layEgg: function(){
-		if (!this.onEgg && this.eggCount < this.eggLimit)
-		{
-			Crafty.audio.play(AudioDefinitions.EGG);
-			this.eggCount += 1;
-			var data = Map.pixelToTile({x: this.x, y: this.y});
-			data.timestamp = WallClock.getTime();
-			NetworkManager.SendMessage(MessageDefinitions.BOMB, data);
-			this.timeout(function (){ Map.spawnEggOnTile(this, data, EntityDefinitions.LOCAL_FUSETIME); }, NetworkManager.localLag);
-		};
-	},
-	spitFireball:function(){
-		console.log("SPIT FIRE!");
-		if (this.hasFireball)
-		{
-			Crafty.audio.play(AudioDefinitions.FIREBALL);
-			var pos = Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}));
-			pos.x += this.direction.x;
-			pos.y += this.direction.y;
-			Entities.Fireball().fireball(this.direction)
-								.attr(pos);
-
-			var data = Map.pixelToTile({x: this.x, y: this.y});
-			data.direction = this.direction;
-			data.timestamp = WallClock.getTime();
-			NetworkManager.SendMessage(MessageDefinitions.FIREBALL, data);
-		}	
-	},
 	clearEgg: function(){
 		this.eggCount -= 1;
 	},
@@ -86,16 +57,6 @@ Crafty.c('Egg', {
 	init: function(){
 		this.owner = undefined;
 		this.bind('explode', this.explode);
-		// this.bind('Moved', function(oldpos)
-		// {
-		// 	this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
-		// 	this.y = oldpos.y + (this.y - oldpos.y) * EntityDefinitions.EGG_MOVE_SPEED;
-
-		// 	if (this.hit('solid') || this.hit('Egg'))
-  //       	{
-  //       		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
-  //       	}
-  //       });
 		return this;
 	},
 	explode: function(){
@@ -163,23 +124,56 @@ Crafty.c('Fire', {
  */
 Crafty.c('Fireball', {
 	init: function(){
+		this.owner = undefined;
+		this.direction = { x: 0, y: 0 };
 		return this;
 	},
-	fireball: function(dir){
+	fireball: function(owner, pos, dir){
+		this.owner = owner;
+		this.origin("center");
+		switch ( dir )
+        {
+        	case Player.Direction.UP:
+        		this.direction.y = -1;
+        		this.rotation = 90;
+        		break;
+        	case Player.Direction.DOWN:
+        		this.direction.y = 1;
+        		this.rotation = -90;
+        		break;
+        	case Player.Direction.LEFT:
+        		this.direction.x = -1;
+        		break;
+        	case Player.Direction.RIGHT:
+        		this.direction.x = 1;
+        		this.flip();
+        		break;
+        }
+        this.x = pos.x + this.direction.x * Map.MAP_TILEWIDTH;
+        this.y = pos.y + this.direction.y * Map.MAP_TILEHEIGHT;
+        
 		this.bind("EnterFrame", function()
 		{
-			if (this.hit('Dragon'))
+			var hitDragon = this.hit('Dragon');
+			if (hitDragon)
 			{
-				this.hit('Dragon')[0].obj.trigger('burn');
-				this.destroy();
+				for (var i = 0; i < hitDragon.length; i++)
+				{
+					if (hitDragon[i].obj != this.owner && !hitDragon[i].obj.has('Death'))
+					{
+						hitDragon[i].obj.trigger('burn');
+						this.destroy();
+					}
+				}
 			}
 			if (this.hit('Egg'))
 			{
 				this.hit('Egg')[0].obj.trigger('burn');
 				this.destroy();
 			}
-			this.x += dir.x * EntityDefinitions.FIREBALL_MOVE_SPEED;
-			this.y += dir.y * EntityDefinitions.FIREBALL_MOVE_SPEED;
+			if (this.hit('extents')) this.destroy();
+			this.x += this.direction.x * EntityDefinitions.FIREBALL_MOVE_SPEED;
+			this.y += this.direction.y * EntityDefinitions.FIREBALL_MOVE_SPEED;
 		});
 		return this;
 	},
@@ -198,16 +192,14 @@ Crafty.c('Killable', {
 Crafty.c('Death', {
 	init: function() {
 		Crafty.audio.play(AudioDefinitions.DEATH);
+		this.deathWings = undefined;
 		this.deathAnimStep = 2; // 2 step death animation
 		this.deathPos = undefined; // deathPos not yet received from server
-		// add burnt dragon sprite
-		//var def = SpriteDefinitions[SpriteDefinitions.BURNT];
-		//Crafty.sprite(def['tile'], def['file'], def['elements']);
-		//this.addComponent(SpriteDefinitions.BURNT + 'dragon');
 		
 		this.requires('Tween');
-		this.alpha = 0.75; // ghost mode
-		this.tween({ y: this.y - 30 }, 30);
+		this.deathWings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, 50);
+		this.attach(this.deathWings);
+		this.tween({ y: this.y - 50, alpha: 0 }, 50); // fade out
 		
 		if (this.has('LocalPlayer')) 
 		{
@@ -215,7 +207,8 @@ Crafty.c('Death', {
 			this.flushUpdates();
 			this.disableControl();
 		}
-		//this.trigger("ChangeDirection", Player.Direction.DOWN);
+		this.trigger("ChangeDirection", Player.Direction.DOWN);
+		this.trigger("ChangeDirection", Player.Direction.NONE);
 		
 		this.bind('TweenEnd', function(something)
 		{
@@ -223,20 +216,25 @@ Crafty.c('Death', {
 			if (this.deathAnimStep == 1)
 			{
 				// first animation step ends, check if death position received from server
-				if (this.deathPos !== undefined) this.tween(this.deathPos, 300);
+				if (this.deathPos !== undefined)
+				{
+					this.x = this.deathPos.x;
+					this.y = this.deathPos.y - 50;
+					this.deathWings.tween({ alpha: 1 }, 50)
+					this.tween({ y: this.deathPos.y, alpha: 1 }, 50); // fade back in
+				} 
 			}
 			else if (this.deathAnimStep == 0) // second animation step ends, player has tweened to death position
-			{
-				this.alpha = 1; // undo ghost mode
-				
-				var cloud = Entities.Cloud().attr({ x: this.x, y: this.y });
-				this.attach(cloud);
-				
+			{	
 				// snap to clear floating point inaccuracies due to tween interpolation
 				this.x = this.deathPos.x;
 				this.y = this.deathPos.y;
 				
-				//this.removeComponent('4dragon');  clear the burn
+				this.deathWings.destroy();
+				this.deathWings = undefined;
+				
+				var cloud = Entities.Cloud().attr({ x: this.x, y: this.y });
+				this.attach(cloud);
 				
 				if (this.has('LocalPlayer'))
 				{
@@ -333,7 +331,6 @@ Crafty.c('Kickable', {
  */
 Crafty.c('Powerup', {
 	init: function(){
-		this.id = undefined;
 		this.type = undefined;
 		return this;
 	},
@@ -343,12 +340,11 @@ Crafty.c('Powerup', {
 			var hitDragon = this.hit('Dragon');
 			if (hitDragon)
 			{
-				Crafty.audio.play(AudioDefinitions.POWERUP);
-				var dragon = hitDragon[0].obj;
-				// effects don't apply until message returns
-				//dragon.addComponent(this.type + "_powerup");
-				//dragon.trigger('applyPowerup');
+				var dragon = hitDragon[0].obj;	
+				if (dragon.has('Death')) return; // if dragon dead can ignore
 
+				Crafty.audio.play(AudioDefinitions.POWERUP);
+				
 				// send message to inform on collection
 				var data = Map.pixelToTile( { x: this.x, y: this.y } );
 				data.timestamp = WallClock.getTime();
@@ -357,9 +353,7 @@ Crafty.c('Powerup', {
 				if (dragon.has('LocalPlayer'))
 					NetworkManager.SendMessage(MessageDefinitions.POWERUP, data);
 				
-				// taken by a live player
-				if (!dragon.has('Death'))
-					this.destroy();
+				this.destroy();
 			}
 		});
 		return this;
@@ -504,28 +498,22 @@ Crafty.c("LocalPlayer", {
 	
 	spitFireball: function(){
 		console.log("SPIT FIRE!");
-		if (this.hasFireball)
+		if (true)//(this.hasFireball)
 		{
-			/*
-			var pos = Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}));
-			pos.x += this.direction.x;
-			pos.y += this.direction.y;
-			Entities.Fireball().fireball(this.direction)
-								.attr(pos);
-			*/
 			this.hasFireball = false;
 			
 			var data = Map.pixelToTile({x: this.x, y: this.y});
+			data.dragon = this;
 			data.direction = this.direction;
 			data.timestamp = WallClock.getTime();
-			//NetworkManager.SendMessage(MessageDefinitions.FIREBALL, data);
+			
+			this.doLocalUpdate(this.updateTypeFireball, data);
 		}	
 	},
 	
 	doLocalUpdate: function(updateType, data){
 		switch(updateType){
 			case this.updateTypeMove:
-				//console.log(data)
 				this.delayLocalUpdate(updateType, data);
 				break;
 			case this.updateTypeDirection:
@@ -537,7 +525,8 @@ Crafty.c("LocalPlayer", {
 				this.delayLocalUpdate(updateType, data)
 				break;
 			case this.updateTypeFireball:
-				NetworkManager.SendMessage(MessageDefinitions.FIREBALL, data);
+				NetworkManager.SendMessage(MessageDefinitions.FIREBALL, { x: data.x, y: data.y, timestamp: data.timestamp });
+				this.delayLocalUpdate(updateType, data);
 				break;
 		}
 	},
@@ -581,7 +570,6 @@ Crafty.c("LocalPlayer", {
 		
 	flushUpdates: function()
 	{
-		console.log("FLUSH");
 		// reset all input keys
 		if (Crafty.keydown[Crafty.keys['A']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['A'] });
 		if (Crafty.keydown[Crafty.keys['RIGHT_ARROW']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['RIGHT_ARROW'] });
@@ -631,7 +619,8 @@ Crafty.c("LocalPlayer", {
 
 	processFireball: function(data)
 	{
-		console.log("fireball not yet implementatatede");
+		var pos = Map.tileToPixel(data);
+		Entities.Fireball().fireball(data.dragon, pos, data.direction);
 	},
 });
 

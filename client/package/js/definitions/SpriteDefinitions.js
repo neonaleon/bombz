@@ -65,7 +65,8 @@ SpriteDefinitions['effects'] = {
 	'file': '/img/sprite40x40.png',
 	'tile': SpriteDefinitions.TILE_WIDTH,
 	'elements': {
-		fire: [6, 5],
+		fire: [2, 8],
+		wings: [5, 7],
 	},
 	'anim_fire':[[6,5], [7,5], [8,5], [9,5], [10,5], [11,5]],
 	'anim_fireball':[[2,8], [3,8], [4,8]],
@@ -91,7 +92,6 @@ SpriteDefinitions['gui'] = {
 		dpad: [0, 5],
 		buttonA: [1, 5],
 		buttonB: [2, 5],
-
 	}
 };
 
