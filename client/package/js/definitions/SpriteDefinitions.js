@@ -90,8 +90,10 @@ SpriteDefinitions['gui'] = {
 		dpad: [0, 5],
 		buttonA: [1, 5],
 		buttonB: [2, 5],
+
 	}
 };
+
 
 SpriteDefinitions['tempgui'] = {
 	'file': '/img/sidebar.png',
@@ -101,6 +103,22 @@ SpriteDefinitions['tempgui'] = {
 		sidebar: [0, 0],
 	}
 };
+
+for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
+{
+	var color = SpriteDefinitions.COLORS[i];
+	SpriteDefinitions['gui-player'color] = {
+		'file': '/img/waitingroom-p.png',
+		'tile': SpriteDefinitions.TILE_WIDTH*2,
+		'elements':(function() {
+			var elements = {};
+			elements[color + 'dragon'] = [18, i];
+			return elements;
+		})(),
+		'anim_spin':[[18, i], [19, i],[20, i], [21, i]], //and many more
+	};
+}
+
 
 SpriteDefinitions['powerup'] = {
 	'file': '/img/sprite40x40.png',
