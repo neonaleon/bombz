@@ -376,6 +376,7 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.DEATH, function( data )
     {
       var player = roomController.GetPlayerFromSocket( socket );
+      player.Reset();
       player.SetAlive( false );
 
       data.pid = player.GetID();
