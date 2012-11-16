@@ -182,8 +182,10 @@ Entities.Powerup = function(type)
  */
 Entities.Fireball = function()
 {
+	var def = SpriteDefinitions['effects'];
 	var fireball = Crafty.e('2D, DOM, Fireball, fire');
-	fireball.addComponent("Collision");
+	fireball.addComponent("SpriteAnimation, Collision")
+				.animate('fireball', def['anim_fireball']);
 	fireball.z = Map.Z_FIRE;
 	return fireball;
 }

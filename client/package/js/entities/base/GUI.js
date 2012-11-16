@@ -56,9 +56,28 @@ GUI.Dpad = function (entity)
 {
 	var def = SpriteDefinitions['gui'];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
-   var dpad = Crafty.e('Controller, dpad, dpad_none')
+   	var dpad = Crafty.e('Controller, dpad, dpad_none')
    					.attr({z:GUIDefinitions.Z_GUI, w: SpriteDefinitions.DPAD_WIDTH, h: SpriteDefinitions.DPAD_HEIGHT})
-   					;
+   					.bind('KeyDown', function(e){
+   						switch(e.keyCode)
+   						{
+   							case Crafty.keys["UP_ARROW"]:
+   								this.addComponent('dpad_up');
+   								break;
+   							case Crafty.keys["DOWN_ARROW"]:
+   								this.addComponent('dpad_down');
+   								break;
+   							case Crafty.keys["LEFT_ARROW"]:
+   								this.addComponent('dpad_left');
+   								break;
+   							case Crafty.keys["RIGHT_ARROW"]:
+   								this.addComponent('dpad_right');
+   								break;	
+   						}
+   					})
+   					.bind('KeyUp', function(e){
+   						this.addComponent('dpad_none');
+   					});
    	
    	return dpad;
 }

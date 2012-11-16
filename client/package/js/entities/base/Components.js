@@ -152,6 +152,8 @@ Crafty.c('Fireball', {
         this.x = pos.x + this.direction.x * Map.MAP_TILEWIDTH;
         this.y = pos.y + this.direction.y * Map.MAP_TILEHEIGHT;
         
+        this.animate('fireball', 10, -1);
+        
 		this.bind("EnterFrame", function()
 		{
 			var hitDragon = this.hit('Dragon');
@@ -497,8 +499,7 @@ Crafty.c("LocalPlayer", {
 	},
 	
 	spitFireball: function(){
-		console.log("SPIT FIRE!");
-		if (true)//(this.hasFireball)
+		if (this.hasFireball)
 		{
 			this.hasFireball = false;
 			
