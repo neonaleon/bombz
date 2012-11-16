@@ -25,14 +25,15 @@ GUI.ACTION_BUTTON_B = 'B'; // defines action button B
 // Creates a button with buttonText, which invokes handler(this) when pressed.
 GUI.Button = function(buttonText, handler)
 {
-	return Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Button")
+	return Crafty.e(Properties.RENDERER + ", 2D, Image, Button")
 				.setName("button_" + buttonText)
 				.attr({ w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT, z:GUIDefinitions.Z_GUI })
-				.color(GUIDefinitions.BUTTON_UPCOLOR)
-				.text(buttonText)
-				.onButtonDown(function(){ this.color(GUIDefinitions.BUTTON_DOWNCOLOR); })
-				.onButtonOut(function(){ this.color(GUIDefinitions.BUTTON_UPCOLOR); })
-				.onButtonUp(function(){ this.color(GUIDefinitions.BUTTON_UPCOLOR); handler(this);});
+				// .color(GUIDefinitions.BUTTON_UPCOLOR)
+				// .text(buttonText)
+				.image("/img/startbutton.png", "no-repeat")
+				.onButtonDown(function(){ this.image("/img/startbuttonclicked.png", "no-repeat"); })
+				.onButtonOut(function(){ this.image("/img/startbutton.png", "no-repeat"); })
+				.onButtonUp(function(){ this.image("/img/startbutton.png", "no-repeat"); handler(this);});
 };
 
 // Create actions buttons for our game. Only 2 buttons A and B are defined.
@@ -86,7 +87,6 @@ GUI.Dpad = function (entity)
 // button has true (selected) and false (not selected) state
 GUI.SwitchButton = function(buttonText, handler, color)
 {
-	console.log(color);
 	var def = SpriteDefinitions['button'+color];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	var button = Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse, SpriteAnimation, " + + color + 'button')

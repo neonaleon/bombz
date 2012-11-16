@@ -28,16 +28,23 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	startButton.attr({	x: Properties.DEVICE_WIDTH - 2 * GUIDefinitions.BUTTON_WIDTH })
 	startButton.attr({	y: Properties.DEVICE_HEIGHT - 2 * GUIDefinitions.BUTTON_HEIGHT });
 
+	Crafty.e("2D, DOM, Image")
+			.image("/img/waitingbackground.png", "no-repeat")
+			.attr({x: 0, y: 0})
+
 	//TEMP GAMENAME
-	Crafty.e(Properties.RENDERER + ", 2D, Color, Text")
-			.attr({x: 100, y: 100, w:800, h:100 })
-			.color(GUIDefinitions.BUTTON_UPCOLOR);
+	Crafty.e("2D, DOM, Image")
+			.image("/img/gametitle600x200.png", "no-repeat")
+			.attr({x: (Properties.DEVICE_WIDTH/2)-(600/2), y: 100, w:600, h:200 })
+	// Crafty.e(Properties.RENDERER + ", 2D, Color, Text")
+			// .attr({x: 100, y: 100, w:800, h:100 })
+			// .color(GUIDefinitions.BUTTON_UPCOLOR);
 	// all the position settings should go inside GUI.js when using real graphics
 	var colorButtons = GUI.OneOrNoneRadioButtonGroup(["Blue", "Green", "Red", "Pink"], handler_Seat);
-	colorButtons[ Player.Color.BLUE ].attr({ x: 100, y: 300});
-	colorButtons[ Player.Color.GREEN ].attr({ x: 300, y: 300});
-	colorButtons[ Player.Color.RED ].attr({ x: 500, y: 300});
-	colorButtons[ Player.Color.PINK ].attr({ x: 700, y: 300});
+	colorButtons[ Player.Color.BLUE ].attr({ x: 200, y: 300});
+	colorButtons[ Player.Color.GREEN ].attr({ x: 400, y: 300});
+	colorButtons[ Player.Color.RED ].attr({ x: 600, y: 300});
+	colorButtons[ Player.Color.PINK ].attr({ x: 800, y: 300});
 
 });
 var handler_Connect = function()
@@ -69,6 +76,7 @@ var handler_StartResponse = function(data)
 };
 var handler_UpdateResponse = function(data)
 {
+	console.log("natalie " + data);
 	GameState.UpdateRoom( data );
 };
 var handler_EnterRoomResponse = function(data)
