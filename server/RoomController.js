@@ -189,6 +189,7 @@ RoomController.prototype.StartGame = function()
       var powerup = roomController.GetMap().SpawnFireballPowerup();
       roomController.FairBroadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
     }
+
   }, Powerup.SPAWN_RATE );
 };
 

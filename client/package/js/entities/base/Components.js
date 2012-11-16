@@ -356,7 +356,13 @@ Crafty.c('Powerup', {
 				Crafty.audio.play(AudioDefinitions.POWERUP);
 				
 				// send message to inform on collection
-				var data = Map.pixelToTile( { x: this.x, y: this.y } );
+				var data = {};
+
+				if ( this.type !== EntityDefinitions.POWERUP_FIREBALL )
+					data = Map.pixelToTile( { x: this.x, y: this.y } );
+				else
+					data = Map.fireballPixelToTile( { x: this.x, y: this.y } );
+
 				data.timestamp = WallClock.getTime();
 
 				// only send update if local dragon

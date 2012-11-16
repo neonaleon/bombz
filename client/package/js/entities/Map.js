@@ -244,3 +244,17 @@ Map.tileToPixel = function(dict)
 	return {x: (dict.x + 2) * Map.MAP_TILEWIDTH + Map._instance.x,
 			y: (dict.y + 2) * Map.MAP_TILEHEIGHT};
 }
+
+Map.fireballPixelToTile = function(dict)
+{
+	// converts pixel coordinates in dict to tile coordinates
+	return {x: Math.floor((dict.x - Map._instance.x) / Map.MAP_TILEWIDTH ), 
+			y: Math.floor(dict.y / Map.MAP_TILEHEIGHT)};
+}
+
+Map.fireballTileToPixel = function(dict)
+{
+	// converts tile coordinates in dict to pixel coordinates 
+	return {x: dict.x * Map.MAP_TILEWIDTH + Map._instance.x,
+			y: dict.y * Map.MAP_TILEHEIGHT};
+}

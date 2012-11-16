@@ -22,7 +22,7 @@ Powerup.Type =
 };
 
 Powerup.SPAWN_RATE = 10000; // every 10 seconds
-Powerup.MAX_IN_PLAY = 10; // maximum number at one time in game area
+Powerup.MAX_IN_PLAY = 8; // maximum number at one time in game area
 Powerup.MAX_FIREBALL_IN_PLAY = 5; // maximum number of fireball powerups at once in dodgeball area
 
 //// PUBLIC FUNCTIONS

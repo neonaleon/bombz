@@ -212,7 +212,8 @@ Map.prototype.AddPowerup = function( powerup )
 // removes a powerup from the map if it is a valid grid for a powerup
 Map.prototype.RemovePowerup = function( powerup )
 {
-  this._bombs.splice( this._bombs.indexOf( powerup ), 1 );
+  this._powerups.splice( this._powerups.indexOf( powerup ), 1 );
+  console.log(this._powerups)
 }
 
 // update map according to a bomb explosion if it is a valid grid for a powerup
