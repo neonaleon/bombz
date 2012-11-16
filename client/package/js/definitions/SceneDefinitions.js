@@ -16,7 +16,11 @@ function Scene(sceneName, initializer)
 // The Waiting Room
 SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 {
-	NetworkManager.Connect(Properties.MASTERSERVER_IP, Properties.MASTERSERVER_PORT, handler_Connect);
+	// beyond the first time entering this scene, the network manager would have been connected already
+	if ( NetworkManager.connected )
+		handler_Connect();
+	else
+		NetworkManager.Connect(Properties.MASTERSERVER_IP, Properties.MASTERSERVER_PORT, handler_Connect);
 
 	console.log("waiting room scene running");
 
@@ -30,6 +34,7 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	colorButtons[ Player.Color.GREEN ].attr({ x: 300, y: 100, w: 150, h: 350 });
 	colorButtons[ Player.Color.RED ].attr({ x: 500, y: 100, w: 150, h: 350 });
 	colorButtons[ Player.Color.PINK ].attr({ x: 700, y: 100, w: 150, h: 350 });
+
 });
 var handler_Connect = function()
 {
@@ -50,6 +55,11 @@ var handler_SeatResponse = function(player)
 // broadcast response when game is starting
 var handler_StartResponse = function(data)
 {
+	NetworkManager.ClearListeners(MessageDefinitions.SEAT);
+	NetworkManager.ClearListeners(MessageDefinitions.START);
+	NetworkManager.ClearListeners(MessageDefinitions.UPDATE);
+	NetworkManager.ClearListeners(MessageDefinitions.ENTER_ROOM);
+
 	GameState.SetMap( data.map );
 	SceneManager.ChangeScene( SceneDefinitions.GameScene );
 };
@@ -82,6 +92,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 
 	// network messages
 	WallClock.sync(); // sync wallclock with server so we can use timestamps
+	NetworkManager.AddListener(MessageDefinitions.WIN, handler_Win);
 	NetworkManager.AddListener(MessageDefinitions.MOVE, handler_Move);
 	NetworkManager.AddListener(MessageDefinitions.BOMB, handler_Bomb);
 	NetworkManager.AddListener(MessageDefinitions.DEATH, handler_Death);
@@ -113,6 +124,20 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	//Map.suddenDeath();
 	var pad = GUI.Dpad(dragons[ GameState.GetLocalPlayer().GetID() ] ).attr({x:50, y:400}); // allow player to control the dragon
 });
+var handler_Win = function(data)
+{
+	console.log( "P" + ( data.pid + 1 ) + " is the winner!" ) ;
+
+	NetworkManager.ClearListeners(MessageDefinitions.WIN);
+	NetworkManager.ClearListeners(MessageDefinitions.MOVE);
+	NetworkManager.ClearListeners(MessageDefinitions.BOMB);
+	NetworkManager.ClearListeners(MessageDefinitions.DEATH);
+	NetworkManager.ClearListeners(MessageDefinitions.LEAVE);
+	NetworkManager.ClearListeners(MessageDefinitions.POWERUP);
+	NetworkManager.ClearListeners(MessageDefinitions.FIREBALL);
+
+	SceneManager.ChangeScene( SceneDefinitions.WaitingRoomScene );
+};
 var handler_Move = function(data)
 {
 	//var dragon = dragons[ data.pid ];

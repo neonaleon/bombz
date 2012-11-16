@@ -116,6 +116,25 @@ Room.prototype.GetPlayerCount = function()
   return Object.keys( this._players ).length;
 }
 
+
+Room.prototype.GetAlivePlayers = function()
+{
+  var alive = [];
+  for ( var i in this._players )
+    if ( this._players[ i ].GetAlive() )
+      alive.push( this._players[ i ] );
+  return alive;
+}
+
+Room.prototype.GetAlivePlayerCount = function()
+{
+  var count = 0;
+  for ( var i in this._players )
+    if ( this._players[ i ].GetAlive() )
+      count++;
+  return count;
+}
+
 Room.prototype.Deserialize = function( data )
 {
   for ( var i in data.players )

@@ -125,9 +125,15 @@ RoomController.prototype.RemovePlayer = function( socket )
     {
       this.Reset();
     }
-    else
+    else if ( this._room.GetPlayerCount() === 1 )
     {
+      var player;
+      var players = this._room.GetPlayers();
+      for ( var i in players )
+        player = players[ i ];
 
+      this.Broadcast( MessageDefinitions.WIN, { pid: player.GetID() } );
+      this.EndGame();
     }
   }
 }
@@ -162,10 +168,14 @@ RoomController.prototype.CanStartGame = function()
 
 RoomController.prototype.StartGame = function()
 {
+  var room = this._room;
   var roomController = this;
 
   setInterval( function()
   {
+    if ( room.GetState() !== Room.State.PLAYING )
+      return;
+
     if ( roomController.GetMap().GetPowerupCount() <= Powerup.MAX_IN_PLAY )
     {
       var powerup = roomController.GetMap().SpawnPowerup();
@@ -177,7 +187,28 @@ RoomController.prototype.StartGame = function()
 // end the game
 RoomController.prototype.EndGame = function()
 {
+  var room = this._room;
+  var roomController = this;
 
+  if ( room.GetState() === Room.State.PLAYING )
+  {
+    var players = room.GetPlayers();
+
+    for ( var i in players )
+      players[ i ].Reset();
+
+    // remove waiting state listeners
+    for ( var i in players )
+      roomController.RemovePlayerListeners( players[ i ].GetSocket() );
+
+    room.SetState( Room.State.WAITING );
+
+    // add playing state listeners
+    for ( var i in players )
+      roomController.CreatePlayerListeners( players[ i ].GetSocket() );
+
+    this._map = new Map( 19, 15, 40, 40 );
+  }
 };
 
 // creates listeners specific to this state for a player
@@ -312,13 +343,24 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     socket.on( MessageDefinitions.DEATH, function( data )
     {
       var player = roomController.GetPlayerFromSocket( socket );
+      player.SetAlive( false );
+
       data.pid = player.GetID();
 
+      // random position in the dodgeball pit to send dead player
       var position = roomController.GetMap().RandomDodgeballSpawnPosition();
       data.x = position.x;
       data.y = position.y;
 
       roomController.Broadcast( MessageDefinitions.DEATH, data );
+
+      // check for winners
+      var alive = room.GetAlivePlayers();
+      if ( alive.length === 1 )
+      {
+        roomController.Broadcast( MessageDefinitions.WIN, { pid: alive[ 0 ].GetID() } );
+        roomController.EndGame();
+      }
     });
   }
 }
@@ -335,8 +377,11 @@ RoomController.prototype.RemovePlayerListeners = function( socket )
   else
   {
     socket.removeAllListeners( MessageDefinitions.MOVE );
+    socket.removeAllListeners( MessageDefinitions.TIME );
     socket.removeAllListeners( MessageDefinitions.BOMB );
     socket.removeAllListeners( MessageDefinitions.KICK );
+    socket.removeAllListeners( MessageDefinitions.DEATH );
+    socket.removeAllListeners( MessageDefinitions.POWERUP );
     socket.removeAllListeners( MessageDefinitions.FIREBALL );
   }
 }
