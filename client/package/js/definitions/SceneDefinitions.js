@@ -30,10 +30,6 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 
 	// all the position settings should go inside GUI.js when using real graphics
 	var colorButtons = GUI.OneOrNoneRadioButtonGroup(["Blue", "Green", "Red", "Pink"], handler_Seat);
-	// colorButtons[ Player.Color.BLUE ].attr({ x: 100, y: 100, w: 150, h: 350 });
-	// colorButtons[ Player.Color.GREEN ].attr({ x: 300, y: 100, w: 150, h: 350 });
-	// colorButtons[ Player.Color.RED ].attr({ x: 500, y: 100, w: 150, h: 350 });
-	// colorButtons[ Player.Color.PINK ].attr({ x: 700, y: 100, w: 150, h: 350 });
 	colorButtons[ Player.Color.BLUE ].attr({ x: 100, y: 100});
 	colorButtons[ Player.Color.GREEN ].attr({ x: 300, y: 100});
 	colorButtons[ Player.Color.RED ].attr({ x: 500, y: 100});
