@@ -13,7 +13,7 @@ NetworkManager.localLag = 100;
 
 NetworkManager.Connect = function (ip, port, handler)
 {
-	socket = io.connect(ip);
+	socket = io.connect(ip+':'+port);
 	socket.on("connect", function(){ 
 		NetworkManager.connected = true;
 		handler();

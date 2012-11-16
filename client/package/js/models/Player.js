@@ -19,8 +19,8 @@ function Player( id, socket )
   // this._powerups;         // Powerup[] - powerups player has - starts with none
   // this._ability_kickbomb; // bool - whether player has ability to kick bombs
 
-  // this._lastUpdateTime;
-  // this._delay;
+  // this._alive;            // bool - whether player is alive
+  // this._delay;            // int - one-sided delay
 
   this.Reset();
 }
@@ -105,6 +105,16 @@ Player.prototype.WeightedAverageDelay = function( newDelay )
   this._delay = parseInt( 0.9 * this._delay + 0.1 * newDelay );
 }
 
+Player.prototype.GetAlive = function()
+{
+  return this._alive;
+}
+
+Player.prototype.SetAlive = function( alive )
+{
+  this._alive = alive;
+}
+
 Player.prototype.GetDirection = function()
 {
   return this._direction;
@@ -178,6 +188,7 @@ Player.prototype.Reset = function()
   this._x = 0;
   this._y = 0;
   this._bombs = 0;
+  this._alive = true;
   this._delay = Player.Default.DELAY;
   this._color = Player.Default.COLOR;
   this._speed = Player.Default.SPEED;

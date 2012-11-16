@@ -9,6 +9,9 @@ var AudioDefinitions = {
 	EXPLODE: "explode",
 	KICK: "kick",
 	EGG: "egg",
+	POWERUP: "powerup",
+	DEATH: "death",
+	FIREBALL: "fireball",
 };
 
 /*
@@ -28,6 +31,14 @@ Crafty.audio.add(AudioDefinitions.KICK, [
 	"snd/kick.wav",
 ])
 Crafty.audio.add(AudioDefinitions.EGG, [
-	"snd/layegg.wav",
+	"snd/drop.wav",
 ])
-
+Crafty.audio.add(AudioDefinitions.POWERUP, [
+	"snd/powerup.wav",
+])
+Crafty.audio.add(AudioDefinitions.DEATH, [
+	"snd/die.wav",
+])
+Crafty.audio.add(AudioDefinitions.FIREBALL, [
+	"snd/fireball.wav",
+])

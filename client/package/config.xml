@@ -20,11 +20,14 @@
   <rim:category name="games"/>    
  
   <rim:permissions>
-    <rim:permit>run_when_backgrounded</rim:permit>
+    <rim:permit>access_shared</rim:permit>
   </rim:permissions>
  
   <icon src="icn/icon.png" />
  
   <content src="index.html" />
+
+  <feature id="blackberry.ui.dialog" required="true" version="1.0.0"/>
+  <access uri="http://ec2-184-73-92-233.compute-1.amazonaws.com:8000" subdomains="false" />
  
 </widget>
