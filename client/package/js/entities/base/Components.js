@@ -29,43 +29,6 @@ Crafty.c('Dragon', {
 		this.lastUpdate = undefined;
 		this.expectedPosition = undefined;
 		
-		this.bind('NewComponent', function(component)
-		{
-			// if a controllable component was added to this dragon
-			if ('Controllable' in this.__c)
-			{
-				this.bind('KeyDown_A', this.layEgg);
-				
-				this.bind('NewDirection', function(newdir){
-					var direction;
-					
-					if (newdir.x < 0)
-                        direction = Player.Direction.LEFT;
-                    if (newdir.x > 0)
-                        direction = Player.Direction.RIGHT;
-                    if (newdir.y < 0)
-                        direction = Player.Direction.UP;
-                    if (newdir.y > 0)
-                        direction = Player.Direction.DOWN;
-                    if(!newdir.x && !newdir.y)
-                    	direction = Player.Direction.NONE;
-
-					// don't store direction if it is none, so we have the latest direction player is facing
-					if ( direction !== Player.Direction.NONE )
-                    	this.direction = direction;
-                    
-                    this.timeout(function() { this.trigger( "ChangeDirection", direction ) }, NetworkManager.localLag);
-
-                    // TODO: DR
-                    // currently sending update as long as direction changes
-                    // want to make it so that only if successfully turn around the corner then send
-                    // 1. spamming left - right
-                    // 2. walking against solid blocks / walls
-                    NetworkManager.SendMessage(MessageDefinitions.MOVE, { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction });
-				});
-				this.unbind('NewComponent');
-			}
-		});
 		return this;
 	},
 	dragon: function(color){
@@ -77,32 +40,6 @@ Crafty.c('Dragon', {
 		// only send update if local dragon
 		if (this.has('LocalPlayer')) 
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
-	},
-	layEgg: function(){
-		if (!this.onEgg && this.eggCount < this.eggLimit)
-		{
-			this.eggCount += 1;
-			var data = Map.pixelToTile({x: this.x, y: this.y});
-			data.timestamp = WallClock.getTime();
-			NetworkManager.SendMessage(MessageDefinitions.BOMB, data);
-			this.timeout(function (){ Map.spawnEggOnTile(this, data, EntityDefinitions.LOCAL_FUSETIME); }, NetworkManager.localLag);
-		};
-	},
-	spitFireball:function(){
-		console.log("SPIT FIRE!");
-		if (this.hasFireball)
-		{
-			var pos = Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}));
-			pos.x += this.direction.x;
-			pos.y += this.direction.y;
-			Entities.Fireball().fireball(this.direction)
-								.attr(pos);
-
-			var data = Map.pixelToTile({x: this.x, y: this.y});
-			data.direction = this.direction;
-			data.timestamp = WallClock.getTime();
-			NetworkManager.SendMessage(MessageDefinitions.FIREBALL, data);
-		}	
 	},
 	clearEgg: function(){
 		this.eggCount -= 1;
@@ -245,9 +182,10 @@ Crafty.c('Death', {
 		if (this.has('LocalPlayer')) 
 		{
 			this.unbind('KeyDown_A');
+			this.flushUpdates();
 			this.disableControl();
 		}
-		this.trigger("ChangeDirection", Player.Direction.DOWN);
+		//this.trigger("ChangeDirection", Player.Direction.DOWN);
 		
 		this.bind('TweenEnd', function(something)
 		{
@@ -273,6 +211,7 @@ Crafty.c('Death', {
 				if (this.has('LocalPlayer'))
 				{
 					this.enableControl();
+					this.flushUpdates();
 					this.bind('KeyDown_A', this.spitFireball); // change ability
 				}
 			}
@@ -383,11 +322,13 @@ Crafty.c('Powerup', {
 				var data = Map.pixelToTile( { x: this.x, y: this.y } );
 				data.timestamp = WallClock.getTime();
 
-				// only send update if local dragon, and alive
-				if (dragon.has('LocalPlayer') && !dragon.has('Death'))
+				// only send update if local dragon
+				if (dragon.has('LocalPlayer'))
 					NetworkManager.SendMessage(MessageDefinitions.POWERUP, data);
-
-				this.destroy();
+				
+				// taken by a live player
+				if (!dragon.has('Death'))
+					this.destroy();
 			}
 		});
 		return this;
@@ -463,43 +404,46 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
  ========================*/
 Crafty.c("LocalPlayer", {
 	init: function(){
+		this.updateTypeMove = 'move';
+		this.updateTypeDirection = 'direction';
+		this.updateTypeEgg = 'egg';
+		this.updateTypeFireball = 'fireball';
+		this.updateQueue = [];
 		// the local player can be controlled
 		this.requires("Controllable");
 		
-		// for local lag
-		this.delayLocalUpdate = function(dx, dy, obj)
-		{
-			this.timeout(function(){
-				obj.x += dx * obj.moveSpeed;
-				obj.y += dy * obj.moveSpeed;
-				if (this.onEgg && this.hit('Egg').length == 1)
-	        	{
-	        		if (this.hit('solid'))
-	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
-	        	}
-	        	else 
-	        	{
-	        		if (this.hit('solid') || this.hit('Egg'))
-	            	{
-	            		var egg = this.hit('Egg');
-	            		//TODO: KICK
-	            		// egg.trigger('kick');
-	            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
-	            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
-	            		//this.x = oldpos.x;
-	            		//this.y = oldpos.y;
-	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
-	            	}
-	        	}
-			}, NetworkManager.localLag);
-		};
+		this.bind('EnterFrame', this.processUpdates);
+		
+		this.bind('NewDirection', function(newdir){
+			var direction;
+			
+			if (newdir.x < 0)
+                direction = Player.Direction.LEFT;
+            if (newdir.x > 0)
+                direction = Player.Direction.RIGHT;
+            if (newdir.y < 0)
+                direction = Player.Direction.UP;
+            if (newdir.y > 0)
+                direction = Player.Direction.DOWN;
+            if(!newdir.x && !newdir.y)
+            	direction = Player.Direction.NONE;
+
+			// don't store direction if it is none, so we have the latest direction player is facing
+			if ( direction !== Player.Direction.NONE )
+            	this.direction = direction;
+            
+            var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction };
+           	this.doLocalUpdate(this.updateTypeDirection, data);
+		});
 		
 		// perform collision detection when the entity is being moved
 		this.bind('Moved', function(oldpos)
 		{
-			var dx = this.x - oldpos.x;
-			var dy = this.y - oldpos.y;
-			this.delayLocalUpdate(dx, dy, this);
+			var data = {};
+			data.dragon = this;
+			data.dx = this.x - oldpos.x;
+			data.dy = this.y - oldpos.y;
+			this.doLocalUpdate(this.updateTypeMove, data);
 			this.x = oldpos.x;
 			this.y = oldpos.y;
 		});
@@ -507,14 +451,157 @@ Crafty.c("LocalPlayer", {
 		this.bind('KeyDown', function(keyEvent){
 			if (keyEvent.key == Crafty.keys['A'])
 				this.trigger('KeyDown_A');
-				/*
-			if (keyEvent.key == Crafty.keys['B'])
-				this.spitFireball();
-				*/
 		});
-				
+		
+		this.bind('KeyDown_A', this.layEgg);
+		
 		return this;
-	}
+	},
+	
+	layEgg: function(){
+		if (!this.onEgg && this.eggCount < this.eggLimit)
+		{
+			this.eggCount += 1;
+			
+			var data = Map.pixelToTile({x: this.x, y: this.y});
+			data.timestamp = WallClock.getTime();
+			data.dragon = this;
+			data.fusetime = EntityDefinitions.LOCAL_FUSETIME;
+			this.doLocalUpdate(this.updateTypeEgg, data);
+		};
+	},
+	
+	spitFireball: function(){
+		console.log("SPIT FIRE!");
+		if (this.hasFireball)
+		{
+			/*
+			var pos = Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}));
+			pos.x += this.direction.x;
+			pos.y += this.direction.y;
+			Entities.Fireball().fireball(this.direction)
+								.attr(pos);
+			*/
+			this.hasFireball = false;
+			
+			var data = Map.pixelToTile({x: this.x, y: this.y});
+			data.direction = this.direction;
+			data.timestamp = WallClock.getTime();
+			//NetworkManager.SendMessage(MessageDefinitions.FIREBALL, data);
+		}	
+	},
+	
+	doLocalUpdate: function(updateType, data){
+		switch(updateType){
+			case this.updateTypeMove:
+				//console.log(data)
+				this.delayLocalUpdate(updateType, data);
+				break;
+			case this.updateTypeDirection:
+				NetworkManager.SendMessage(MessageDefinitions.MOVE, data);
+				this.delayLocalUpdate(updateType, data);
+				break;
+			case this.updateTypeEgg:
+				NetworkManager.SendMessage(MessageDefinitions.BOMB, { x: data.x, y: data.y, timestamp: data.timestamp });
+				this.delayLocalUpdate(updateType, data)
+				break;
+			case this.updateTypeFireball:
+				NetworkManager.SendMessage(MessageDefinitions.FIREBALL, data);
+				break;
+		}
+	},
+	
+	delayLocalUpdate: function(updateType, data){
+		data.updateType = updateType;
+		data.timeCalled = (new Date()).getTime();
+		this.updateQueue.push(data);
+	},
+	
+	processUpdates: function()
+	{
+		var processedCount = 0;
+		for (var i = 0; i < this.updateQueue.length; i++)
+		{
+			var data = this.updateQueue[i];
+			if ((new Date()).getTime() > data.timeCalled + NetworkManager.localLag)
+			{
+				switch(data.updateType)
+				{
+					case this.updateTypeMove:
+						this.processMove(data);
+						break;
+					case this.updateTypeDirection:
+						this.processDirection(data);
+						break;
+					case this.updateTypeEgg:
+						this.processEgg(data);
+						break;
+					case this.updateTypeFireball:
+						this.processFireball(data);
+						break;
+				}
+				processedCount += 1;
+			}
+			else
+				break;
+		}
+		this.updateQueue.splice(0, processedCount);
+	},
+		
+	flushUpdates: function()
+	{
+		console.log("FLUSH");
+		// reset all input keys
+		if (Crafty.keydown[Crafty.keys['A']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['A'] });
+		if (Crafty.keydown[Crafty.keys['RIGHT_ARROW']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['RIGHT_ARROW'] });
+		if (Crafty.keydown[Crafty.keys['LEFT_ARROW']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['LEFT_ARROW'] });
+		if (Crafty.keydown[Crafty.keys['UP_ARROW']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['UP_ARROW'] });
+		if (Crafty.keydown[Crafty.keys['DOWN_ARROW']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['DOWN_ARROW'] });
+		
+		this.updateQueue.splice(0, this.updateQueue.length);
+	},
+	
+	processMove: function(data)
+	{
+		var dragon = data.dragon;
+		dragon.x += data.dx * dragon.moveSpeed;
+		dragon.y += data.dy * dragon.moveSpeed;
+		if (dragon.onEgg && dragon.hit('Egg').length == 1)
+    	{
+    		if (dragon.hit('solid'))
+        		dragon.attr(Map.tileToPixel(Map.pixelToTile({x: dragon.x, y:dragon.y}))); // snap to grid
+    	}
+    	else 
+    	{
+    		if (dragon.hit('solid') || dragon.hit('Egg'))
+        	{
+        		var egg = dragon.hit('Egg');
+        		//TODO: KICK
+        		// egg.trigger('kick');
+        		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+        		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+        		//this.x = oldpos.x;
+        		//this.y = oldpos.y;
+        		dragon.attr(Map.tileToPixel(Map.pixelToTile({x: dragon.x, y:dragon.y})));
+        	}
+    	}
+	},
+	
+	processDirection: function(data)
+	{
+		this.trigger('ChangeDirection', data.dir);
+	},
+	
+	processEgg: function(data)
+	{
+		var dragon = data.dragon;
+		Map.spawnEggOnTile(dragon, data, data.fusetime);
+	},
+
+	processFireball: function(data)
+	{
+		console.log("fireball not yet implementatatede");
+	},
 });
 
 Crafty.c("NetworkedPlayer", {

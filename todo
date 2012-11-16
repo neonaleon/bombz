@@ -7,7 +7,7 @@ TODO:
 		-----local lag done for movement and animation and bomb
 		-----lpf 250 bomb fuse (local player is 1750, remote player is 1500)
 		-----player death (visual trick, use animation and .5 alpha to make player tp out)
-		player during death animation still picking up powerups
+		-----player during death animation still picking up powerups
 		problem with death animation (player has queued delayed local updates, which take effect after the player moves outside)
 		
 		fireball logic
