@@ -54,7 +54,11 @@ GUI.ActionButton = function(button)
 // Creates a dpad which moves the target entity with speed, and invokes button handlers when GUI.ACTION_BUTTON_A, or B is pressed.
 GUI.Dpad = function (entity)
 {
-   var dpad = Crafty.e('Controller, dpad').attr({z:GUIDefinitions.Z_GUI});
+	var def = SpriteDefinitions['gui'];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+   var dpad = Crafty.e('Controller, dpad, dpad_none')
+   					.attr({z:GUIDefinitions.Z_GUI, w: SpriteDefinitions.DPAD_WIDTH, h: SpriteDefinitions.DPAD_HEIGHT})
+   					;
    	
    	return dpad;
 }
@@ -158,6 +162,11 @@ GUI.Selector = function(choicesArray, handler)
 						handler(index);
 					});
 	return { 'label': label, 'left': buttonLeft, 'right': buttonRight };
+};
+
+GUI.GameTitle = function()
+{
+	
 };
 
 /* ==============

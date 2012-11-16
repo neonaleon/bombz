@@ -62,13 +62,13 @@ Map.generate = function(mapData)
 			switch ( tile )
 			{
 				case 0: // outermost border for dodge ballers
-				if (!(dy==0 || dy==mapData.height-1 || dx==0 || dx==mapData.width-1) )
-					map.attach(
-						Entities.FloorTile().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
-				else
-					map.attach(
-						Entities.DodgeBallBlock().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
-					break;
+					if (!(dy==0 || dy==mapData.height-1 || dx==0 || dx==mapData.width-1) )
+						map.attach(
+							Entities.FloorTile().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
+					else
+						map.attach(
+							Entities.DodgeBallBlock().attr({ x: dx * Map.MAP_TILEWIDTH, y: dy * Map.MAP_TILEHEIGHT, z: Map.Z_FLOOR }));
+						break;
 
 				case 1: // floor with destructible tile
 					map.attach(
@@ -104,7 +104,7 @@ Map.generate = function(mapData)
 	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: -10});
 	// bottom
 	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: Properties.DEVICE_HEIGHT});
-	
+
 	var powerups = mapData.powerups;
 	for (var i = 0; i < powerups.length; i++)
 	{

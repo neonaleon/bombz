@@ -19,6 +19,12 @@ var SpriteDefinitions = {
 	
 	TILE_WIDTH: 40,
 	TILE_HEIGHT: 40,
+
+	BUTTON_WIDTH: 80,
+	BUTTON_HEIGHT: 80,
+
+	DPAD_WIDTH: 150,
+	DPAD_HEIGHT: 150,
 	
 	BLUE: 0,
 	GREEN: 1,
@@ -86,12 +92,14 @@ SpriteDefinitions['map1'] = {
 };
 
 SpriteDefinitions['gui'] = {
-	'file': '/img/sprite40x40.png',
-	'tile': SpriteDefinitions.TILE_WIDTH,
+	'file': '/img/dpad150x150.png',
+	'tile': SpriteDefinitions.DPAD_WIDTH,
 	'elements': {
-		dpad: [0, 5],
-		buttonA: [1, 5],
-		buttonB: [2, 5],
+		dpad_none: [0, 0],
+		dpad_up: [1, 0],
+		dpad_down: [2, 0],
+		dpad_left: [3, 0],
+		dpad_right: [4, 0],
 	}
 };
 
@@ -110,7 +118,7 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 	var color = SpriteDefinitions.COLORS[i];
 	SpriteDefinitions['button'+color] = {
 		'file': '/img/button80x80.png',
-		'tile': SpriteDefinitions.TILE_WIDTH*2,
+		'tile': SpriteDefinitions.BUTTON_WIDTH,
 		'elements':(function() {
 			var elements = {};
 			elements[color + 'button'] = [18, i];
