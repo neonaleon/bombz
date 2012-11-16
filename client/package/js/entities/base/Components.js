@@ -19,58 +19,23 @@ var Components = {};
 Crafty.c('Dragon', {
 	init: function() {
 		this.onEgg = false;
-		this.blastRadius = 3;
+		this.blastRadius = 2;
 		this.moveSpeed = 5;
-		this.eggLimit = 3;
+		this.eggLimit = 2;
 		this.eggCount = 0;
-		this.hasFireball = true;
+		this.hasFireball = false;
 		this.direction = undefined;
 
 		this.lastUpdate = undefined;
 		this.expectedPosition = undefined;
-		
-		this.delayLocalUpdate = function(dx, dy, obj)
-		{
-			this.timeout(function(){
-				obj.x += dx * obj.moveSpeed;
-				obj.y += dy * obj.moveSpeed;
-				if (this.onEgg && this.hit('Egg').length == 1)
-	        	{
-	        		if (this.hit('solid'))
-	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
-	        	}
-	        	else 
-	        	{
-	        		if (this.hit('solid') || this.hit('Egg'))
-	            	{
-	            		var egg = this.hit('Egg');
-	            		//TODO: KICK
-	            		// egg.trigger('kick');
-	            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
-	            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
-	            		//this.x = oldpos.x;
-	            		//this.y = oldpos.y;
-	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
-	            	}
-	        	}
-			}, NetworkManager.localLag);
-		};
-		
-		// perform collision detection when the entity is being moved
-		this.bind('Moved', function(oldpos)
-		{
-			var dx = this.x - oldpos.x;
-			var dy = this.y - oldpos.y;
-			this.delayLocalUpdate(dx, dy, this);
-			this.x = oldpos.x;
-			this.y = oldpos.y;
-		});	
 		
 		this.bind('NewComponent', function(component)
 		{
 			// if a controllable component was added to this dragon
 			if ('Controllable' in this.__c)
 			{
+				this.bind('KeyDown_A', this.layEgg);
+				
 				this.bind('NewDirection', function(newdir){
 					var direction;
 					
@@ -88,6 +53,7 @@ Crafty.c('Dragon', {
 					// don't store direction if it is none, so we have the latest direction player is facing
 					if ( direction !== Player.Direction.NONE )
                     	this.direction = direction;
+                    
                     this.timeout(function() { this.trigger( "ChangeDirection", direction ) }, NetworkManager.localLag);
 
                     // TODO: DR
@@ -96,12 +62,6 @@ Crafty.c('Dragon', {
                     // 1. spamming left - right
                     // 2. walking against solid blocks / walls
                     NetworkManager.SendMessage(MessageDefinitions.MOVE, { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction });
-				});
-				this.bind('KeyDown', function(keyEvent){
-					if (keyEvent.key == Crafty.keys['A'])
-						this.layEgg();
-					if (keyEvent.key == Crafty.keys['B'])
-						this.spitFireball();
 				});
 				this.unbind('NewComponent');
 			}
@@ -113,22 +73,19 @@ Crafty.c('Dragon', {
 		return this;
 	},
 	die: function(){
+		this.addComponent('Death');
 		// only send update if local dragon
 		if (this.has('LocalPlayer')) 
-		{
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
-		}
 	},
 	layEgg: function(){
 		if (!this.onEgg && this.eggCount < this.eggLimit)
 		{
 			this.eggCount += 1;
-			//console.log("planted: " + this.eggCount);
-
 			var data = Map.pixelToTile({x: this.x, y: this.y});
 			data.timestamp = WallClock.getTime();
 			NetworkManager.SendMessage(MessageDefinitions.BOMB, data);
-			this.timeout(function (){ Map.spawnEggOnTile(this, data); }, NetworkManager.localLag);
+			this.timeout(function (){ Map.spawnEggOnTile(this, data, EntityDefinitions.LOCAL_FUSETIME); }, NetworkManager.localLag);
 		};
 	},
 	spitFireball:function(){
@@ -262,6 +219,78 @@ Crafty.c('Fireball', {
 	},
 });
 
+Crafty.c('Killable', {
+	init: function() {
+		this.bind('killed', function(tile){
+			this.trigger('death', tile);
+			this.removeComponent('Killable');
+		});
+		return this;
+	},
+});
+
+Crafty.c('Death', {
+	init: function() {
+		this.deathAnimStep = 2; // 2 step death animation
+		this.deathPos = undefined; // deathPos not yet received from server
+		// add burnt dragon sprite
+		//var def = SpriteDefinitions[SpriteDefinitions.BURNT];
+		//Crafty.sprite(def['tile'], def['file'], def['elements']);
+		//this.addComponent(SpriteDefinitions.BURNT + 'dragon');
+		
+		this.requires('Tween');
+		this.alpha = 0.75; // ghost mode
+		this.tween({ y: this.y - 30 }, 30);
+		
+		if (this.has('LocalPlayer')) 
+		{
+			this.unbind('KeyDown_A');
+			this.disableControl();
+		}
+		this.trigger("ChangeDirection", Player.Direction.DOWN);
+		
+		this.bind('TweenEnd', function(something)
+		{
+			this.deathAnimStep -= 1;
+			if (this.deathAnimStep == 1)
+			{
+				// first animation step ends, check if death position received from server
+				if (this.deathPos !== undefined) this.tween(this.deathPos, 300);
+			}
+			else if (this.deathAnimStep == 0) // second animation step ends, player has tweened to death position
+			{
+				this.alpha = 1; // undo ghost mode
+				
+				var cloud = Entities.Cloud().attr({ x: this.x, y: this.y });
+				this.attach(cloud);
+				
+				// snap to clear floating point inaccuracies due to tween interpolation
+				this.x = this.deathPos.x;
+				this.y = this.deathPos.y;
+				
+				//this.removeComponent('4dragon');  clear the burn
+				
+				if (this.has('LocalPlayer'))
+				{
+					this.enableControl();
+					this.bind('KeyDown_A', this.spitFireball); // change ability
+				}
+			}
+		})
+		
+		this.bind('death', function(tile)
+		{
+			// death position received from server
+			this.deathPos = Map.getDeathLocation(tile);
+			// see if first animation step is complete, otherwise when it is complete, it will tween
+			// this is for the case where the msg comes in a lot later than the time for the death animation which is ~500ms
+			if (this.deathAnimStep == 1) this.tween(this.deathPos, 300);
+		});
+		
+		return this;
+	},
+})
+
 /* ============================
  * Collision related components
  ==============================*/
@@ -346,22 +375,19 @@ Crafty.c('Powerup', {
 			if (hitDragon)
 			{
 				var dragon = hitDragon[0].obj;
-				if (!dragon.has(this.type + "_powerup"))
-				{
-					// effects don't apply until message returns
-					//dragon.addComponent(this.type + "_powerup");
-					//dragon.trigger('applyPowerup');
+				// effects don't apply until message returns
+				//dragon.addComponent(this.type + "_powerup");
+				//dragon.trigger('applyPowerup');
 
-					// send message to inform on collection
-					var data = Map.pixelToTile( { x: this.x, y: this.y } );
-					data.timestamp = WallClock.getTime();
+				// send message to inform on collection
+				var data = Map.pixelToTile( { x: this.x, y: this.y } );
+				data.timestamp = WallClock.getTime();
 
-					// only send update if local dragon
-					if ('Controllable' in dragon.__c)
-						NetworkManager.SendMessage(MessageDefinitions.POWERUP, data);
+				// only send update if local dragon, and alive
+				if (dragon.has('LocalPlayer') && !dragon.has('Death'))
+					NetworkManager.SendMessage(MessageDefinitions.POWERUP, data);
 
-					this.destroy();
-				}
+				this.destroy();
 			}
 		});
 		return this;
@@ -378,10 +404,6 @@ Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
 		this.bind("applyPowerup", function(){
 			//this.canKick = true;
 		});
-		this.bind("unapplyPowerup", function(){ 
-			//this.canKick = false;
-			this.removeComponent(EntityDefinitions.POWERUP_KICK); 
-		});
 		return this;
 	},
 });
@@ -392,12 +414,9 @@ Crafty.c(EntityDefinitions.POWERUP_KICK + "_powerup", {
  */
 Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){
-			this.moveSpeed = 7.5; 
-		});
-		this.bind("unapplyPowerup", function(){ 
-			this.moveSpeed = 5;
-			this.removeComponent(EntityDefinitions.POWERUP_SPEED + "_powerup");
+		this.bind("applyPowerup", function(){ 
+			this.moveSpeed = Math.min(this.moveSpeed + 1, EntityDefinitions.MOVESPEED_CAP);
+			this.removeComponent(EntityDefinitions.POWERUP_SPEED + "_powerup"); 
 		});
 		return this;
 	},
@@ -408,10 +427,9 @@ Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
  */
 Crafty.c(EntityDefinitions.POWERUP_BLAST + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){ this.blastRadius = 6; });
-		this.bind("unapplyPowerup", function(){ 
-			this.blastRadius = 3;
-			this.removeComponent(EntityDefinitions.POWERUP_BLAST + "_powerup");
+		this.bind("applyPowerup", function(){ 
+			this.blastRadius = Math.min(this.blastRadius + 1, EntityDefinitions.BLAST_CAP);
+			this.removeComponent(EntityDefinitions.POWERUP_BLAST + "_powerup"); 
 		});
 		return this;
 	},
@@ -422,16 +440,20 @@ Crafty.c(EntityDefinitions.POWERUP_BLAST + "_powerup", {
  */
 Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){ this.eggLimit = 6; });
-		this.bind("unapplyPowerup", function(){ this.eggLimit = 3; });
+		this.bind("applyPowerup", function(){ 
+			this.eggLimit = Math.min(this.eggLimit + 1, EntityDefinitions.EGG_CAP);
+			this.removeComponent(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup"); 
+		});
 		return this;
 	},
 });
 
 Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 	init: function(){
-		this.bind("applyPowerup", function(){ this.hasFireball = true; });
-		this.bind("unapplyPowerup", function(){});
+		this.bind("applyPowerup", function(){ 
+			this.hasFireball = true;
+			this.removeComponent(EntityDefinitions.POWERUP_FIREBALL + "_powerup"); 
+		});
 		return this;
 	}
 })
@@ -441,7 +463,56 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
  ========================*/
 Crafty.c("LocalPlayer", {
 	init: function(){
+		// the local player can be controlled
 		this.requires("Controllable");
+		
+		// for local lag
+		this.delayLocalUpdate = function(dx, dy, obj)
+		{
+			this.timeout(function(){
+				obj.x += dx * obj.moveSpeed;
+				obj.y += dy * obj.moveSpeed;
+				if (this.onEgg && this.hit('Egg').length == 1)
+	        	{
+	        		if (this.hit('solid'))
+	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+	        	}
+	        	else 
+	        	{
+	        		if (this.hit('solid') || this.hit('Egg'))
+	            	{
+	            		var egg = this.hit('Egg');
+	            		//TODO: KICK
+	            		// egg.trigger('kick');
+	            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+	            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+	            		//this.x = oldpos.x;
+	            		//this.y = oldpos.y;
+	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+	            	}
+	        	}
+			}, NetworkManager.localLag);
+		};
+		
+		// perform collision detection when the entity is being moved
+		this.bind('Moved', function(oldpos)
+		{
+			var dx = this.x - oldpos.x;
+			var dy = this.y - oldpos.y;
+			this.delayLocalUpdate(dx, dy, this);
+			this.x = oldpos.x;
+			this.y = oldpos.y;
+		});
+		
+		this.bind('KeyDown', function(keyEvent){
+			if (keyEvent.key == Crafty.keys['A'])
+				this.trigger('KeyDown_A');
+				/*
+			if (keyEvent.key == Crafty.keys['B'])
+				this.spitFireball();
+				*/
+		});
+				
 		return this;
 	}
 });
@@ -455,6 +526,33 @@ Crafty.c("NetworkedPlayer", {
 		this.bind("EnterFrame", function(){
 			this.simulate();
 		});
+		
+		// perform collision detection when the entity is being moved
+		this.bind('Moved', function(oldpos)
+		{
+			this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
+			this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
+			
+			if (this.onEgg && this.hit('Egg').length == 1)
+	        	{
+	        		if (this.hit('solid'))
+	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+	        	}
+	        	else 
+	        	{
+	        		if (this.hit('solid') || this.hit('Egg'))
+	            	{
+	            		var egg = this.hit('Egg');
+	            		//TODO: KICK
+	            		// egg.trigger('kick');
+	            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+	            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+	            		//this.x = oldpos.x;
+	            		//this.y = oldpos.y;
+	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+	            	}
+	        	}
+		});	
 		return this;
 	},
 	simulate: function()
