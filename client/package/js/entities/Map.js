@@ -28,6 +28,7 @@ var Map = {
 	Z_EGG: 7,
 	Z_FIREBALL: 8,
 	Z_DRAGON: 9,
+	Z_CLOUD: 10,
 	
 	// 4 corner spawn positions
 	SPAWN_POSITIONS: [[0, 0], [14, 0], [0, 10], [14, 10]],
@@ -176,6 +177,11 @@ Map.movePlayerOutside = function(dragon, position)
 {
 	dragon.x = position.x * Map.MAP_TILEWIDTH + Map._instance.x;
 	dragon.y = position.y * Map.MAP_TILEHEIGHT;
+}
+
+Map.getDeathLocation = function(position)
+{
+	return { x: position.x * Map.MAP_TILEWIDTH + Map._instance.x, y: position.y * Map.MAP_TILEHEIGHT };
 }
 
 Map.suddenDeath = function()

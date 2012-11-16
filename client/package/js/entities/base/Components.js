@@ -73,11 +73,10 @@ Crafty.c('Dragon', {
 		return this;
 	},
 	die: function(){
+		this.addComponent('Death');
 		// only send update if local dragon
 		if (this.has('LocalPlayer')) 
-		{
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
-		}
 	},
 	layEgg: function(){
 		if (!this.onEgg && this.eggCount < this.eggLimit)
@@ -220,6 +219,78 @@ Crafty.c('Fireball', {
 	},
 });
 
+Crafty.c('Killable', {
+	init: function() {
+		this.bind('killed', function(tile){
+			this.trigger('death', tile);
+			this.removeComponent('Killable');
+		});
+		return this;
+	},
+});
+
+Crafty.c('Death', {
+	init: function() {
+		this.deathAnimStep = 2; // 2 step death animation
+		this.deathPos = undefined; // deathPos not yet received from server
+		// add burnt dragon sprite
+		//var def = SpriteDefinitions[SpriteDefinitions.BURNT];
+		//Crafty.sprite(def['tile'], def['file'], def['elements']);
+		//this.addComponent(SpriteDefinitions.BURNT + 'dragon');
+		
+		this.requires('Tween');
+		this.alpha = 0.75; // ghost mode
+		this.tween({ y: this.y - 30 }, 30);
+		
+		if (this.has('LocalPlayer')) 
+		{
+			this.unbind('KeyDown_A');
+			this.disableControl();
+		}
+		this.trigger("ChangeDirection", Player.Direction.DOWN);
+		
+		this.bind('TweenEnd', function(something)
+		{
+			this.deathAnimStep -= 1;
+			if (this.deathAnimStep == 1)
+			{
+				// first animation step ends, check if death position received from server
+				if (this.deathPos !== undefined) this.tween(this.deathPos, 300);
+			}
+			else if (this.deathAnimStep == 0) // second animation step ends, player has tweened to death position
+			{
+				this.alpha = 1; // undo ghost mode
+				
+				var cloud = Entities.Cloud().attr({ x: this.x, y: this.y });
+				this.attach(cloud);
+				
+				// snap to clear floating point inaccuracies due to tween interpolation
+				this.x = this.deathPos.x;
+				this.y = this.deathPos.y;
+				
+				//this.removeComponent('4dragon');  clear the burn
+				
+				if (this.has('LocalPlayer'))
+				{
+					this.enableControl();
+					this.bind('KeyDown_A', this.spitFireball); // change ability
+				}
+			}
+		})
+		
+		this.bind('death', function(tile)
+		{
+			// death position received from server
+			this.deathPos = Map.getDeathLocation(tile);
+			// see if first animation step is complete, otherwise when it is complete, it will tween
+			// this is for the case where the msg comes in a lot later than the time for the death animation which is ~500ms
+			if (this.deathAnimStep == 1) this.tween(this.deathPos, 300);
+		});
+		
+		return this;
+	},
+})
+
 /* ============================
  * Collision related components
  ==============================*/
@@ -312,8 +383,8 @@ Crafty.c('Powerup', {
 				var data = Map.pixelToTile( { x: this.x, y: this.y } );
 				data.timestamp = WallClock.getTime();
 
-				// only send update if local dragon
-				if (dragon.has('LocalPlayer'))
+				// only send update if local dragon, and alive
+				if (dragon.has('LocalPlayer') && !dragon.has('Death'))
 					NetworkManager.SendMessage(MessageDefinitions.POWERUP, data);
 
 				this.destroy();
