@@ -61,12 +61,17 @@ GUI.Dpad = function (entity)
 
 // Creates a switch button with buttonText, which invokes handler(this) when clicked
 // button has true (selected) and false (not selected) state
-GUI.SwitchButton = function(buttonText, handler)
+GUI.SwitchButton = function(buttonText, handler, color)
 {
-	var button = Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse")
+	console.log(color);
+	var def = SpriteDefinitions['button'+color];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	var button = Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse, SpriteAnimation, " + + color + 'button')
 				.setName("button_" + buttonText)
-				.attr({	isDown:false, w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
-				.color(GUIDefinitions.BUTTON_UPCOLOR)
+				.animate("spin", def['anim_spin'])
+				// .attr({	isDown:false, w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
+				// .color(GUIDefinitions.BUTTON_UPCOLOR)
+				.attr({	isDown:false})
 				.text(buttonText)
 				.bind("Click", function()
 				{
@@ -84,12 +89,14 @@ GUI.SwitchButton = function(buttonText, handler)
 	button.on = function()
 	{
 		this.isDown = true;
-		this.color(GUIDefinitions.BUTTON_DOWNCOLOR);
+		if (!this.isPlaying("spin")) this.stop().animate("spin", 50, -1);
+		// this.color(GUIDefinitions.BUTTON_DOWNCOLOR);
 	};
 	button.off = function()
 	{
 		this.isDown = false;
-		this.color(GUIDefinitions.BUTTON_UPCOLOR);
+		if (this.isPlaying("spin")) this.stop();
+		// this.color(GUIDefinitions.BUTTON_UPCOLOR);
 	};
 	return button;
 };
@@ -112,7 +119,7 @@ GUI.OneOrNoneRadioButtonGroup = function(buttonTextArray, handler)
 	for ( var i in buttonTextArray )
 	{
 		var buttonText = buttonTextArray[ i ];
-		buttons.push( GUI.SwitchButton( buttonText, handler_Group ) );
+		buttons.push( GUI.SwitchButton( buttonText, handler_Group, i ) );
 	}
 	return buttons;
 };

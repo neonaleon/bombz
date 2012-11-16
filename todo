@@ -36,7 +36,7 @@ BUGS: // report any bugs here, please include a description and the steps to rep
 	-----see TODO in server\RoomController.js
 
 NAT:
-	burnt dragon
+	burnt dragon d
 	fireball pickup (after death), enable button to shoot
 	fireball animation (before death)
 	waiting room, playerX selection, ready button, start button
@@ -47,11 +47,13 @@ NAT:
 	destructing tiles
 
 	GRAPHICS:
-		fireball - 3 frames (important)
-		destructible blocks - 3 frames
+		fireball - 3 frames (important) d
+		destructible blocks - 3 frames d 
 		dpad/joystick (important)
 		button A, B (important)
-		gui border for padding area
+		gui border for padding area d 
+		padding character icon d
+		padding character hp & powerup
 
 	AUDIO:
 		check this out http://www.bfxr.net/
