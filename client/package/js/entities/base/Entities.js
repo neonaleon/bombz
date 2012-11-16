@@ -161,14 +161,13 @@ Entities.Dragon = function(color)
 /*
  * @entity Egg
  */
-Entities.Egg = function(dragon)
+Entities.Egg = function(dragon, fuseTime)
 {
+	var time = fuseTime || 1500;
 	var egg = Crafty.e(Properties.RENDERER + ", 2D, Burnable, Kickable, Egg," + dragon.color + 'egg')
 						.setName(color + 'egg')
 						.bind('burn', function(){ this.trigger('explode'); })
-						.egg(dragon.blastRadius, 1500);
-	//TODO fix the chaining
-	// egg.addComponent("Collision, WiredHitBox").collision([10, 10], [30, 10], [30, 30], [10, 30]);
+						.egg(dragon.blastRadius, fuseTime);
 	egg.owner = dragon;
 	return egg;
 };

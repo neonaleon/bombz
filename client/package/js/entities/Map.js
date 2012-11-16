@@ -104,13 +104,6 @@ Map.generate = function(mapData)
 	// bottom
 	Entities.Extents().color("#000000").attr({w: Properties.DEVICE_WIDTH, h: 10, x: 0, y: Properties.DEVICE_HEIGHT});
 	
-	// TODO: test
-	/*
-	Map.spawnPowerup(EntityDefinitions.POWERUP_KICK, 5, 0);
-	Map.spawnPowerup(EntityDefinitions.POWERUP_BLAST, 1, 0);
-	Map.spawnPowerup(EntityDefinitions.POWERUP_SPEED, 3, 0);
-	Map.spawnPowerup(EntityDefinitions.POWERUP_EGGLIMIT, 2, 0);
-	*/
 	var powerups = mapData.powerups;
 	for (var i = 0; i < powerups.length; i++)
 	{
@@ -153,20 +146,22 @@ Map.spawnPlayer = function(color)
 	return player;
 }
 
-Map.spawnEgg = function(dragon)
+Map.spawnEgg = function(dragon, fuseTime)
 {
 	// spawn egg on the dragon making the egg
 	var tile = Map.pixelToTile({ x: dragon.x, y: dragon.y });
-	var egg = Entities.Egg(dragon).attr(Map.tileToPixel(tile)); 
+	var egg = Entities.Egg(dragon, fuseTime).attr(Map.tileToPixel(tile)); 
 	egg.z = Map.Z_EGG;
-	return egg;
+	if (egg.hit('Egg')) egg.destroy(); // don't allow egg to spawn on top of other eggs
+	else return egg;
 }
 
-Map.spawnEggOnTile = function(dragon, tile)
+Map.spawnEggOnTile = function(dragon, tile, fuseTime)
 {
 	// spawn egg on the dragon making the egg
-	var egg = Entities.Egg(dragon).attr(Map.tileToPixel(tile)); 
+	var egg = Entities.Egg(dragon, fuseTime).attr(Map.tileToPixel(tile)); 
 	egg.z = Map.Z_EGG;
+	if (egg.hit('Egg')) egg.destroy();
 	return egg;
 }
 

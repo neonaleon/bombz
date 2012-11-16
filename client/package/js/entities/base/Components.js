@@ -29,43 +29,6 @@ Crafty.c('Dragon', {
 		this.lastUpdate = undefined;
 		this.expectedPosition = undefined;
 		
-		this.delayLocalUpdate = function(dx, dy, obj)
-		{
-			this.timeout(function(){
-				obj.x += dx * obj.moveSpeed;
-				obj.y += dy * obj.moveSpeed;
-				if (this.onEgg && this.hit('Egg').length == 1)
-	        	{
-	        		if (this.hit('solid'))
-	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
-	        	}
-	        	else 
-	        	{
-	        		if (this.hit('solid') || this.hit('Egg'))
-	            	{
-	            		var egg = this.hit('Egg');
-	            		//TODO: KICK
-	            		// egg.trigger('kick');
-	            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
-	            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
-	            		//this.x = oldpos.x;
-	            		//this.y = oldpos.y;
-	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
-	            	}
-	        	}
-			}, NetworkManager.localLag);
-		};
-		
-		// perform collision detection when the entity is being moved
-		this.bind('Moved', function(oldpos)
-		{
-			var dx = this.x - oldpos.x;
-			var dy = this.y - oldpos.y;
-			this.delayLocalUpdate(dx, dy, this);
-			this.x = oldpos.x;
-			this.y = oldpos.y;
-		});	
-		
 		this.bind('NewComponent', function(component)
 		{
 			// if a controllable component was added to this dragon
@@ -88,6 +51,7 @@ Crafty.c('Dragon', {
 					// don't store direction if it is none, so we have the latest direction player is facing
 					if ( direction !== Player.Direction.NONE )
                     	this.direction = direction;
+                    
                     this.timeout(function() { this.trigger( "ChangeDirection", direction ) }, NetworkManager.localLag);
 
                     // TODO: DR
@@ -442,6 +406,43 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 Crafty.c("LocalPlayer", {
 	init: function(){
 		this.requires("Controllable");
+		
+		this.delayLocalUpdate = function(dx, dy, obj)
+		{
+			this.timeout(function(){
+				obj.x += dx * obj.moveSpeed;
+				obj.y += dy * obj.moveSpeed;
+				if (this.onEgg && this.hit('Egg').length == 1)
+	        	{
+	        		if (this.hit('solid'))
+	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+	        	}
+	        	else 
+	        	{
+	        		if (this.hit('solid') || this.hit('Egg'))
+	            	{
+	            		var egg = this.hit('Egg');
+	            		//TODO: KICK
+	            		// egg.trigger('kick');
+	            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+	            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+	            		//this.x = oldpos.x;
+	            		//this.y = oldpos.y;
+	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+	            	}
+	        	}
+			}, NetworkManager.localLag);
+		};
+		
+		// perform collision detection when the entity is being moved
+		this.bind('Moved', function(oldpos)
+		{
+			var dx = this.x - oldpos.x;
+			var dy = this.y - oldpos.y;
+			this.delayLocalUpdate(dx, dy, this);
+			this.x = oldpos.x;
+			this.y = oldpos.y;
+		});	
 		return this;
 	}
 });
@@ -455,6 +456,33 @@ Crafty.c("NetworkedPlayer", {
 		this.bind("EnterFrame", function(){
 			this.simulate();
 		});
+		
+		// perform collision detection when the entity is being moved
+		this.bind('Moved', function(oldpos)
+		{
+			this.x = oldpos.x + (this.x - oldpos.x) * this.moveSpeed;
+			this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
+			
+			if (this.onEgg && this.hit('Egg').length == 1)
+	        	{
+	        		if (this.hit('solid'))
+	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+	        	}
+	        	else 
+	        	{
+	        		if (this.hit('solid') || this.hit('Egg'))
+	            	{
+	            		var egg = this.hit('Egg');
+	            		//TODO: KICK
+	            		// egg.trigger('kick');
+	            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
+	            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
+	            		//this.x = oldpos.x;
+	            		//this.y = oldpos.y;
+	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
+	            	}
+	        	}
+		});	
 		return this;
 	},
 	simulate: function()
