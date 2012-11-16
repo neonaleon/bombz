@@ -173,6 +173,13 @@ Map.spawnPowerup = function(type, x, y)
 	return powerup;
 }
 
+Map.spawnFireballPowerup = function(type, x, y)
+{
+	var powerup = Entities.Powerup(type).attr({ x: x * Map.MAP_TILEWIDTH + Map._instance.x, y: y * Map.MAP_TILEHEIGHT });
+	powerup.z = Map.Z_POWERUP;
+	return powerup;
+}
+
 Map.movePlayerOutside = function(dragon, position)
 {
 	dragon.x = position.x * Map.MAP_TILEWIDTH + Map._instance.x;

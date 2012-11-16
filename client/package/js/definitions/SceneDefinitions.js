@@ -184,7 +184,10 @@ var handler_Powerup = function(powerup)
 	}
 	else
 	{
-		Map.spawnPowerup(EntityDefinitions.POWERUP_SPRITES[powerup.type], powerup.x, powerup.y);
+		if ( powerup.type !== 4 )
+			Map.spawnPowerup(EntityDefinitions.POWERUP_SPRITES[powerup.type], powerup.x, powerup.y);
+		else
+			Map.spawnFireballPowerup(EntityDefinitions.POWERUP_SPRITES[powerup.type], powerup.x, powerup.y);
 	}
 };
 var handler_Fireball = function(data)

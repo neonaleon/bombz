@@ -105,6 +105,28 @@ Map.prototype.GetPowerupCount = function()
   return this._powerups.length;
 }
 
+Map.prototype.GetFireballPowerupCount = function()
+{
+  var count = 0;
+
+  for ( var i in this._powerups )
+    if ( this._powerups[ i ].GetType() === Powerup.Type.ABILITY_FIREBALL )
+      count++;
+
+  return count;
+}
+
+Map.prototype.GetNonFireballPowerupCount = function()
+{
+  var count = 0;
+  
+  for ( var i in this._powerups )
+    if ( this._powerups[ i ].GetType() !== Powerup.Type.ABILITY_FIREBALL )
+      count++;
+
+  return count;
+}
+
 // add a powerup to the map if it is a valid grid for a powerup
 Map.prototype.SpawnPowerup = function()
 {
@@ -132,6 +154,50 @@ Map.prototype.SpawnPowerup = function()
   while ( reroll === true || ( ( x % 2 !== 0 ) && ( y % 2 !== 0 ) ) )
 
   var powerup = new Powerup( Math.floor( Math.random() * 3 ), x, y )
+  this._powerups.push( powerup );
+  return powerup;
+}
+
+Map.prototype.SpawnFireballPowerup = function()
+{
+  var x;
+  var y;
+  var reroll;
+  do 
+  {
+    reroll = false;
+
+    // roll unique position
+    // 
+    switch ( Math.floor( Math.random() * 4 ) )
+    {
+      case 0: // UP
+        x = Math.floor( Math.random() * this._width );
+        y = 0;
+        break;
+
+      case 1: // LEFT
+        x = 0;
+        y = Math.floor( Math.random() * this._height );
+        break;
+
+      case 2: // DOWN
+        x = Math.floor( Math.random() * this._width );
+        y = this._height - 1;
+        break;
+
+      case 3: // RIGHT
+        x = this._width - 1;
+        y = Math.floor( Math.random() * this._height );
+        break;
+    }    
+
+    if ( this.GetPowerup( x, y ) !== undefined )
+      reroll = true;
+  }
+  while ( reroll === true );
+
+  var powerup = new Powerup( Powerup.Type.ABILITY_FIREBALL, x, y )
   this._powerups.push( powerup );
   return powerup;
 }
