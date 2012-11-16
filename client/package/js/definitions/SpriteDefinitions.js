@@ -107,7 +107,7 @@ SpriteDefinitions['tempgui'] = {
 for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 {
 	var color = SpriteDefinitions.COLORS[i];
-	SpriteDefinitions['gui-player'color] = {
+	SpriteDefinitions['gui-player'+color] = {
 		'file': '/img/waitingroom-p.png',
 		'tile': SpriteDefinitions.TILE_WIDTH*2,
 		'elements':(function() {
