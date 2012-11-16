@@ -26,6 +26,8 @@ LATEST CHANGES:
 		
 
 BUGS: // report any bugs here, please include a description and the steps to repro it
+	*****death animation to outside has input bug
+
 	-----sudden death block issue
 	-----movespeed powerup causes character to get stuck
 

@@ -194,6 +194,8 @@ Crafty.c('Killable', {
 Crafty.c('Death', {
 	init: function() {
 		Crafty.audio.play(AudioDefinitions.DEATH);
+		this.moveSpeed = 4; // reset move speed
+		
 		this.wings = undefined;
 		this.cloud = undefined;
 		this.deathAnimStep = 2; // 2 step death animation
@@ -211,8 +213,9 @@ Crafty.c('Death', {
 			this.flushUpdates();
 			this.disableControl();
 		}
+		// set player to face down, and stop animating
 		this.trigger("ChangeDirection", Player.Direction.DOWN);
-		this.trigger("ChangeDirection", Player.Direction.NONE);
+		this.trigger("ChangeDirection", Player.Direction.NONE); 
 		
 		this.bind('TweenEnd', function(something)
 		{
@@ -242,13 +245,13 @@ Crafty.c('Death', {
 				
 				if (this.has('LocalPlayer'))
 				{
+					this.flushUpdates();
 					this.enableControl();
 					this.flushUpdates();
 					this.bind('KeyDown_A', this.spitFireball); // change ability
 				}
 			}
-			
-			this.removeComponent()
+			this.removeComponent('Death', false);
 		})
 		
 		this.bind('death', function(tile)
