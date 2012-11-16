@@ -194,13 +194,15 @@ Crafty.c('Killable', {
 Crafty.c('Death', {
 	init: function() {
 		Crafty.audio.play(AudioDefinitions.DEATH);
-		this.deathWings = undefined;
+		this.wings = undefined;
+		this.cloud = undefined;
 		this.deathAnimStep = 2; // 2 step death animation
 		this.deathPos = undefined; // deathPos not yet received from server
 		
 		this.requires('Tween');
-		this.deathWings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, 50);
-		this.attach(this.deathWings);
+		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, 50);
+		this.attach(this.wings);
+		
 		this.tween({ y: this.y - 50, alpha: 0 }, 50); // fade out
 		
 		if (this.has('LocalPlayer')) 
@@ -222,9 +224,9 @@ Crafty.c('Death', {
 				{
 					this.x = this.deathPos.x;
 					this.y = this.deathPos.y - 50;
-					this.deathWings.tween({ alpha: 1 }, 50)
+					this.wings.tween({ alpha: 1 }, 50)
 					this.tween({ y: this.deathPos.y, alpha: 1 }, 50); // fade back in
-				} 
+				}
 			}
 			else if (this.deathAnimStep == 0) // second animation step ends, player has tweened to death position
 			{	
@@ -232,11 +234,11 @@ Crafty.c('Death', {
 				this.x = this.deathPos.x;
 				this.y = this.deathPos.y;
 				
-				this.deathWings.destroy();
-				this.deathWings = undefined;
+				this.wings.destroy();
+				this.wings = undefined;
 				
-				var cloud = Entities.Cloud().attr({ x: this.x, y: this.y });
-				this.attach(cloud);
+				this.cloud = Entities.Cloud().attr({ x: this.deathPos.x, y: this.deathPos.y }); // make cloud at deathPos
+				this.attach(this.cloud);
 				
 				if (this.has('LocalPlayer'))
 				{
@@ -246,7 +248,7 @@ Crafty.c('Death', {
 				}
 			}
 			
-			this.removeComponent('Death', false);
+			this.removeComponent()
 		})
 		
 		this.bind('death', function(tile)

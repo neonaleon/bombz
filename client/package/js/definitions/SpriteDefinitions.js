@@ -52,7 +52,6 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 			var elements = {};
 			elements[color + 'dragon'] = [5, i];
 			elements[color + 'egg'] = [10, i];
-			elements['cloud'] = [1, 8];
 			return elements;
 		})(),
 		'anim_walk_up':[[0, i], [1, i]],
@@ -73,6 +72,7 @@ SpriteDefinitions['effects'] = {
 	'elements': {
 		fire: [2, 8],
 		wings: [5, 7],
+		cloud: [1, 8],
 	},
 	'anim_fire':[[6,5], [7,5], [8,5], [9,5], [10,5], [11,5]],
 	'anim_fireball':[[2,8], [3,8], [4,8], [3,8], [2,8]],

@@ -49,12 +49,12 @@ Entities.BurningBlock = function()
 
 Entities.SolidBlock = function()
 {
-	return Crafty.e(Properties.RENDERER + ", 2D, solid, tileI");
+	return Crafty.e(Properties.RENDERER + ", 2D, solid, tileDB");
 };
 
 Entities.DodgeBallBlock = function()
 {
-	return Crafty.e(Properties.RENDERER + ", 2D, tileDB");
+	return Crafty.e(Properties.RENDERER + ", 2D, floor");
 };
 
 Entities.FloorTile = function()
@@ -71,7 +71,7 @@ Entities.Sidebar = function()
 
 Entities.SDBlock = function()
 {
-	var block = Crafty.e(Properties.RENDERER + ", 2D, solid, tileI");
+	var block = Crafty.e(Properties.RENDERER + ", 2D, solid, tileDB");
 	block.moved = 0;
 	block.addComponent("Collision")
 		.bind("Move", function(){
@@ -202,7 +202,10 @@ Entities.Wings = function()
 
 Entities.Cloud = function()
 {
-	var cloud = Crafty.e('2D, DOM, cloud');
+	var def = SpriteDefinitions['effects'];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	
+	var cloud = Crafty.e('2D, DOM, cloud, Tween');
 	cloud.z = Map.Z_CLOUD;
 	return cloud;
 }
