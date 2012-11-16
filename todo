@@ -56,12 +56,12 @@ NAT:
 	AUDIO:
 		check this out http://www.bfxr.net/
 		bgm - looping
-		pickup powerup - <1s 
-		kick bomb - <1s 
-		plant bomb - <1s
-		bomb explode - 1s
-		spit fireball
-
+		pickup powerup - <1s d
+		kick bomb - <1s *
+		plant bomb - <1s d
+		bomb explode - 1s *
+		spit fireball d 
+		die d
 
 NOTES:
 	remoteplayers simulated, listen for updates from networkmanager 

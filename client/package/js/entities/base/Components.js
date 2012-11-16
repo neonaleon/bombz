@@ -81,6 +81,7 @@ Crafty.c('Dragon', {
 	layEgg: function(){
 		if (!this.onEgg && this.eggCount < this.eggLimit)
 		{
+			Crafty.audio.play(AudioDefinitions.EGG);
 			this.eggCount += 1;
 			var data = Map.pixelToTile({x: this.x, y: this.y});
 			data.timestamp = WallClock.getTime();
@@ -92,6 +93,7 @@ Crafty.c('Dragon', {
 		console.log("SPIT FIRE!");
 		if (this.hasFireball)
 		{
+			Crafty.audio.play(AudioDefinitions.FIREBALL);
 			var pos = Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}));
 			pos.x += this.direction.x;
 			pos.y += this.direction.y;
@@ -120,16 +122,16 @@ Crafty.c('Egg', {
 	init: function(){
 		this.owner = undefined;
 		this.bind('explode', this.explode);
-		this.bind('Moved', function(oldpos)
-		{
-			this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
-			this.y = oldpos.y + (this.y - oldpos.y) * EntityDefinitions.EGG_MOVE_SPEED;
+		// this.bind('Moved', function(oldpos)
+		// {
+		// 	this.x = oldpos.x + (this.x - oldpos.x) * EntityDefinitions.EGG_MOVE_SPEED;
+		// 	this.y = oldpos.y + (this.y - oldpos.y) * EntityDefinitions.EGG_MOVE_SPEED;
 
-			if (this.hit('solid') || this.hit('Egg'))
-        	{
-        		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
-        	}
-        });
+		// 	if (this.hit('solid') || this.hit('Egg'))
+  //       	{
+  //       		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
+  //       	}
+  //       });
 		return this;
 	},
 	explode: function(){
@@ -231,6 +233,7 @@ Crafty.c('Killable', {
 
 Crafty.c('Death', {
 	init: function() {
+		Crafty.audio.play(AudioDefinitions.DEATH);
 		this.deathAnimStep = 2; // 2 step death animation
 		this.deathPos = undefined; // deathPos not yet received from server
 		// add burnt dragon sprite
@@ -374,6 +377,7 @@ Crafty.c('Powerup', {
 			var hitDragon = this.hit('Dragon');
 			if (hitDragon)
 			{
+				Crafty.audio.play(AudioDefinitions.POWERUP);
 				var dragon = hitDragon[0].obj;
 				// effects don't apply until message returns
 				//dragon.addComponent(this.type + "_powerup");
