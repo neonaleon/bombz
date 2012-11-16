@@ -161,7 +161,7 @@ Crafty.c('Fireball', {
 			{
 				for (var i = 0; i < hitDragon.length; i++)
 				{
-					if (hitDragon[i].obj != this.owner && !hitDragon[i].obj.has('Death'))
+					if (hitDragon[i].obj != this.owner && !hitDragon[i].obj.has('DodgeballPlayer'))
 					{
 						hitDragon[i].obj.trigger('burn');
 						this.destroy();
@@ -245,6 +245,8 @@ Crafty.c('Death', {
 					this.bind('KeyDown_A', this.spitFireball); // change ability
 				}
 			}
+			
+			this.removeComponent('Death', false);
 		})
 		
 		this.bind('death', function(tile)
@@ -280,6 +282,12 @@ Crafty.c('Destructible', {
  * The 'burn' event occurs when the entity is hit by @comp fire
  */
 Crafty.c('Burnable', {
+	init: function(){
+		return this;
+	},
+});
+
+Crafty.c('DodgeballPlayer', {
 	init: function(){
 		return this;
 	},
