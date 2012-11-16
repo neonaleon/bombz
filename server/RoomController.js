@@ -21,6 +21,7 @@ function RoomController( id )
 RoomController.prototype.Reset = function( socket )
 {
   this._room.Reset();
+  this._powerupQueue = {};        // holds powerup pickup requests for a short while to see if anyone picked it earlier
   this._map = new Map( 19, 15, 40, 40 );
 }
 
@@ -171,17 +172,25 @@ RoomController.prototype.StartGame = function()
   var room = this._room;
   var roomController = this;
 
+  // spawn normal & fireball powerups
   setInterval( function()
   {
     if ( room.GetState() !== Room.State.PLAYING )
       return;
 
-    if ( roomController.GetMap().GetPowerupCount() <= Powerup.MAX_IN_PLAY )
+    if ( roomController.GetMap().GetNonFireballPowerupCount() < Powerup.MAX_IN_PLAY )
     {
       var powerup = roomController.GetMap().SpawnPowerup();
       roomController.FairBroadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
     }
-  }, 10000 );
+
+    if ( roomController.GetMap().GetFireballPowerupCount() < Powerup.MAX_FIREBALL_IN_PLAY )
+    {
+      var powerup = roomController.GetMap().SpawnFireballPowerup();
+      roomController.FairBroadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
+    }
+
+  }, Powerup.SPAWN_RATE );
 };
 
 // end the game
@@ -325,18 +334,28 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     {
       var powerup = roomController.GetMap().GetPowerup( data.x, data.y );
 
-      if ( powerup !== undefined )
+      if ( powerup === undefined )
+        return;
+/*
+      // need to put into queue instead
+      var key = data.x + ', ' + data.y;
+      if ( key in roomController._powerupQueue )
       {
-        // need to put into queue instead
+        var queue = roomController._powerupQueue[ key ];
 
-        var player = roomController.GetPlayerFromSocket( socket );
-        delete data.timestamp;
-        data.pid = player.GetID();
-        data.type = powerup.GetType();
-        powerup.ApplyEffect( player );
-        roomController.GetMap().RemovePowerup( powerup );
-        roomController.Broadcast( MessageDefinitions.POWERUP, data );
       }
+      else
+      {
+        roomController._powerupQueue[ key ] = [ data ];
+
+      }
+*/
+      var player = roomController.GetPlayerFromSocket( socket );
+      data.pid = player.GetID();
+      data.type = powerup.GetType();
+      powerup.ApplyEffect( player );
+      roomController.GetMap().RemovePowerup( powerup );
+      roomController.Broadcast( MessageDefinitions.POWERUP, data );
     });
 
     // player dies

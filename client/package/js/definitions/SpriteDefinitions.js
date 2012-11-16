@@ -137,5 +137,6 @@ SpriteDefinitions['powerup'] = {
 		blast: [1,6],
 		egg_limit: [2,6],
 		speed: [3,6],
+		fireball: [4,6],
 	}
 };
