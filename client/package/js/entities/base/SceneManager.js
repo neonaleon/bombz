@@ -41,7 +41,17 @@ SceneManager.LoadScene = function (scene)
 {
 	SceneManager.ChangeScene(SceneDefinitions.LoadScene);
 	
-	Crafty.load(['/img/sidebar.png', '/img/dpad150x150.png', '/img/sprite40x40.png', '/img/button80x80.png'], 
+	Crafty.load([
+		'/img/sidebar.png', 
+		'/img/dpad150x150.png',
+		'/img/sprite40x40.png',
+		'/img/button80x80.png',
+		"snd/explode.wav",
+		"snd/kick.wav",
+		"snd/drop.wav",
+		"snd/powerup.wav",
+		"snd/die.wav",
+		"snd/fireball.wav"], 
 		function(){
 			SceneManager.ChangeScene(scene);		
 		});
