@@ -584,7 +584,6 @@ Crafty.c("LocalPlayer", {
 			this.updateQueue.splice(0, this.updateQueue.length);
 			return;
 		}
-		console.log(this.moveSpeed)
 		var processedCount = 0;
 		for (var i = 0; i < this.updateQueue.length; i++)
 		{
