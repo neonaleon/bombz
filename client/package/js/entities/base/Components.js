@@ -656,8 +656,8 @@ Crafty.c("LocalPlayer", {
     	{
     		if (dragon.hit('solid') || dragon.hit('Egg'))
         	{
-        		var egg = dragon.hit('Egg');
         		//TODO: KICK
+        		//var egg = dragon.hit('Egg');
         		// egg.trigger('kick');
         		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
         		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
@@ -702,24 +702,15 @@ Crafty.c("NetworkedPlayer", {
 			this.y = oldpos.y + (this.y - oldpos.y) * this.moveSpeed;
 			
 			if (this.onEgg && this.hit('Egg').length == 1)
-	        	{
-	        		if (this.hit('solid'))
-	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y}))); // snap to grid
-	        	}
-	        	else 
-	        	{
-	        		if (this.hit('solid') || this.hit('Egg'))
-	            	{
-	            		var egg = this.hit('Egg');
-	            		//TODO: KICK
-	            		// egg.trigger('kick');
-	            		//if (egg && this.has(EntityDefinitions.POWERUP_KICK + "_powerup"))
-	            		//	egg[0].obj.trigger('kicked', {x: this.x - oldpos.x, y: this.y - oldpos.y});
-	            		//this.x = oldpos.x;
-	            		//this.y = oldpos.y;
-	            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y:this.y})));
-	            	}
-	        	}
+        	{
+        		if (this.hit('solid'))
+            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
+        	}
+        	else 
+        	{
+        		if (this.hit('solid') || this.hit('Egg'))
+            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
+        	}
 		});	
 		return this;
 	},
