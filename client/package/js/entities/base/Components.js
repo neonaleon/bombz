@@ -733,24 +733,8 @@ Crafty.c("NetworkedPlayer", {
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
 		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20) // assuming 50 fps 
-		var extrapolate = this.moveSpeed * simFrames;
-		switch ( this.direction )
-        {
-        	case Player.Direction.UP:
-        		this.y = data.y - extrapolate;
-        		break;
-        	case Player.Direction.DOWN:
-        		this.y = data.y + extrapolate;
-        		break;
-        	case Player.Direction.LEFT:
-        		this.x = data.x - extrapolate;
-        		break;
-        	case Player.Direction.RIGHT:
-        		this.x = data.x + extrapolate;
-        		break;
-        	case Player.Direction.NONE:
-        		break;
-        }
+		for (var i = 0; i < simFrames; i++)
+			this.simulate();
 		this.trigger('ChangeDirection', data.dir);
 	}
 })
