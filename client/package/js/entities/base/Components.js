@@ -212,9 +212,8 @@ Crafty.c('Death', {
 		if (this.has('LocalPlayer')) 
 		{
 			this.unbind('KeyDown_A');
-			this.disableControl();
 			this.flushUpdates();
-			this.trigger('CraftyStop');
+			this.disableControl();
 		}
 		// set player to face down, and stop animating
 		this.trigger("ChangeDirection", Player.Direction.DOWN);
@@ -256,8 +255,8 @@ Crafty.c('Death', {
 				
 				if (this.has('LocalPlayer'))
 				{
-					this.enableControl();
 					this.flushUpdates();
+					this.enableControl();
 					this.bind('KeyDown_A', this.spitFireball); // change ability
 				}
 				this.removeComponent('Death', false);
