@@ -188,9 +188,9 @@ Crafty.c('Fireball', {
 
 Crafty.c('Killable', {
 	init: function() {
-		this.bind('killed', function(tile){
+		this.bind('killed', function(data){
 			this.addComponent('Death');
-			this.trigger('death', tile);
+			this.trigger('death', data);
 			this.removeComponent('Killable');
 		});
 		return this;
@@ -208,12 +208,7 @@ Crafty.c('Death', {
 		this.step2props = 2; // 2 properties being interpolated at each step
 		this.step1props = 2;
 		this.deathPos = undefined; // deathPos not yet received from server
-		
-		this.requires('Tween');
-		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, 50);
-		this.attach(this.wings);
-		
-		this.tween({ y: this.y - 50, alpha: 0 }, 50); // fade out
+		this.num_anim_frames = 50;
 		
 		if (this.has('LocalPlayer')) 
 		{
@@ -221,6 +216,13 @@ Crafty.c('Death', {
 			this.flushUpdates();
 			this.disableControl();
 		}
+		
+		this.requires('Tween');
+		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, this.num_anim_frames);
+		this.attach(this.wings);
+		
+		this.tween({ y: this.y - 50, alpha: 0 }, this.num_anim_frames); // fade out
+		
 		// set player to face down, and stop animating
 		this.trigger("ChangeDirection", Player.Direction.DOWN);
 		this.trigger("ChangeDirection", Player.Direction.NONE); 
@@ -236,8 +238,8 @@ Crafty.c('Death', {
 				{
 					this.x = this.deathPos.x;
 					this.y = this.deathPos.y - 50;
-					this.wings.tween({ alpha: 1 }, 50)
-					this.tween({ y: this.deathPos.y, alpha: 1 }, 50); // fade back in
+					this.wings.tween({ alpha: 1 }, this.num_anim_frames)
+					this.tween({ y: this.deathPos.y, alpha: 1 }, this.num_anim_frames); // fade back in
 				}
 			}
 			else if (this.deathAnimStep == 1)
@@ -269,12 +271,16 @@ Crafty.c('Death', {
 			}
 		})
 		
-		this.bind('death', function(tile)
+		this.bind('death', function(data)
 		{
 			// death position received from server
-			this.deathPos = Map.getDeathLocation(tile);
-			// force animation if this death message was very late
-			if (this.deathAnimStep == 1) this.trigger('TweenEnd'); 
+			this.deathPos = Map.getDeathLocation(data);
+			// force animation when the death message is received
+			if (this.deathAnimStep == 1) 
+			{
+				this.num_anim_frames -= Math.floor((WallClock.getTime() - data.timestamp) / 20);
+				this.trigger('TweenEnd');
+			} 
 		});
 		
 		return this;
