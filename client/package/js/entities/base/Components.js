@@ -707,14 +707,18 @@ Crafty.c("NetworkedPlayer", {
         	{
         		if (this.hit('solid'))
         		{
-        			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
+        			this.x = oldpos.x;
+        			this.y = oldpos.y;
+        			//this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
         		}
         	}
         	else 
         	{
         		if (this.hit('solid') || this.hit('Egg'))
         		{
-        			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
+        			this.x = oldpos.x;
+        			this.y = oldpos.y;
+        			//this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
         		}
             		
         	}
@@ -752,16 +756,16 @@ Crafty.c("NetworkedPlayer", {
 		switch ( this.direction )
         {
         	case Player.Direction.UP:
-        		this.y -= 1 * this.moveSpeed;
+        		this.y -= 1;
         		break;
         	case Player.Direction.DOWN:
-        		this.y += 1 * this.moveSpeed;
+        		this.y += 1;
         		break;
         	case Player.Direction.LEFT:
-        		this.x -= 1 * this.moveSpeed;
+        		this.x -= 1;
         		break;
         	case Player.Direction.RIGHT:
-        		this.x += 1 * this.moveSpeed;
+        		this.x += 1;
         		break;
         	case Player.Direction.NONE:
         		break;
