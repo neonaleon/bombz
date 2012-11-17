@@ -734,7 +734,7 @@ Crafty.c("NetworkedPlayer", {
 		this.y = data.y;
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
-		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20) // assuming 50 fps 
+		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20) // assuming 50 fps
 		for (var i = 0; i < simFrames; i++)
 			this.simulate();
 		this.trigger('ChangeDirection', data.dir);
