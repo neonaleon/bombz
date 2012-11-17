@@ -511,6 +511,10 @@ Crafty.c("LocalPlayer", {
             if(!newdir.x && !newdir.y)
             	direction = Player.Direction.NONE;
             	
+            // don't store direction if it is none, so we have the latest direction player is facing
+			if ( direction !== Player.Direction.NONE )
+            	this.direction = direction;
+            
            	var oldpos = { x: this.x, y: this.y };
            	var data = {};
 			data.dx = newdir.x;
@@ -528,10 +532,6 @@ Crafty.c("LocalPlayer", {
            	// revert, wait for local update
            	this.x = oldpos.x;
            	this.y = oldpos.y;
-			
-			// don't store direction if it is none, so we have the latest direction player is facing
-			if ( direction !== Player.Direction.NONE )
-            	this.direction = direction;
 		});
 		
 		// perform collision detection when the entity is being moved
