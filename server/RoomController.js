@@ -176,7 +176,7 @@ RoomController.prototype.StartGame = function()
   this._suddenDeathtimer = setTimeout( function()
   {
      roomController.FairBroadcast( MessageDefinitions.SUDDEN_DEATH );
-  }, Room.Settings.Timeout.ONE_MINUTE );
+  }, Room.Settings.Timeout.TWO_HALF_MINUTES );
 
   // spawn normal powerups
   setInterval( function()
