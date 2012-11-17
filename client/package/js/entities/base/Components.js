@@ -221,10 +221,10 @@ Crafty.c('Death', {
 			this.disableControl();
 		}
 		
-		this.requires('Tween');
 		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, 50);
 		this.attach(this.wings);
 		
+		this.requires('Tween');
 		this.tween({ y: this.y - 50, alpha: 0 }, 50); // fade out
 		
 		// set player to face down, and stop animating
@@ -259,6 +259,7 @@ Crafty.c('Death', {
 				this.x = this.deathPos.x;
 				this.y = this.deathPos.y;
 				
+				console.log(this.wings);
 				this.wings.destroy();
 				this.wings = undefined;
 				
