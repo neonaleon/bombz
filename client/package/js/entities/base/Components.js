@@ -749,6 +749,23 @@ Crafty.c("NetworkedPlayer", {
 	{
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
+		switch ( this.direction )
+        {
+        	case Player.Direction.UP:
+        		this.y -= 1 * this.moveSpeed;
+        		break;
+        	case Player.Direction.DOWN:
+        		this.y += 1 * this.moveSpeed;
+        		break;
+        	case Player.Direction.LEFT:
+        		this.x -= 1 * this.moveSpeed;
+        		break;
+        	case Player.Direction.RIGHT:
+        		this.x += 1 * this.moveSpeed;
+        		break;
+        	case Player.Direction.NONE:
+        		break;
+        }
 		if (data.dir != 4)
 		{
 			this.x = data.x;
