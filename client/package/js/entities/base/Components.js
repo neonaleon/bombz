@@ -515,7 +515,7 @@ Crafty.c("LocalPlayer", {
 			if ( direction !== Player.Direction.NONE )
             	this.direction = direction;
             
-            var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction };
+            var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, newdir: direction, olddir: this.direction };
            	this.doLocalUpdate(this.updateTypeDirection, data);
 		});
 		
@@ -571,7 +571,6 @@ Crafty.c("LocalPlayer", {
 	doLocalUpdate: function(updateType, data){
 		switch(updateType){
 			case this.updateTypeMove:
-				NetworkManager.SendMessage(MessageDefinitions.MOVE, data);
 				this.delayLocalUpdate(updateType, data);
 				break;
 			case this.updateTypeDirection:
@@ -673,7 +672,7 @@ Crafty.c("LocalPlayer", {
 	
 	processDirection: function(data)
 	{
-		this.trigger('ChangeDirection', data.dir);
+		this.trigger('ChangeDirection', data.newdir);
 	},
 	
 	processEgg: function(data)
@@ -753,14 +752,14 @@ Crafty.c("NetworkedPlayer", {
 	updateState: function(data)
 	{
 		this.moveSpeed = data.speed;
-		this.direction = data.dir;
+		this.direction = data.olddir;
 		this.x = data.x;
 		this.y = data.y;
-		/*this.simulate();
 		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20);
 		for (var i = 0; i < simFrames; i++)
 			this.simulate();
-	*/
+		this.direction = data.newdir;
+		this.simulate();
 		this.trigger('ChangeDirection', data.dir);
 	}
 })
