@@ -747,6 +747,7 @@ Crafty.c("NetworkedPlayer", {
 		for (var i = 0; i < simFrames; i++)
 			this.simulate();
 			*/
+		this.simulate();
 		this.trigger('ChangeDirection', data.dir);
 	}
 })
