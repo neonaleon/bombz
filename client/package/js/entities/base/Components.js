@@ -723,8 +723,8 @@ Crafty.c("NetworkedPlayer", {
 	},
 	simulate: function()
 	{
-		WallClock.sync();
-		console.log(WallClock.delay);
+		//WallClock.sync();
+		//console.log(WallClock.delay);
 		var oldpos = { x: this.x, y: this.y };
 		switch ( this.direction )
         {
@@ -749,15 +749,15 @@ Crafty.c("NetworkedPlayer", {
 	{
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
-		this.x = data.x;
-		this.y = data.y;
 		if (data.dir != 4)
 		{
+			this.x = data.x;
+			this.y = data.y;
 			this.simulate();
+			var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20);
+			for (var i = 0; i < simFrames; i++)
+				this.simulate();
 		}
-		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20);
-		for (var i = 0; i < simFrames; i++)
-			this.simulate();
 		this.trigger('ChangeDirection', data.dir);
 	}
 })
