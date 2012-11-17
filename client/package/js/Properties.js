@@ -16,4 +16,5 @@ var Properties =
 	
 	// game properties
 	SPLASH_DURATION: 2000,
+	WINSCREEN_DURATION: 5000,
 };

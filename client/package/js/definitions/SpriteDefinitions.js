@@ -54,6 +54,7 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 			var elements = {};
 			elements[color + 'dragon'] = [5, i];
 			elements[color + 'egg'] = [10, i];
+			elements[color + 'icon'] = [i +1 , 9]
 			return elements;
 		})(),
 		'anim_walk_up':[[0, i], [1, i]],
@@ -115,6 +116,16 @@ SpriteDefinitions['sidebar'] = {
 	'elements': {
 		sidebar: [0, 0],
 	}
+};
+
+SpriteDefinitions['victory'] = {
+	'file': '/img/victory300x100.png',
+	'tile': 300,
+	'tileh': 100,
+	'elements': {
+		victory1: [0, 0],
+	},
+	'anim_blink': [[0,0], [1,0]],
 };
 
 for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)

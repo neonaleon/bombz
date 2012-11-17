@@ -66,7 +66,7 @@ Entities.Sidebar = function()
 {
 	var def = SpriteDefinitions['sidebar'];
 	Crafty.sprite(def['tile'], def['tileh'], def['file'], def['elements']);
-	return Crafty.e(Properties.RENDERER + ", 2D, solid, extents, sidebar");//, Image").image("/img/sidebar.png", "no-repeat");
+	return Crafty.e(Properties.RENDERER + ", 2D, solid, extents, sidebar");
 };
 
 Entities.SDBlock = function()
