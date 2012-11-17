@@ -29,6 +29,12 @@ Crafty.c('Dragon', {
 		this.lastUpdate = undefined;
 		this.expectedPosition = undefined;
 		
+		this.bind('reset_stats', function(){
+			this.moveSpeed = 4;
+			this.eggLimit = 2;
+			this.blastRadius = 2;
+		})
+		
 		return this;
 	},
 	dragon: function(color){
@@ -193,8 +199,8 @@ Crafty.c('Killable', {
 
 Crafty.c('Death', {
 	init: function() {
+		this.trigger('reset_stats');
 		Crafty.audio.play(AudioDefinitions.DEATH);
-		this.moveSpeed = 4; // reset move speed
 		
 		this.wings = undefined;
 		this.cloud = undefined;
@@ -411,7 +417,8 @@ Crafty.c(EntityDefinitions.POWERUP_SPEED + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){ 
 			this.moveSpeed = Math.min(this.moveSpeed + 1, EntityDefinitions.MOVESPEED_CAP);
-			this.removeComponent(EntityDefinitions.POWERUP_SPEED + "_powerup"); 
+			this.unbind("applyPowerup");
+			this.removeComponent(EntityDefinitions.POWERUP_SPEED + "_powerup", false);
 		});
 		return this;
 	},
@@ -424,7 +431,8 @@ Crafty.c(EntityDefinitions.POWERUP_BLAST + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){ 
 			this.blastRadius = Math.min(this.blastRadius + 1, EntityDefinitions.BLAST_CAP);
-			this.removeComponent(EntityDefinitions.POWERUP_BLAST + "_powerup"); 
+			this.unbind("applyPowerup");
+			this.removeComponent(EntityDefinitions.POWERUP_BLAST + "_powerup", false); 
 		});
 		return this;
 	},
@@ -437,7 +445,8 @@ Crafty.c(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){ 
 			this.eggLimit = Math.min(this.eggLimit + 1, EntityDefinitions.EGG_CAP);
-			this.removeComponent(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup"); 
+			this.unbind("applyPowerup");
+			this.removeComponent(EntityDefinitions.POWERUP_EGGLIMIT + "_powerup", false); 
 		});
 		return this;
 	},
@@ -447,7 +456,8 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){ 
 			this.hasFireball = true;
-			this.removeComponent(EntityDefinitions.POWERUP_FIREBALL + "_powerup"); 
+			this.unbind("applyPowerup");
+			this.removeComponent(EntityDefinitions.POWERUP_FIREBALL + "_powerup", false); 
 		});
 		return this;
 	}
@@ -574,7 +584,7 @@ Crafty.c("LocalPlayer", {
 			this.updateQueue.splice(0, this.updateQueue.length);
 			return;
 		}
-		
+		console.log(this.moveSpeed)
 		var processedCount = 0;
 		for (var i = 0; i < this.updateQueue.length; i++)
 		{
