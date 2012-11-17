@@ -494,7 +494,7 @@ Crafty.c("LocalPlayer", {
 		this.flush = false;
 		
 		this.networkInterval = 1000/25; // 25 updates per sec
-		this.networkTimer = (new Date()).getTime();
+		this.networkTimer = WallClock.getTime();
 		// the local player can be controlled
 		this.requires("Controllable");
 		
@@ -517,6 +517,9 @@ Crafty.c("LocalPlayer", {
             // don't store direction if it is none, so we have the latest direction player is facing
 			if ( direction !== Player.Direction.NONE )
             	this.direction = direction;
+            	
+        	var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction };
+			this.doLocalUpdate(this.updateTypeDirection, data);
 		});
 		
 		// perform collision detection when the entity is being moved
@@ -679,7 +682,7 @@ Crafty.c("LocalPlayer", {
 	
 	processDirection: function(data)
 	{
-		this.trigger('ChangeDirection', data.newdir);
+		this.trigger('ChangeDirection', data.dir);
 	},
 	
 	processEgg: function(data)
