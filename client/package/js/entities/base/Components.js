@@ -707,14 +707,12 @@ Crafty.c("NetworkedPlayer", {
         		if (this.hit('solid'))
         		{
         			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
-        			console.log("if", oldpos);
         		}
         	}
         	else 
         	{
         		if (this.hit('solid') || this.hit('Egg'))
         		{
-        			console.log("else", oldpos);
         			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
         		}
             		
@@ -724,6 +722,7 @@ Crafty.c("NetworkedPlayer", {
 	},
 	simulate: function()
 	{
+		WallClock.sync();
 		console.log(WallClock.delay);
 		var oldpos = { x: this.x, y: this.y };
 		switch ( this.direction )
