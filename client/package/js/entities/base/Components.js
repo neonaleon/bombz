@@ -515,7 +515,7 @@ Crafty.c("LocalPlayer", {
 			if ( direction !== Player.Direction.NONE )
             	this.direction = direction;
             
-            var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: this.direction };
+            var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction };
            	this.doLocalUpdate(this.updateTypeDirection, data);
 		});
 		
