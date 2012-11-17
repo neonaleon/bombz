@@ -716,9 +716,12 @@ Crafty.c("LocalPlayer", {
 
 Crafty.c("NetworkedPlayer", {
 	init: function(){
+		this.requires('Tween'); // interpolation
+		
 		this.bind("network_update", function(data){
 			this.updateState(data);
 		});
+		
 		this.bind("EnterFrame", function(){
 			this.simulate();
 		});
@@ -744,7 +747,19 @@ Crafty.c("NetworkedPlayer", {
         		}
             		
         	}
-		});	
+		});
+		
+		this.props = 2;
+		this.bind('TweenEnd', function(prop)
+		{
+			this.props -= 1;
+			if (this.props == 0)
+			{
+				//this.trigger('ChangeDirection', this.direction);
+				this.props = 2;	
+			}
+		})
+		
 		return this;
 	},
 	simulate: function()
@@ -773,17 +788,9 @@ Crafty.c("NetworkedPlayer", {
 	},
 	updateState: function(data)
 	{
-		console.log(data);
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
-		this.x = data.x;
-		this.y = data.y;
-		/*
-		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20);
-		for (var i = 0; i < simFrames; i++)
-			this.simulate();
-		*/
-		this.simulate();
+		this.tween({x: data.x, y: data.y}, 2);
 		this.trigger('ChangeDirection', this.direction);
 	}
 })

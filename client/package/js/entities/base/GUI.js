@@ -63,21 +63,22 @@ GUI.ActionButton = function(button)
 	return Crafty.e(Properties.RENDERER + ", 2D, Button, eggButton, button" + button) // add a action button sprite!
 			.setName("actionButton_" + button)
 			.attr({w: SpriteDefinitions.CONTROLS_WIDTH, h: SpriteDefinitions.CONTROLS_HEIGHT, z:GUIDefinitions.Z_GUI})
+			.areaMap([0,0], [300,0], [300,300], [0,300])
 			.onButtonDown(function (){
 				if (!Crafty.keydown[Crafty.keys[button]]) {
 					Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : Crafty.keys[button] });
 					if (!dragons[GameState.GetLocalPlayer().GetID()].has('DodgeballPlayer')) {
-						console.log("playerID: " + GameState.GetLocalPlayer().GetID());
-						console.log("playerHasDodge: " + dragons[GameState.GetLocalPlayer().GetID()].has('DodgeballPlayer'));
-						console.log("I HAZ NO DIED")
+						//console.log("playerID: " + GameState.GetLocalPlayer().GetID());
+						//console.log("playerHasDodge: " + dragons[GameState.GetLocalPlayer().GetID()].has('DodgeballPlayer'));
+						//console.log("I HAZ NO DIED")
 						this.addComponent('eggButton');
 					}
 					else if (dragons[GameState.GetLocalPlayer().GetID()].hasFireball) {
-						console.log("I CAN HAZ FIREBALL")
+						//console.log("I CAN HAZ FIREBALL")
 						this.addComponent('fireballButton_down')
 					}
 					else {
-						console.log("I HAZ NO FIREBALL")
+						//console.log("I HAZ NO FIREBALL")
 						this.addComponent('fireballButton_none')
 					}
 				}
@@ -103,6 +104,7 @@ GUI.Dpad = function (entity)
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
    	var dpad = Crafty.e('Controller, dpad_none')
    					.attr({z:GUIDefinitions.Z_GUI, w: SpriteDefinitions.CONTROLS_WIDTH, h: SpriteDefinitions.CONTROLS_HEIGHT})
+   					.areaMap([0,0], [500,0], [500,500], [0,500])
    					.bind('KeyDown', function(e){
    						switch(e.keyCode)
    						{
