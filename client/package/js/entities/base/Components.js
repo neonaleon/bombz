@@ -730,6 +730,8 @@ Crafty.c("NetworkedPlayer", {
 	},
 	updateState: function(data)
 	{
+		this.x = data.x;
+		this.y = data.y;
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
 		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20) // assuming 50 fps 
