@@ -259,6 +259,7 @@ Crafty.c('Death', {
 				this.x = this.deathPos.x;
 				this.y = this.deathPos.y;
 				
+				this.detach(this.wings);
 				this.wings.destroy();
 				this.wings = undefined;
 				
