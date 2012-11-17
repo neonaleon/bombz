@@ -203,7 +203,13 @@ var handler_Powerup = function(powerup)
 var handler_Fireball = function(data)
 {
 	console.log( "P" + ( data.pid + 1 ) + " spit fireball." ) ;
+	//dragons[ data.pid ].processFireball(data);
+	//
+	console.log(data);
+	var pos = Map.tileToPixel(data);console.log(pos);
+	Entities.Fireball().fireball(dragons[ data.pid ], pos, data.direction);
 };
+
 var handler_Leave = function(data)
 {
 	dragons[ data.id ].destroy();
