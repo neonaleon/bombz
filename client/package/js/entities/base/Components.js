@@ -511,12 +511,12 @@ Crafty.c("LocalPlayer", {
             if(!newdir.x && !newdir.y)
             	direction = Player.Direction.NONE;
 
+			var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, newdir: direction, olddir: this.direction };
+           	this.doLocalUpdate(this.updateTypeDirection, data);
+			
 			// don't store direction if it is none, so we have the latest direction player is facing
 			if ( direction !== Player.Direction.NONE )
             	this.direction = direction;
-            
-            var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, newdir: direction, olddir: this.direction };
-           	this.doLocalUpdate(this.updateTypeDirection, data);
 		});
 		
 		// perform collision detection when the entity is being moved
@@ -760,7 +760,7 @@ Crafty.c("NetworkedPlayer", {
 			this.simulate();
 		this.direction = data.newdir;
 		this.simulate();
-		this.trigger('ChangeDirection', data.dir);
+		this.trigger('ChangeDirection', this.direction);
 	}
 })
 
