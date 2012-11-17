@@ -510,9 +510,20 @@ Crafty.c("LocalPlayer", {
                 direction = Player.Direction.DOWN;
             if(!newdir.x && !newdir.y)
             	direction = Player.Direction.NONE;
-
-			var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, newdir: direction, olddir: this.direction };
-           	this.doLocalUpdate(this.updateTypeDirection, data);
+            	
+           	var oldpos = { x: this.x, y: this.y };
+           	var data = {};
+			data.dx = newdir.x;
+			data.dy = newdir.y;
+			data.dragon = this;
+			this.processMove(data); // simulate a local move
+			
+			var pkt = { timestamp: WallClock.getTime(), x: this.x, y: this.y, newdir: direction, olddir: this.direction };
+           	this.doLocalUpdate(this.updateTypeDirection, pkt);
+           	
+           	// revert, wait for local update
+           	this.x = oldpos.x;
+           	this.y = oldpos.y;
 			
 			// don't store direction if it is none, so we have the latest direction player is facing
 			if ( direction !== Player.Direction.NONE )
