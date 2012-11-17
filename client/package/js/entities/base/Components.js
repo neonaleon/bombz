@@ -258,7 +258,7 @@ Crafty.c('Death', {
 				// snap to clear floating point inaccuracies due to tween interpolation
 				this.x = this.deathPos.x;
 				this.y = this.deathPos.y;
-				
+
 				console.log(this.wings);
 				this.wings.destroy();
 				this.wings = undefined;
