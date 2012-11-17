@@ -20,7 +20,7 @@ Crafty.c('Dragon', {
 	init: function() {
 		this.onEgg = false;
 		this.blastRadius = 2;
-		this.moveSpeed = 4;
+		this.moveSpeed = 3;
 		this.eggLimit = 2;
 		this.eggCount = 0;
 		this.hasFireball = false;
@@ -578,7 +578,6 @@ Crafty.c("LocalPlayer", {
 	
 	processUpdates: function()
 	{
-		console.log(Crafty.timer.getFPS());
 		if (this.flush) 
 		{
 			this.flush = false;
@@ -673,7 +672,6 @@ Crafty.c("LocalPlayer", {
 Crafty.c("NetworkedPlayer", {
 	init: function(){
 		this.bind("network_update", function(data){
-			console.log("network update", data);
 			this.updateState(data);
 		});
 		this.bind("EnterFrame", function(){
@@ -732,10 +730,27 @@ Crafty.c("NetworkedPlayer", {
 	},
 	updateState: function(data)
 	{
-		this.x = data.x;
-		this.y = data.y;
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
+		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20) // assuming 50 fps 
+		var extrapolate = this.moveSpeed * simFrames;
+		switch ( this.direction )
+        {
+        	case Player.Direction.UP:
+        		this.y = data.y - extrapolate;
+        		break;
+        	case Player.Direction.DOWN:
+        		this.y = data.y + extrapolate;
+        		break;
+        	case Player.Direction.LEFT:
+        		this.x = data.x - extrapolate;
+        		break;
+        	case Player.Direction.RIGHT:
+        		this.x = data.x + extrapolate;
+        		break;
+        	case Player.Direction.NONE:
+        		break;
+        }
 		this.trigger('ChangeDirection', data.dir);
 	}
 })

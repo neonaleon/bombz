@@ -47,7 +47,7 @@ Player.Direction =
 
 Player.Default =
 {
-  SPEED: 4,
+  SPEED: 3,
   BOMBS: 0,
   DELAY: 150,
   POWERUPS: [],
@@ -60,7 +60,7 @@ Player.Default =
 
 Player.Max =
 {
-  SPEED: 7,
+  SPEED: 6,
   BOMB_RANGE: 12,
   BOMB_LIMIT: 6,
 }

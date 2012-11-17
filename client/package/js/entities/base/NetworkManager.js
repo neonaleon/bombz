@@ -9,7 +9,7 @@ var socket = undefined;
 NetworkManager.sendRate = 0;
 NetworkManager.connected = false;
 
-NetworkManager.localLag = 100;
+NetworkManager.localLag = 150;
 
 NetworkManager.Connect = function (ip, port, handler)
 {

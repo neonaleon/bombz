@@ -12,7 +12,7 @@ var EntityDefinitions = {
 	POWERUP_FIREBALL: 'fireball',
 	POWERUP_SPRITES: ["speed", "blast", "egg_limit", "kick", "fireball"],
 	
-	MOVESPEED_CAP: 7,
+	MOVESPEED_CAP: 6,
 	EGG_CAP: 6,
 	BLAST_CAP: 12,
 
