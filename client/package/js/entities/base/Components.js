@@ -703,15 +703,20 @@ Crafty.c("NetworkedPlayer", {
 			
 			if (this.onEgg && this.hit('Egg').length == 1)
         	{
-        		console.log("if", oldpos);
         		if (this.hit('solid'))
-            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
+        		{
+        			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
+        			console.log("if", oldpos);
+        		}
         	}
         	else 
         	{
-        		console.log("else", oldpos);
         		if (this.hit('solid') || this.hit('Egg'))
-            		this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
+        		{
+        			console.log("else", oldpos);
+        			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
+        		}
+            		
         	}
 		});	
 		return this;
