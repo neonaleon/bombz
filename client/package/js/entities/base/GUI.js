@@ -66,13 +66,32 @@ GUI.ActionButton = function(button)
 			.onButtonDown(function (){
 				if (!Crafty.keydown[Crafty.keys[button]]) {
 					Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : Crafty.keys[button] });
-					this.addComponent('eggButton_down');
+					if (!dragons[GameState.GetLocalPlayer().GetID()].has('DodgeballPlayer')) {
+						console.log("playerID: " + GameState.GetLocalPlayer().GetID());
+						console.log("playerHasDodge: " + dragons[GameState.GetLocalPlayer().GetID()].has('DodgeballPlayer'));
+						console.log("I HAZ NO DIED")
+						this.addComponent('eggButton');
+					}
+					else if (dragons[GameState.GetLocalPlayer().GetID()].hasFireball) {
+						console.log("I CAN HAZ FIREBALL")
+						this.addComponent('fireballButton_down')
+					}
+					else {
+						console.log("I HAZ NO FIREBALL")
+						this.addComponent('fireballButton_none')
+					}
 				}
 			})
 			.onButtonUp(function (){
 				if (Crafty.keydown[Crafty.keys[button]]) {
 					Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys[button] });
-					this.addComponent('eggButton');
+					if (!dragons[GameState.GetLocalPlayer().GetID()].has('DodgeballPlayer'))
+						this.addComponent('eggButton');
+					else if (dragons[GameState.GetLocalPlayer().GetID()].hasFireball) {
+						this.addComponent('fireballButton')
+					}
+					else //if (dragons[GameState.GetLocalPlayer().GetID()].has('DodgeballPlayer')
+						this.addComponent('fireballButton_none');
 				}
 			})
 }

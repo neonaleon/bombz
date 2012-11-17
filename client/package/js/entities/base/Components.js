@@ -208,7 +208,7 @@ Crafty.c('Death', {
 		this.step2props = 2; // 2 properties being interpolated at each step
 		this.step1props = 2;
 		this.deathPos = undefined; // deathPos not yet received from server
-		
+		this.addComponent('DodgeballPlayer');
 		this.requires('Tween');
 		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, 50);
 		this.attach(this.wings);
@@ -456,6 +456,7 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){ 
 			this.hasFireball = true;
+			aButton.addComponent('fireballButton');
 			this.unbind("applyPowerup");
 			this.removeComponent(EntityDefinitions.POWERUP_FIREBALL + "_powerup", false); 
 		});
