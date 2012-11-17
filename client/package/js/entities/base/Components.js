@@ -212,8 +212,9 @@ Crafty.c('Death', {
 		if (this.has('LocalPlayer')) 
 		{
 			this.unbind('KeyDown_A');
-			this.flushUpdates();
 			this.disableControl();
+			this.flushUpdates();
+			this.trigger('CraftyStop');
 		}
 		// set player to face down, and stop animating
 		this.trigger("ChangeDirection", Player.Direction.DOWN);
@@ -255,7 +256,6 @@ Crafty.c('Death', {
 				
 				if (this.has('LocalPlayer'))
 				{
-					this.flushUpdates();
 					this.enableControl();
 					this.flushUpdates();
 					this.bind('KeyDown_A', this.spitFireball); // change ability
@@ -464,6 +464,7 @@ Crafty.c("LocalPlayer", {
 		this.updateTypeEgg = 'egg';
 		this.updateTypeFireball = 'fireball';
 		this.updateQueue = [];
+		this.flush = false;
 		// the local player can be controlled
 		this.requires("Controllable");
 		
@@ -568,6 +569,13 @@ Crafty.c("LocalPlayer", {
 	
 	processUpdates: function()
 	{
+		if (this.flush) 
+		{
+			this.flush = false;
+			this.updateQueue.splice(0, this.updateQueue.length);
+			return;
+		}
+		
 		var processedCount = 0;
 		for (var i = 0; i < this.updateQueue.length; i++)
 		{
@@ -606,7 +614,7 @@ Crafty.c("LocalPlayer", {
 		if (Crafty.keydown[Crafty.keys['UP_ARROW']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['UP_ARROW'] });
 		if (Crafty.keydown[Crafty.keys['DOWN_ARROW']]) Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys['DOWN_ARROW'] });
 		
-		this.updateQueue.splice(0, this.updateQueue.length);
+		this.flush = true;
 	},
 	
 	processMove: function(data)
