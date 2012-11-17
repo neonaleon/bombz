@@ -39,8 +39,6 @@ SceneManager.ChangeScene = function (scene)
 
 SceneManager.LoadScene = function (scene)
 {
-	SceneManager.ChangeScene(SceneDefinitions.LoadScene);
-	
 	Crafty.load([
 		'/img/sidebar.png', 
 		'/img/dpad150x150.png',
@@ -55,6 +53,8 @@ SceneManager.LoadScene = function (scene)
 		function(){
 			SceneManager.ChangeScene(scene);		
 		});
+		
+	SceneManager.ChangeScene(SceneDefinitions.LoadScene);
 };
 
 

@@ -23,8 +23,8 @@ var SpriteDefinitions = {
 	BUTTON_WIDTH: 80,
 	BUTTON_HEIGHT: 80,
 
-	DPAD_WIDTH: 150,
-	DPAD_HEIGHT: 150,
+	CONTROLS_WIDTH: 150,
+	CONTROLS_HEIGHT: 150,
 	
 	BLUE: 0,
 	GREEN: 1,
@@ -36,6 +36,8 @@ var SpriteDefinitions = {
 	BUTTONS: ['bluebutton', 'greenbutton', 'redbutton', 'pinkbutton'],
 	//COLORS: ['blue', 'green', 'red', 'pink'], // follows order on the spritesheet
 	COLORS: [0, 1, 2, 3], // follows order on the spritesheet
+
+	PLAYERS: [0, 1, 2, 3],
 	
 	MAP_1: 'map1',
 	
@@ -92,21 +94,23 @@ SpriteDefinitions['map1'] = {
 };
 
 SpriteDefinitions['gui'] = {
-	'file': '/img/dpad150x150.png',
-	'tile': SpriteDefinitions.DPAD_WIDTH,
+	'file': '/img/gamecontrols150x150.png',
+	'tile': SpriteDefinitions.CONTROLS_WIDTH,
 	'elements': {
 		dpad_none: [0, 0],
 		dpad_up: [1, 0],
 		dpad_down: [2, 0],
 		dpad_left: [3, 0],
 		dpad_right: [4, 0],
+		eggButton: [5, 0],
+		eggButton_down: [6, 0],
 	}
 };
 
 
 SpriteDefinitions['sidebar'] = {
 	'file': '/img/sidebar.png',
-	'tile': 137,
+	'tile': 132,
 	'tileh': 600,
 	'elements': {
 		sidebar: [0, 0],
@@ -123,11 +127,25 @@ for (var i = 0; i < SpriteDefinitions.COLORS.length; i++)
 			var elements = {};
 			elements[color + 'button'] = [18, i];
 			return elements;
-		})(), //35
+		}) (), //35
 		'anim_spin':[[18, i], [19, i],[20, i], [21, i], [22,i], [23,i], [24,i], [25,i], [26,i], [27,i], [28,i], [29,i], [30,i], [31,i], [32,i], [33,i], [34,i], [35,i], [0,i], [1,i], [2,i], [3,i], [4,i], [5,i], [6,i], [7,i], [8,i], [9,i], [10,i], [11,i], [12,i], [13,i], [14,i], [15,i], [16,i], [17,i]], //and many more
 	};
 }
 
+for (var i = 0; i < SpriteDefinitions.PLAYERS.length; i++)
+{
+	var player = SpriteDefinitions.PLAYERS[i];
+	SpriteDefinitions['player'+i] = {
+		'file': '/img/playernumber80x40.png',
+		'tile': SpriteDefinitions.BUTTON_WIDTH,
+		'tileh': SpriteDefinitions.BUTTON_HEIGHT/2,
+		'elements': (function(){
+			var elements = {};
+			elements['p'+i] = [i, 0];
+			return elements;
+		})(),
+	};
+}
 
 SpriteDefinitions['powerup'] = {
 	'file': '/img/sprite40x40.png',
