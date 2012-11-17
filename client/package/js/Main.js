@@ -1,9 +1,11 @@
-Math.PI*3/4// main.js
+// main.js
 // @author Leon Ho
 
 window.onload = function()
 {
-	Crafty.canvas.init(Properties.DEVICE_WIDTH, Properties.DEVICE_HEIGHT);
+	Crafty.init(Properties.DEVICE_WIDTH, Properties.DEVICE_HEIGHT);
+	Crafty.canvas.init();
+	
 	Crafty.background("#FFFFFF");
 	
 	//SceneManager.RunWithScene(SceneDefinitions.WaitingRoomScene);

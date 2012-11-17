@@ -578,6 +578,7 @@ Crafty.c("LocalPlayer", {
 	
 	processUpdates: function()
 	{
+		console.log(Crafty.timer.getFPS());
 		if (this.flush) 
 		{
 			this.flush = false;

@@ -140,6 +140,7 @@ Entities.Dragon = function(color)
                     }
                 })
                 .onHit('Egg', function(){ this.onEgg = true; }, function(){ this.onEgg = false; })
+                
 	return dragon;
 };
 
