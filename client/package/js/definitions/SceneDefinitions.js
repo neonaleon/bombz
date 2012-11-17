@@ -200,7 +200,6 @@ var handler_Death = function(data)
 	dragons[ data.pid ].trigger('killed', data);
 	var def = SpriteDefinitions['gui'];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
-	aButton.addComponent('fireballButton_none')
 };
 var handler_Powerup = function(powerup)
 {

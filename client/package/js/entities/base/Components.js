@@ -43,8 +43,10 @@ Crafty.c('Dragon', {
 	},
 	die: function(){
 		// only send update if local dragon
-		if (this.has('LocalPlayer')) 
+		if (this.has('LocalPlayer')) {
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
+			aButton.addComponent('fireballButton_none')
+		}
 	},
 	clearEgg: function(){
 		this.eggCount -= 1;
