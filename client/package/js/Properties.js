@@ -7,7 +7,7 @@ var Properties =
 	// device properties
 	DEVICE_WIDTH: 1024,
 	DEVICE_HEIGHT: 600,
-	RENDERER : "Canvas", // or Canvas NOTE: Canvas renderer will be a breaking change
+	RENDERER : "DOM", // or Canvas NOTE: Canvas renderer will be a breaking change
 	
 	// server properties
 	MASTERSERVER_IP: "http://localhost",
