@@ -116,6 +116,15 @@ Room.prototype.GetPlayerCount = function()
   return Object.keys( this._players ).length;
 }
 
+Room.prototype.GetAverageDelay = function()
+{
+  var sum = 0;
+  for ( var i in this._players )
+    sum += this._players[ i ].GetDelay();
+
+  sum /= this.GetPlayerCount();
+  return parseInt( sum );
+}
 
 Room.prototype.GetAlivePlayers = function()
 {

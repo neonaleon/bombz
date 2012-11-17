@@ -349,26 +349,33 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
 
       if ( powerup === undefined )
         return;
-/*
+
+      var player = roomController.GetPlayerFromSocket( socket );
+      data.pid = player.GetID();
+      data.type = powerup.GetType();
+
       // need to put into queue instead
       var key = data.x + ', ' + data.y;
       if ( key in roomController._powerupQueue )
       {
         var queue = roomController._powerupQueue[ key ];
-
+        queue.push( data );
       }
       else
       {
         roomController._powerupQueue[ key ] = [ data ];
-
+        roomController.HandlePowerupQueue( key, room.GetAverageDelay() );
       }
-*/
+
+      /*
+      // original method of directly handling, now delayed to HandlePowerupQueue
       var player = roomController.GetPlayerFromSocket( socket );
       data.pid = player.GetID();
       data.type = powerup.GetType();
       powerup.ApplyEffect( player );
       roomController.GetMap().RemovePowerup( powerup );
       roomController.Broadcast( MessageDefinitions.POWERUP, data );
+      */
     });
 
     // player dies
@@ -396,6 +403,34 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
       }
     });
   }
+}
+
+// removes listeners specific to this state for a player
+RoomController.prototype.HandlePowerupQueue = function( key, delay )
+{
+  var room = this._room;
+  var roomController = this;
+
+  setTimeout( function()
+  {
+    var queue = roomController._powerupQueue[ key ];
+
+    queue.sort( function( a, b )
+    {
+      return a.timestamp - b.timestamp;
+    });
+
+    // take earliest timestamped packet
+    var data = queue[ 0 ];
+    var player = room.GetPlayer( data.pid );
+    var powerup = roomController.GetMap().GetPowerup( data.x, data.y );
+    powerup.ApplyEffect( player );
+    roomController.GetMap().RemovePowerup( powerup );
+    roomController.Broadcast( MessageDefinitions.POWERUP, data );
+
+    // remove queue for this powerup
+    delete roomController._powerupQueue[ key ];
+  }, delay );
 }
 
 // removes listeners specific to this state for a player
