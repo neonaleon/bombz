@@ -139,6 +139,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	NetworkManager.AddListener(MessageDefinitions.LEAVE, handler_Leave); // player leaves/disconnects
 	NetworkManager.AddListener(MessageDefinitions.POWERUP, handler_Powerup);
 	NetworkManager.AddListener(MessageDefinitions.FIREBALL, handler_Fireball);
+	NetworkManager.AddListener(MessageDefinitions.SUDDEN_DEATH, handler_SuddenDeath);
 
 	// generate map and entities
 	Map.generate(GameState.GetMap());
@@ -181,6 +182,8 @@ var handler_Win = function(data)
 	NetworkManager.ClearListeners(MessageDefinitions.LEAVE);
 	NetworkManager.ClearListeners(MessageDefinitions.POWERUP);
 	NetworkManager.ClearListeners(MessageDefinitions.FIREBALL);
+	NetworkManager.ClearListeners(MessageDefinitions.SUDDEN_DEATH);
+	Map.stopSuddenDeath();
 	SceneManager.ChangeScene( SceneDefinitions.WinScene);
 };
 var handler_Move = function(data)
@@ -248,6 +251,11 @@ var handler_Leave = function(data)
 	console.log( "P" + ( data.id + 1 ) + " has left the game." ) ;
 
 	// message should have more things like powerups dropped by player
+};
+var handler_SuddenDeath = function()
+{
+	console.log( "Activating Sudden death mode" );
+	Map.suddenDeath();
 };
 
 SceneDefinitions.WinScene = new Scene("WinScene", function()
