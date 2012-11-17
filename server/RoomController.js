@@ -338,7 +338,6 @@ RoomController.prototype.CreatePlayerListeners = function( socket )
     // player shoots a fireball
     socket.on( MessageDefinitions.FIREBALL, function( data )
     {
-      var data = {};
       data.pid = roomController.GetPlayerFromSocket( socket ).GetID();
       roomController.Broadcast( MessageDefinitions.FIREBALL, data, socket );
     });

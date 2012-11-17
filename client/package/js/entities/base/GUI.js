@@ -8,7 +8,9 @@
 /* ==============
  * GUI Initialize
  ================ */
-var GUI = {};
+var GUI = {
+	pNumber:[]
+};
 // Create GUI sprites
 var guiSpriteDef = SpriteDefinitions[SpriteDefinitions.GUI];
 Crafty.sprite(guiSpriteDef['tile'], guiSpriteDef['file'], guiSpriteDef['elements']);
@@ -18,6 +20,12 @@ Crafty.sprite(guiSpriteDef['tile'], guiSpriteDef['file'], guiSpriteDef['elements
  =============== */
 GUI.ACTION_BUTTON_A = 'A'; // defines action button A
 GUI.ACTION_BUTTON_B = 'B'; // defines action button B
+GUI.GAMETITLE_HEIGHT = 200;
+GUI.GAMETITLE_WIDTH = 600;
+GUI.STARTBUTTON_HEIGHT = 100;
+GUI.STARTBUTTON_WIDTH = 200;
+GUI.PLAYERBUTTON_HEIGHT = 80;
+GUI.PLAYERBUTTON_WIDTH = 80;
 
 /* ============
  * GUI Entities
@@ -39,16 +47,22 @@ GUI.Button = function(buttonText, handler)
 // Create actions buttons for our game. Only 2 buttons A and B are defined.
 GUI.ActionButton = function(button)
 {
-	return Crafty.e(Properties.RENDERER + ", 2D, Button, button" + button) // add a action button sprite!
+	var def = SpriteDefinitions['gui'];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	return Crafty.e(Properties.RENDERER + ", 2D, Button, eggButton, button" + button) // add a action button sprite!
 			.setName("actionButton_" + button)
-			.attr({z:GUIDefinitions.Z_GUI})
+			.attr({w: SpriteDefinitions.CONTROLS_WIDTH, h: SpriteDefinitions.CONTROLS_HEIGHT, z:GUIDefinitions.Z_GUI})
 			.onButtonDown(function (){
-				if (!Crafty.keydown[Crafty.keys[button]])
+				if (!Crafty.keydown[Crafty.keys[button]]) {
 					Crafty.keyboardDispatch({'type':'keydown', 'keyCode' : Crafty.keys[button] });
+					this.addComponent('eggButton_down');
+				}
 			})
 			.onButtonUp(function (){
-				if (Crafty.keydown[Crafty.keys[button]]) 
+				if (Crafty.keydown[Crafty.keys[button]]) {
 					Crafty.keyboardDispatch({'type':'keyup', 'keyCode' : Crafty.keys[button] });
+					this.addComponent('eggButton');
+				}
 			})
 }
 
@@ -57,8 +71,8 @@ GUI.Dpad = function (entity)
 {
 	var def = SpriteDefinitions['gui'];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
-   	var dpad = Crafty.e('Controller, dpad, dpad_none')
-   					.attr({z:GUIDefinitions.Z_GUI, w: SpriteDefinitions.DPAD_WIDTH, h: SpriteDefinitions.DPAD_HEIGHT})
+   	var dpad = Crafty.e('Controller, dpad_none')
+   					.attr({z:GUIDefinitions.Z_GUI, w: SpriteDefinitions.CONTROLS_WIDTH, h: SpriteDefinitions.CONTROLS_HEIGHT})
    					.bind('KeyDown', function(e){
    						switch(e.keyCode)
    						{
@@ -89,13 +103,13 @@ GUI.SwitchButton = function(buttonText, handler, color)
 {
 	var def = SpriteDefinitions['button'+color];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
-	var button = Crafty.e(Properties.RENDERER + ", 2D, Color, Text, Mouse, SpriteAnimation, " + + color + 'button')
+	var button = Crafty.e(Properties.RENDERER + ", 2D, Color, Mouse, SpriteAnimation, " + + color + 'button')
 				.setName("button_" + buttonText)
 				.animate("spin", def['anim_spin'])
 				// .attr({	isDown:false, w:GUIDefinitions.BUTTON_WIDTH, h:GUIDefinitions.BUTTON_HEIGHT })
 				// .color(GUIDefinitions.BUTTON_UPCOLOR)
 				.attr({	isDown:false})
-				.text(buttonText)
+				// .text(buttonText)
 				.bind("Click", function()
 				{
 					if (!this.isDown) 
@@ -181,6 +195,14 @@ GUI.Selector = function(choicesArray, handler)
 						handler(index);
 					});
 	return { 'label': label, 'left': buttonLeft, 'right': buttonRight };
+};
+
+GUI.PlayerNumber = function(id)
+{
+	var def = SpriteDefinitions['player'+id];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	var player = Crafty.e(Properties.RENDERER + ", 2D, " + 'p' + id);
+	return player;
 };
 
 GUI.GameTitle = function()

@@ -25,26 +25,31 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	console.log("waiting room scene running");
 
 	var startButton = GUI.Button( "Start", handler_Start );
-	startButton.attr({	x: Properties.DEVICE_WIDTH - 2 * GUIDefinitions.BUTTON_WIDTH })
-	startButton.attr({	y: Properties.DEVICE_HEIGHT - 2 * GUIDefinitions.BUTTON_HEIGHT });
+	startButton.attr({	x: Properties.DEVICE_WIDTH - 1.25 * GUI.STARTBUTTON_WIDTH })
+	startButton.attr({	y: Properties.DEVICE_HEIGHT - 1.25 * GUI.STARTBUTTON_HEIGHT });
 
-	Crafty.e("2D, DOM, Image")
+	var background = Crafty.e("2D, DOM, Image")
 			.image("/img/waitingbackground.png", "no-repeat")
 			.attr({x: 0, y: 0})
 
 	//TEMP GAMENAME
-	Crafty.e("2D, DOM, Image")
+	var gameTitle = Crafty.e("2D, DOM, Image")
 			.image("/img/gametitle600x200.png", "no-repeat")
-			.attr({x: (Properties.DEVICE_WIDTH/2)-(600/2), y: 100, w:600, h:200 })
+			.attr({x: (Properties.DEVICE_WIDTH/2)-(600/2), y: 75, w:600, h:200 })
 	// Crafty.e(Properties.RENDERER + ", 2D, Color, Text")
 			// .attr({x: 100, y: 100, w:800, h:100 })
 			// .color(GUIDefinitions.BUTTON_UPCOLOR);
 	// all the position settings should go inside GUI.js when using real graphics
+	var button_space = 80;
 	var colorButtons = GUI.OneOrNoneRadioButtonGroup(["Blue", "Green", "Red", "Pink"], handler_Seat);
-	colorButtons[ Player.Color.BLUE ].attr({ x: 200, y: 300});
-	colorButtons[ Player.Color.GREEN ].attr({ x: 400, y: 300});
-	colorButtons[ Player.Color.RED ].attr({ x: 600, y: 300});
-	colorButtons[ Player.Color.PINK ].attr({ x: 800, y: 300});
+	colorButtons[ Player.Color.BLUE ].attr({ x: (Properties.DEVICE_WIDTH/2)-(3.5*GUI.PLAYERBUTTON_WIDTH), y: Properties.DEVICE_HEIGHT-(3*GUI.PLAYERBUTTON_HEIGHT)});
+	colorButtons[ Player.Color.GREEN ].attr({ x: (Properties.DEVICE_WIDTH/2)-(1.5*GUI.PLAYERBUTTON_WIDTH), y: Properties.DEVICE_HEIGHT-(3*GUI.PLAYERBUTTON_HEIGHT)});
+	colorButtons[ Player.Color.RED ].attr({ x: (Properties.DEVICE_WIDTH/2)+(0.5*GUI.PLAYERBUTTON_WIDTH), y: Properties.DEVICE_HEIGHT-(3*GUI.PLAYERBUTTON_HEIGHT)});
+	colorButtons[ Player.Color.PINK ].attr({ x: (Properties.DEVICE_WIDTH/2)+(2.5*GUI.PLAYERBUTTON_WIDTH), y: Properties.DEVICE_HEIGHT-(3*GUI.PLAYERBUTTON_HEIGHT)});
+
+	for (var i = 0; i< 4; i++) {
+		GUI.pNumber.push(GUI.PlayerNumber(i).attr({x: -100, y: -100}));
+	}
 
 });
 var handler_Connect = function()
@@ -74,9 +79,30 @@ var handler_StartResponse = function(data)
 	GameState.SetMap( data.map );
 	SceneManager.ChangeScene( SceneDefinitions.GameScene );
 };
-var handler_UpdateResponse = function(data)
+var handler_UpdateResponse = function(data) //natalie
 {
-	console.log("natalie " + data);
+	var xstart = (Properties.DEVICE_WIDTH/2)-(3.5*GUI.PLAYERBUTTON_WIDTH)
+	var ystart = Properties.DEVICE_HEIGHT-(3*GUI.PLAYERBUTTON_HEIGHT);
+	console.log(data);
+
+	for (var i=0; i<4; i++) {	
+		GUI.pNumber[i].attr({x: -100, y: -100})
+	}
+	var yval = [ 0, 0, 0, 0]; // yval[x], x = data.room.players[i]
+	if (data.room.players.length > 0) {
+		// for (var i=0; i<data.room.players.length; i++) {
+		for (var i in data.room.players) {
+			if (data.room.players[i] <4 && data.room.players[i] != null) {
+				if (GameState._pid == i) { //if id is own
+					console.log("poop");
+					GUI.pNumber[i].attr({x: xstart+(data.room.players[i]*2*GUI.PLAYERBUTTON_WIDTH), y: ystart-(GUI.PLAYERBUTTON_HEIGHT/2)})
+				} else {
+					GUI.pNumber[i].attr({x: xstart+(data.room.players[i]*2*GUI.PLAYERBUTTON_WIDTH), y: ystart+GUI.PLAYERBUTTON_HEIGHT+(yval[data.room.players[i]]*0.5*GUI.PLAYERBUTTON_HEIGHT) } )
+					yval[data.room.players[i]]++;
+				}
+			}
+		}
+	}
 	GameState.UpdateRoom( data );
 };
 var handler_EnterRoomResponse = function(data)
@@ -123,6 +149,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	var players = GameState.GetRoom().GetPlayers();
 	for ( var i in players )
 	{
+		//todo check nullz
 		var player = players[ i ];
 		dragons[ player.GetID() ] = Map.spawnPlayer( player.GetColor() );
 		// add networked player component to sync state of remote players
@@ -132,12 +159,14 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	dragons[GameState.GetLocalPlayer().GetID()].addComponent('LocalPlayer');
 
 	// setup GUI
-	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A).attr({x:900, y:400});
-	var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
+	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A)
+					.attr({x:Properties.DEVICE_WIDTH-20-SpriteDefinitions.CONTROLS_WIDTH, y:Properties.DEVICE_HEIGHT-20-SpriteDefinitions.CONTROLS_HEIGHT});
+	// var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
 	//dragons[ GameState.GetLocalPlayer().GetID() ].attr({x: Map._instance.x, y:0 } );
 	//Map.movePlayerOutside(dragons[ GameState.GetLocalPlayer().GetID() ]);
 	//Map.suddenDeath();
-	var pad = GUI.Dpad(dragons[ GameState.GetLocalPlayer().GetID() ] ).attr({x:50, y:400}); // allow player to control the dragon
+	var pad = GUI.Dpad(dragons[ GameState.GetLocalPlayer().GetID() ] )
+				.attr({x:20, y:Properties.DEVICE_HEIGHT-20-SpriteDefinitions.CONTROLS_HEIGHT});
 });
 var handler_Win = function(data)
 {
@@ -203,7 +232,13 @@ var handler_Powerup = function(powerup)
 var handler_Fireball = function(data)
 {
 	console.log( "P" + ( data.pid + 1 ) + " spit fireball." ) ;
+	//dragons[ data.pid ].processFireball(data);
+	//
+	console.log(data);
+	var pos = Map.tileToPixel(data);console.log(pos);
+	Entities.Fireball().fireball(dragons[ data.pid ], pos, data.direction);
 };
+
 var handler_Leave = function(data)
 {
 	dragons[ data.id ].destroy();

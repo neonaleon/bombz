@@ -554,7 +554,7 @@ Crafty.c("LocalPlayer", {
 				this.delayLocalUpdate(updateType, data)
 				break;
 			case this.updateTypeFireball:
-				NetworkManager.SendMessage(MessageDefinitions.FIREBALL, { x: data.x, y: data.y, timestamp: data.timestamp });
+				NetworkManager.SendMessage(MessageDefinitions.FIREBALL, { x: data.x, y: data.y, direction: this.direction, timestamp: data.timestamp });
 				this.delayLocalUpdate(updateType, data);
 				break;
 		}
