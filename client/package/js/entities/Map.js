@@ -195,6 +195,7 @@ Map.getDeathLocation = function(position)
 Map.stopSuddenDeath = function()
 {
 	clearTimeout(Map._suddenDeathTimer);
+	Map._suddenDeathTimer = undefined;
 }
 Map.suddenDeath = function()
 {
@@ -205,6 +206,10 @@ function defer_spawn_block(up, right, down, left, row, col, delay)
 	spawn_sd_block(col, row);
 	// 0-14 in columns, 0-10 in rows	
 	Map._suddenDeathTimer = setTimeout(function() {
+
+		if ( Map._suddenDeathTimer === undefined )
+			return;
+
 		if (row == up && col != right) 
 		{
 			col += 1;

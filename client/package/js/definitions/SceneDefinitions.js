@@ -173,6 +173,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 var winner = 4;
 var handler_Win = function(data)
 {
+	Map.stopSuddenDeath();
 	console.log( "P" + ( data.pid + 1 ) + " is the winner!" ) ;
 	winner = data.pid;
 	NetworkManager.ClearListeners(MessageDefinitions.WIN);
@@ -183,7 +184,6 @@ var handler_Win = function(data)
 	NetworkManager.ClearListeners(MessageDefinitions.POWERUP);
 	NetworkManager.ClearListeners(MessageDefinitions.FIREBALL);
 	NetworkManager.ClearListeners(MessageDefinitions.SUDDEN_DEATH);
-	Map.stopSuddenDeath();
 	SceneManager.ChangeScene( SceneDefinitions.WinScene);
 };
 var handler_Move = function(data)
