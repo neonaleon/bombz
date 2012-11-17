@@ -32,6 +32,7 @@ Room.Settings.Type =
 };
 Room.Settings.Timeout =
 {
+  ONE_MINUTE: 30000,
   FIVE_MINUTES: 300,
 };
 Room.Settings.SuddenDeath =

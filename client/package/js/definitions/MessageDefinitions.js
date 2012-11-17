@@ -29,6 +29,7 @@ var MessageDefinitions =
 	DEATH: "death", // player kicks a bomb
 	POWERUP: "powerup", // powerup drops in the map
 	LEAVE: "leave", // player leaves / disconnects
+	SUDDEN_DEATH: "suddendeath" // activate sudden death mode
 };
 
 //// EXPORTS

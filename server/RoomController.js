@@ -23,6 +23,7 @@ RoomController.prototype.Reset = function( socket )
   this._room.Reset();
   this._powerupQueue = {};        // holds powerup pickup requests for a short while to see if anyone picked it earlier
   this._map = new Map( 19, 15, 40, 40 );
+  clearTimeout( this._suddenDeathtimer );
 }
 
 RoomController.prototype.GetPlayerFromSocket = function( socket )
@@ -171,6 +172,11 @@ RoomController.prototype.StartGame = function()
 {
   var room = this._room;
   var roomController = this;
+
+  this._suddenDeathtimer = setTimeout( function()
+  {
+     roomController.FairBroadcast( MessageDefinitions.SUDDEN_DEATH );
+  }, Room.Settings.Timeout.ONE_MINUTE );
 
   // spawn normal powerups
   setInterval( function()

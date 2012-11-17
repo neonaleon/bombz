@@ -80,7 +80,7 @@ Entities.SDBlock = function()
 			if (hitDragon)
 			{
 				for (var i = 0; i < hitDragon.length; i++)
-					hitDragon[i].obj.trigger('killed');
+					hitDragon[i].obj.trigger('burn');
 			}
 			if (this.moved == 2)
 				this.collision([-10, -10], [50, -10], [50, 50], [-10, 50]);

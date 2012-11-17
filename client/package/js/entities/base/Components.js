@@ -773,7 +773,6 @@ Crafty.c("NetworkedPlayer", {
 	},
 	updateState: function(data)
 	{
-		console.log(data);
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
 		this.x = data.x;

@@ -39,6 +39,7 @@ var Map = {
 	_powerups: undefined,
 	
 	_instance: undefined,
+	_suddenDeathTimer: undefined,
 };
 
 /*
@@ -190,6 +191,11 @@ Map.getDeathLocation = function(position)
 	return { x: position.x * Map.MAP_TILEWIDTH + Map._instance.x, y: position.y * Map.MAP_TILEHEIGHT };
 }
 
+
+Map.stopSuddenDeath = function()
+{
+	clearTimeout(Map._suddenDeathTimer);
+}
 Map.suddenDeath = function()
 {
 	defer_spawn_block(0, 14, 10, 0, 0, 0, Map.SUDDEN_DEATH_RATE);
@@ -198,7 +204,7 @@ function defer_spawn_block(up, right, down, left, row, col, delay)
 {
 	spawn_sd_block(col, row);
 	// 0-14 in columns, 0-10 in rows	
-	setTimeout(function() {
+	Map._suddenDeathTimer = setTimeout(function() {
 		if (row == up && col != right) 
 		{
 			col += 1;
