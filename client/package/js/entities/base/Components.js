@@ -43,8 +43,10 @@ Crafty.c('Dragon', {
 	},
 	die: function(){
 		// only send update if local dragon
-		if (this.has('LocalPlayer')) 
+		if (this.has('LocalPlayer')) {
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
+			aButton.addComponent('fireballButton_none')
+		}
 	},
 	clearEgg: function(){
 		this.eggCount -= 1;
@@ -209,6 +211,14 @@ Crafty.c('Death', {
 		this.step1props = 2;
 		this.deathPos = undefined; // deathPos not yet received from server
 		this.num_anim_frames = 50;
+		
+		this.addComponent('DodgeballPlayer');
+		
+		this.requires('Tween');
+		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, this.num_anim_frames);
+		this.attach(this.wings);
+		
+		this.tween({ y: this.y - 50, alpha: 0 }, this.num_anim_frames); // fade out
 		
 		if (this.has('LocalPlayer')) 
 		{
@@ -462,6 +472,7 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){ 
 			this.hasFireball = true;
+			aButton.addComponent('fireballButton');
 			this.unbind("applyPowerup");
 			this.removeComponent(EntityDefinitions.POWERUP_FIREBALL + "_powerup", false); 
 		});

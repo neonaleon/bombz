@@ -125,6 +125,7 @@ var handler_Seat = function( buttonIndex, value )
  * GAME SCENE
  * Game scene is where the game will be played
  */
+var aButton;
 SceneDefinitions.GameScene = new Scene("GameScene", function()
 {
 	console.log("game scene running");
@@ -158,7 +159,7 @@ SceneDefinitions.GameScene = new Scene("GameScene", function()
 	dragons[GameState.GetLocalPlayer().GetID()].addComponent('LocalPlayer');
 
 	// setup GUI
-	var aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A)
+	aButton = GUI.ActionButton(GUI.ACTION_BUTTON_A)
 					.attr({x:Properties.DEVICE_WIDTH-20-SpriteDefinitions.CONTROLS_WIDTH, y:Properties.DEVICE_HEIGHT-20-SpriteDefinitions.CONTROLS_HEIGHT});
 	// var bButton = GUI.ActionButton(GUI.ACTION_BUTTON_B).attr({x:960, y:400});
 	//dragons[ GameState.GetLocalPlayer().GetID() ].attr({x: Map._instance.x, y:0 } );
@@ -197,6 +198,8 @@ var handler_Bomb = function(data)
 var handler_Death = function(data)
 {
 	dragons[ data.pid ].trigger('killed', data);
+	var def = SpriteDefinitions['gui'];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
 };
 var handler_Powerup = function(powerup)
 {

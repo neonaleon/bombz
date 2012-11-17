@@ -105,6 +105,9 @@ SpriteDefinitions['gui'] = {
 		dpad_right: [4, 0],
 		eggButton: [5, 0],
 		eggButton_down: [6, 0],
+		fireballButton_none: [7, 0],
+		fireballButton: [8, 0],
+		fireballButton_down: [9, 0],
 	}
 };
 
