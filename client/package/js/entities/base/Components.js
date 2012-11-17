@@ -279,11 +279,16 @@ Crafty.c('Death', {
 		{
 			// death position received from server
 			this.deathPos = Map.getDeathLocation(data);
+			
+			this.num_anim_frames = Math.max(this.num_anim_frames - Math.floor((WallClock.getTime() - data.timestamp) / 20));
+			
 			// force animation when the death message is received
 			if (this.deathAnimStep == 1) 
 			{
-				this.num_anim_frames = Math.max(this.num_anim_frames - Math.floor((WallClock.getTime() - data.timestamp) / 20));
-				this.trigger('TweenEnd');
+				this.x = this.deathPos.x;
+				this.y = this.deathPos.y - 50;
+				this.wings.tween({ alpha: 1 }, this.num_anim_frames)
+				this.tween({ y: this.deathPos.y, alpha: 1 }, this.num_anim_frames); // fade back in
 			} 
 		});
 		
