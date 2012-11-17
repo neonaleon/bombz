@@ -214,12 +214,6 @@ Crafty.c('Death', {
 		
 		this.addComponent('DodgeballPlayer');
 		
-		this.requires('Tween');
-		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, this.num_anim_frames);
-		this.attach(this.wings);
-		
-		this.tween({ y: this.y - 50, alpha: 0 }, this.num_anim_frames); // fade out
-		
 		if (this.has('LocalPlayer')) 
 		{
 			this.unbind('KeyDown_A');
@@ -228,10 +222,10 @@ Crafty.c('Death', {
 		}
 		
 		this.requires('Tween');
-		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, this.num_anim_frames);
+		this.wings = Entities.Wings().attr({ x: this.x, y: this.y }).tween({ alpha: 0 }, 50);
 		this.attach(this.wings);
 		
-		this.tween({ y: this.y - 50, alpha: 0 }, this.num_anim_frames); // fade out
+		this.tween({ y: this.y - 50, alpha: 0 }, 50); // fade out
 		
 		// set player to face down, and stop animating
 		this.trigger("ChangeDirection", Player.Direction.DOWN);
@@ -288,7 +282,7 @@ Crafty.c('Death', {
 			// force animation when the death message is received
 			if (this.deathAnimStep == 1) 
 			{
-				this.num_anim_frames -= Math.floor((WallClock.getTime() - data.timestamp) / 20);
+				this.num_anim_frames = Math.max(this.num_anim_frames - Math.floor((WallClock.getTime() - data.timestamp) / 20));
 				this.trigger('TweenEnd');
 			} 
 		});
