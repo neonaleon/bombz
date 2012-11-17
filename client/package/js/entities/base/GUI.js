@@ -30,6 +30,17 @@ GUI.PLAYERBUTTON_WIDTH = 80;
 /* ============
  * GUI Entities
  ============== */
+
+ GUI.SpawnPlayerIcon = function(color)
+{
+	var def = SpriteDefinitions[color];
+	Crafty.sprite(def['tile'], def['file'], def['elements']);
+	var icon = Crafty.e(Properties.RENDERER + ", 2D, " + color + 'icon')
+						.icon(color);
+
+	return icon;
+}
+
 // Creates a button with buttonText, which invokes handler(this) when pressed.
 GUI.Button = function(buttonText, handler)
 {
