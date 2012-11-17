@@ -513,30 +513,10 @@ Crafty.c("LocalPlayer", {
                 direction = Player.Direction.DOWN;
             if(!newdir.x && !newdir.y)
             	direction = Player.Direction.NONE;
-            	
-
-            if ( direction === this.direction )
-				return;
 
             // don't store direction if it is none, so we have the latest direction player is facing
 			if ( direction !== Player.Direction.NONE )
             	this.direction = direction;
-            /*
-           	var oldpos = { x: this.x, y: this.y };
-           	var data = {};
-			data.dx = newdir.x;
-			data.dy = newdir.y;
-			data.dragon = this;
-			this.processMove(data); // simulate a local move
-			
-			var pkt = { timestamp: WallClock.getTime(), x: this.x, y: this.y, newdir: direction, olddir: this.direction };
-			console.log(pkt);
-           	this.doLocalUpdate(this.updateTypeDirection, pkt);
-           	
-           	// revert, wait for local update
-           	this.x = oldpos.x;
-           	this.y = oldpos.y;
-           	*/
 		});
 		
 		// perform collision detection when the entity is being moved
@@ -595,7 +575,7 @@ Crafty.c("LocalPlayer", {
 				break;
 			case this.updateTypeDirection:
 				// send when change direction
-				NetworkManager.SendMessage(MessageDefinitions.MOVE, data);
+				//NetworkManager.SendMessage(MessageDefinitions.MOVE, data);
 				this.delayLocalUpdate(updateType, data);
 				break;
 			case this.updateTypeEgg:
@@ -651,7 +631,7 @@ Crafty.c("LocalPlayer", {
 		}
 		this.updateQueue.splice(0, processedCount);
 		
-		var currTime = (new Date()).getTime();
+		var currTime = WallClock.getTime();
 		if (currTime > this.networkTimer + this.networkInterval)
 		{
 			this.networkTimer = currTime;
@@ -739,18 +719,14 @@ Crafty.c("NetworkedPlayer", {
         	{
         		if (this.hit('solid'))
         		{
-        			this.x = oldpos.x;
-        			this.y = oldpos.y;
-        			//this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
+        			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y}))); // snap to grid
         		}
         	}
         	else 
         	{
         		if (this.hit('solid') || this.hit('Egg'))
         		{
-        			this.x = oldpos.x;
-        			this.y = oldpos.y;
-        			//this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
+        			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
         		}
             		
         	}
@@ -791,9 +767,8 @@ Crafty.c("NetworkedPlayer", {
 		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20);
 		for (var i = 0; i < simFrames; i++)
 			this.simulate();
-		this.direction = data.newdir;
-		this.simulate();
 		*/
+		this.simulate();
 		this.trigger('ChangeDirection', this.direction);
 	}
 })
