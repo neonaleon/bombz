@@ -28,12 +28,12 @@ SceneDefinitions.WaitingRoomScene = new Scene("WaitingRoomScene", function()
 	startButton.attr({	x: Properties.DEVICE_WIDTH - 1.25 * GUI.STARTBUTTON_WIDTH })
 	startButton.attr({	y: Properties.DEVICE_HEIGHT - 1.25 * GUI.STARTBUTTON_HEIGHT });
 
-	var background = Crafty.e("2D, DOM, Image")
+	var background = Crafty.e(Properties.RENDERER + ", 2D, Image")
 			.image("/img/waitingbackground.png", "no-repeat")
 			.attr({x: 0, y: 0})
 
 	//TEMP GAMENAME
-	var gameTitle = Crafty.e("2D, DOM, Image")
+	var gameTitle = Crafty.e(Properties.RENDERER + ", 2D, Image")
 			.image("/img/gametitle600x200.png", "no-repeat")
 			.attr({x: (Properties.DEVICE_WIDTH/2)-(600/2), y: 75, w:600, h:200 })
 	// Crafty.e(Properties.RENDERER + ", 2D, Color, Text")
@@ -255,12 +255,12 @@ SceneDefinitions.SplashScene = new Scene("SplashScene", function()
 { 
 	console.log("splash scene running");
 	
-	Crafty.e("2D, DOM, Image")
+	Crafty.e(Properties.RENDERER + ", 2D, Image")
 			.image("/img/waitingbackground.png", "no-repeat")
 			.attr({x: 0, y: 0});
 			
 	//TEMP GAMENAME
-	Crafty.e("2D, DOM, Image")
+	Crafty.e(Properties.RENDERER + ", 2D, Image")
 			.image("/img/gametitle600x200.png", "no-repeat")
 			.attr({x: (Properties.DEVICE_WIDTH/2)-(600/2), y: 100, w:600, h:200 });
 			
@@ -273,16 +273,16 @@ SceneDefinitions.SplashScene = new Scene("SplashScene", function()
 SceneDefinitions.LoadScene = new Scene("LoadScene", function()
 { 
 	console.log("load scene running");
-	Crafty.e("2D, DOM, Image")
+	Crafty.e(Properties.RENDERER + ", 2D, Image")
 			.image("/img/waitingbackground.png", "no-repeat")
 			.attr({x: 0, y: 0});
 
 	//TEMP GAMENAME
-	Crafty.e("2D, DOM, Image")
+	Crafty.e(Properties.RENDERER + ", 2D, Image")
 			.image("/img/gametitle600x200.png", "no-repeat")
 			.attr({x: (Properties.DEVICE_WIDTH/2)-(600/2), y: 100, w:600, h:200 });
 			
-	Crafty.e("2D, DOM, Text")
+	Crafty.e(Properties.RENDERER + ", 2D, Text")
 			.text("Loading...")
 			.attr({ x: Properties.DEVICE_WIDTH/2-60, y: Properties.DEVICE_HEIGHT/3*2 });
 });

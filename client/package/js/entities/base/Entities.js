@@ -59,14 +59,14 @@ Entities.DodgeBallBlock = function()
 
 Entities.FloorTile = function()
 {
-	return Crafty.e("2D, DOM, floor");
+	return Crafty.e(Properties.RENDERER + ", 2D, floor");
 };
 
 Entities.Sidebar = function()
 {
 	var def = SpriteDefinitions['sidebar'];
 	Crafty.sprite(def['tile'], def['tileh'], def['file'], def['elements']);
-	return Crafty.e("2D, DOM, solid, extents, sidebar");//, Image").image("/img/sidebar.png", "no-repeat");
+	return Crafty.e(Properties.RENDERER + ", 2D, solid, extents, sidebar");//, Image").image("/img/sidebar.png", "no-repeat");
 };
 
 Entities.SDBlock = function()
@@ -90,7 +90,7 @@ Entities.SDBlock = function()
 
 Entities.Extents = function()
 {
-	return Crafty.e("2D, DOM, Color, solid, extents").attr({z: GUIDefinitions.Z_GUI });
+	return Crafty.e(Properties.RENDERER + ", 2D, Color, solid, extents").attr({z: GUIDefinitions.Z_GUI });
 }
 
 /*
@@ -182,7 +182,7 @@ Entities.Powerup = function(type)
 Entities.Fireball = function()
 {
 	var def = SpriteDefinitions['effects'];
-	var fireball = Crafty.e('2D, DOM, Fireball, fire');
+	var fireball = Crafty.e(Properties.RENDERER + ', 2D, Fireball, fire');
 	fireball.addComponent("SpriteAnimation, Collision")
 				.animate('fireball', def['anim_fireball']);
 	fireball.z = Map.Z_FIRE;
@@ -194,7 +194,7 @@ Entities.Wings = function()
 	var def = SpriteDefinitions['effects'];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	
-	var wings = Crafty.e('2D, DOM, wings, Tween')
+	var wings = Crafty.e(Properties.RENDERER + ', 2D, wings, Tween')
 	wings.z = Map.Z_DRAGON - 1;
 	return wings;
 }
@@ -204,7 +204,7 @@ Entities.Cloud = function()
 	var def = SpriteDefinitions['effects'];
 	Crafty.sprite(def['tile'], def['file'], def['elements']);
 	
-	var cloud = Crafty.e('2D, DOM, cloud, Tween');
+	var cloud = Crafty.e(Properties.RENDERER + ', 2D, cloud, Tween');
 	cloud.z = Map.Z_CLOUD;
 	return cloud;
 }
