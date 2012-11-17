@@ -517,8 +517,12 @@ Crafty.c("LocalPlayer", {
 			data.dy = newdir.y;
 			data.dragon = this;
 			this.processMove(data); // simulate a local move
+
+			if ( direction === this.direction )
+				return;
 			
 			var pkt = { timestamp: WallClock.getTime(), x: this.x, y: this.y, newdir: direction, olddir: this.direction };
+			console.log(pkt);
            	this.doLocalUpdate(this.updateTypeDirection, pkt);
            	
            	// revert, wait for local update
