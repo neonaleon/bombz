@@ -753,12 +753,9 @@ Crafty.c("NetworkedPlayer", {
 			this.x = data.x;
 			this.y = data.y;
 		}
-		/*
 		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20) // assuming 50 fps
 		for (var i = 0; i < simFrames; i++)
 			this.simulate();
-			*/
-		this.simulate();
 		this.trigger('ChangeDirection', data.dir);
 	}
 })
