@@ -312,7 +312,7 @@ Crafty.c('Controller', {
  */
 Crafty.c('Controllable', {
 	init: function(){
-		this.requires("Keyboard, Multiway");
+		this.requires("Multiway");
 		this.multiway(1, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
 		return this;
 	},
