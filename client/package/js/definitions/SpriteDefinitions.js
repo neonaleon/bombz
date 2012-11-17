@@ -106,7 +106,7 @@ SpriteDefinitions['gui'] = {
 
 SpriteDefinitions['sidebar'] = {
 	'file': '/img/sidebar.png',
-	'tile': 137,
+	'tile': 132,
 	'tileh': 600,
 	'elements': {
 		sidebar: [0, 0],

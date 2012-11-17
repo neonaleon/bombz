@@ -114,7 +114,6 @@ Entities.Dragon = function(color)
 
 	// add animation and collision logic
 	dragon.addComponent("SpriteAnimation, Collision")
-	// dragon.addComponent("SpriteAnimation, Collision, WiredHitBox")
 				.collision([10, 10], [30, 10], [30, 30], [10, 30]) // smaller hit box based on 40x40 sprites
 				.animate("walk_up", def['anim_walk_up'])
 				.animate("walk_right", def['anim_walk_right'])

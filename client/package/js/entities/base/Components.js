@@ -36,7 +36,6 @@ Crafty.c('Dragon', {
 		return this;
 	},
 	die: function(){
-		this.addComponent('Death');
 		// only send update if local dragon
 		if (this.has('LocalPlayer')) 
 			NetworkManager.SendMessage(MessageDefinitions.DEATH, { timestamp: WallClock.getTime() });
@@ -184,6 +183,7 @@ Crafty.c('Fireball', {
 Crafty.c('Killable', {
 	init: function() {
 		this.bind('killed', function(tile){
+			this.addComponent('Death');
 			this.trigger('death', tile);
 			this.removeComponent('Killable');
 		});
@@ -198,7 +198,9 @@ Crafty.c('Death', {
 		
 		this.wings = undefined;
 		this.cloud = undefined;
-		this.deathAnimStep = 2; // 2 step death animation
+		this.deathAnimStep = 2; // 2 step death animation (fade out, fade in)
+		this.step2props = 2; // 2 properties being interpolated at each step
+		this.step1props = 2;
 		this.deathPos = undefined; // deathPos not yet received from server
 		
 		this.requires('Tween');
@@ -217,13 +219,14 @@ Crafty.c('Death', {
 		this.trigger("ChangeDirection", Player.Direction.DOWN);
 		this.trigger("ChangeDirection", Player.Direction.NONE); 
 		
-		this.bind('TweenEnd', function(something)
+		this.bind('TweenEnd', function(prop)
 		{
-			this.deathAnimStep -= 1;
-			if (this.deathAnimStep == 1)
+			if (this.deathAnimStep == 2)
 			{
+				if (prop == 'y' || prop == 'alpha') this.step2props -= 1;
+				if (this.step2props == 0) this.deathAnimStep -= 1;
 				// first animation step ends, check if death position received from server
-				if (this.deathPos !== undefined)
+				if (this.step2props == 0 && this.deathPos !== undefined)
 				{
 					this.x = this.deathPos.x;
 					this.y = this.deathPos.y - 50;
@@ -231,7 +234,14 @@ Crafty.c('Death', {
 					this.tween({ y: this.deathPos.y, alpha: 1 }, 50); // fade back in
 				}
 			}
-			else if (this.deathAnimStep == 0) // second animation step ends, player has tweened to death position
+			else if (this.deathAnimStep == 1)
+			{
+				
+				if (prop == 'y' || prop == 'alpha') this.step1props -= 1;
+				if (this.step1props == 0) this.deathAnimStep -= 1;
+			}
+			
+			if (this.deathAnimStep == 0) // second animation step ends, player has tweened to death position
 			{	
 				// snap to clear floating point inaccuracies due to tween interpolation
 				this.x = this.deathPos.x;
@@ -250,17 +260,16 @@ Crafty.c('Death', {
 					this.flushUpdates();
 					this.bind('KeyDown_A', this.spitFireball); // change ability
 				}
+				this.removeComponent('Death', false);
 			}
-			this.removeComponent('Death', false);
 		})
 		
 		this.bind('death', function(tile)
 		{
 			// death position received from server
 			this.deathPos = Map.getDeathLocation(tile);
-			// see if first animation step is complete, otherwise when it is complete, it will tween
-			// this is for the case where the msg comes in a lot later than the time for the death animation which is ~500ms
-			if (this.deathAnimStep == 1) this.tween(this.deathPos, 300);
+			// force animation if this death message was very late
+			if (this.deathAnimStep == 1) this.trigger('TweenEnd'); 
 		});
 		
 		return this;

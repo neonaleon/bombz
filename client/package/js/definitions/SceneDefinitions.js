@@ -88,7 +88,7 @@ var handler_Start = function(obj)
 {
 	NetworkManager.SendMessage(MessageDefinitions.START, {})
 	
-	SceneManager.LoadScene( SceneDefinitions.GameScene )
+	//SceneManager.LoadScene( SceneDefinitions.GameScene )
 };
 // players seats on a colour
 var handler_Seat = function( buttonIndex, value )
