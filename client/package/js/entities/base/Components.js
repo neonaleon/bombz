@@ -492,6 +492,9 @@ Crafty.c("LocalPlayer", {
 		this.updateTypeFireball = 'fireball';
 		this.updateQueue = [];
 		this.flush = false;
+		
+		this.networkInterval = 1000/25; // 25 updates per sec
+		this.networkTimer = (new Date()).getTime();
 		// the local player can be controlled
 		this.requires("Controllable");
 		
@@ -514,7 +517,7 @@ Crafty.c("LocalPlayer", {
             // don't store direction if it is none, so we have the latest direction player is facing
 			if ( direction !== Player.Direction.NONE )
             	this.direction = direction;
-            
+            /*
            	var oldpos = { x: this.x, y: this.y };
            	var data = {};
 			data.dx = newdir.x;
@@ -532,6 +535,7 @@ Crafty.c("LocalPlayer", {
            	// revert, wait for local update
            	this.x = oldpos.x;
            	this.y = oldpos.y;
+           	*/
 		});
 		
 		// perform collision detection when the entity is being moved
@@ -645,6 +649,13 @@ Crafty.c("LocalPlayer", {
 				break;
 		}
 		this.updateQueue.splice(0, processedCount);
+		
+		var currTime = (new Date()).getTime();
+		if (currTime > this.networkTimer + this.networkInterval)
+		{
+			this.networkTimer = currTime;
+			this.periodicUpdate({ timestamp: WallClock.getTime(), x: this.x, y: this.y, speed: this.moveSpeed, dir: this.direction });
+		}
 	},
 		
 	flushUpdates: function()
@@ -700,6 +711,11 @@ Crafty.c("LocalPlayer", {
 	{
 		var pos = Map.tileToPixel(data);
 		Entities.Fireball().fireball(data.dragon, pos, data.direction);
+	},
+	
+	periodicUpdate: function(data)
+	{
+		NetworkManager.SendMessage(MessageDefinitions.MOVE, data);
 	},
 });
 
@@ -767,14 +783,16 @@ Crafty.c("NetworkedPlayer", {
 	updateState: function(data)
 	{
 		this.moveSpeed = data.speed;
-		this.direction = data.olddir;
+		this.direction = data.dir;
 		this.x = data.x;
 		this.y = data.y;
+		/*
 		var simFrames = Math.floor((WallClock.getTime() - data.timestamp) / 20);
 		for (var i = 0; i < simFrames; i++)
 			this.simulate();
 		this.direction = data.newdir;
 		this.simulate();
+		*/
 		this.trigger('ChangeDirection', this.direction);
 	}
 })
