@@ -472,7 +472,8 @@ Crafty.c(EntityDefinitions.POWERUP_FIREBALL + "_powerup", {
 	init: function(){
 		this.bind("applyPowerup", function(){ 
 			this.hasFireball = true;
-			aButton.addComponent('fireballButton');
+			if (this.has('LocalPlayer'))
+				aButton.addComponent('fireballButton');
 			this.unbind("applyPowerup");
 			this.removeComponent(EntityDefinitions.POWERUP_FIREBALL + "_powerup", false); 
 		});
@@ -723,7 +724,6 @@ Crafty.c("NetworkedPlayer", {
 	},
 	simulate: function()
 	{
-		console.log('simulate');
 		var oldpos = { x: this.x, y: this.y };
 		switch ( this.direction )
         {
@@ -746,7 +746,6 @@ Crafty.c("NetworkedPlayer", {
 	},
 	updateState: function(data)
 	{
-		console.log(data);
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
 		if (data.dir != 4)
