@@ -492,9 +492,10 @@ Crafty.c("LocalPlayer", {
 		this.updateTypeFireball = 'fireball';
 		this.updateQueue = [];
 		this.flush = false;
+		this.hasStopped = true;
 		
 		this.networkInterval = 1000/25; // 25 updates per sec
-		this.networkTimer = WallClock.getTime();
+		this.networkTimer = (new Date()).getTime();
 		// the local player can be controlled
 		this.requires("Controllable");
 		
@@ -516,7 +517,14 @@ Crafty.c("LocalPlayer", {
 
             // don't store direction if it is none, so we have the latest direction player is facing
 			if ( direction !== Player.Direction.NONE )
+			{
             	this.direction = direction;
+            	this.hasStopped = false;
+            }
+            else
+            {
+            	this.hasStopped = true;
+            }
             	
         	var data = { timestamp: WallClock.getTime(), x: this.x, y: this.y, dir: direction };
 			this.doLocalUpdate(this.updateTypeDirection, data);
@@ -634,7 +642,7 @@ Crafty.c("LocalPlayer", {
 		}
 		this.updateQueue.splice(0, processedCount);
 		
-		var currTime = WallClock.getTime();
+		var currTime = (new Date()).getTime();
 		if (currTime > this.networkTimer + this.networkInterval)
 		{
 			this.networkTimer = currTime;
@@ -699,6 +707,9 @@ Crafty.c("LocalPlayer", {
 	
 	periodicUpdate: function(data)
 	{
+		if ( this.hasStopped )
+			data.dir = Player.Direction.NONE;
+		
 		NetworkManager.SendMessage(MessageDefinitions.MOVE, data);
 	},
 });
@@ -762,6 +773,7 @@ Crafty.c("NetworkedPlayer", {
 	},
 	updateState: function(data)
 	{
+		console.log(data);
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
 		this.x = data.x;
