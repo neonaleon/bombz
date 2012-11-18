@@ -235,7 +235,7 @@ Crafty.c('Death', {
 		{
 			if (this.deathAnimStep == 2)
 			{
-				if (prop == 'y' || prop == 'alpha') this.step2props -= 1;
+				if (this.wings && (prop == 'y' || prop == 'alpha')) this.step2props -= 1;
 				if (this.step2props == 0) this.deathAnimStep -= 1;
 				// first animation step ends, check if death position received from server
 				if (this.step2props == 0 && this.deathPos !== undefined)
@@ -249,7 +249,7 @@ Crafty.c('Death', {
 			else if (this.deathAnimStep == 1)
 			{
 				
-				if (prop == 'y' || prop == 'alpha') this.step1props -= 1;
+				if (this.wings && (prop == 'y' || prop == 'alpha')) this.step1props -= 1;
 				if (this.step1props == 0) this.deathAnimStep -= 1;
 			}
 			
@@ -259,7 +259,6 @@ Crafty.c('Death', {
 				this.x = this.deathPos.x;
 				this.y = this.deathPos.y;
 
-				console.log(this.wings);
 				this.wings.destroy();
 				this.wings = undefined;
 				
@@ -745,21 +744,8 @@ Crafty.c("NetworkedPlayer", {
         		{
         			this.attr(Map.tileToPixel(Map.pixelToTile({x: this.x, y: this.y})));
         		}
-            		
         	}
 		});
-		
-		this.props = 2;
-		this.bind('TweenEnd', function(prop)
-		{
-			this.props -= 1;
-			if (this.props == 0)
-			{
-				//this.trigger('ChangeDirection', this.direction);
-				this.props = 2;	
-			}
-		})
-		
 		return this;
 	},
 	simulate: function()
