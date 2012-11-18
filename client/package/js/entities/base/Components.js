@@ -211,6 +211,7 @@ Crafty.c('Death', {
 		this.step1props = 2;
 		this.deathPos = undefined; // deathPos not yet received from server
 		this.num_anim_frames = 50;
+		this.dying = true;
 		
 		this.addComponent('DodgeballPlayer');
 		
@@ -233,9 +234,11 @@ Crafty.c('Death', {
 		
 		this.bind('TweenEnd', function(prop)
 		{
+			if (!this.dying) return;
+			
 			if (this.deathAnimStep == 2)
 			{
-				if (this.wings && (prop == 'y' || prop == 'alpha')) this.step2props -= 1;
+				if ((prop == 'y' || prop == 'alpha')) this.step2props -= 1;
 				if (this.step2props == 0) this.deathAnimStep -= 1;
 				// first animation step ends, check if death position received from server
 				if (this.step2props == 0 && this.deathPos !== undefined)
@@ -249,7 +252,7 @@ Crafty.c('Death', {
 			else if (this.deathAnimStep == 1)
 			{
 				
-				if (this.wings && (prop == 'y' || prop == 'alpha')) this.step1props -= 1;
+				if ((prop == 'y' || prop == 'alpha')) this.step1props -= 1;
 				if (this.step1props == 0) this.deathAnimStep -= 1;
 			}
 			
@@ -271,6 +274,7 @@ Crafty.c('Death', {
 					this.enableControl();
 					this.bind('KeyDown_A', this.spitFireball); // change ability
 				}
+				this.dying = false;
 				this.removeComponent('Death', false);
 			}
 		})
