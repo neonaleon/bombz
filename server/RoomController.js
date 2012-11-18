@@ -23,7 +23,9 @@ RoomController.prototype.Reset = function( socket )
   this._room.Reset();
   this._powerupQueue = {};        // holds powerup pickup requests for a short while to see if anyone picked it earlier
   this._map = new Map( 19, 15, 40, 40 );
-  clearTimeout( this._suddenDeathtimer );
+  clearTimeout( this._suddenDeathTimer );
+  clearInterval( this._powerupSpawnTimer );
+  clearInterval( this._fireballPowerupSpawnTimer );
 }
 
 RoomController.prototype.GetPlayerFromSocket = function( socket )
@@ -177,37 +179,24 @@ RoomController.prototype.StartGame = function()
   var room = this._room;
   var roomController = this;
 
-  this._suddenDeathtimer = setTimeout( function()
+  this.suddenDeathTimer = setTimeout( function()
   {
      roomController.FairBroadcast( MessageDefinitions.SUDDEN_DEATH );
   }, Room.Settings.Timeout.TWO_HALF_MINUTES );
 
   // spawn normal powerups
-  setInterval( function()
+  this._powerupSpawnTimer = setInterval( function()
   {
-    if ( room.GetState() !== Room.State.PLAYING )
-      return;
-
     if ( roomController.GetMap().GetNonFireballPowerupCount() < Powerup.MAX_IN_PLAY )
     {
       var powerup = roomController.GetMap().SpawnPowerup();
       roomController.FairBroadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
     }
-
-    if ( roomController.GetMap().GetFireballPowerupCount() < Powerup.MAX_FIREBALL_IN_PLAY )
-    {
-      var powerup = roomController.GetMap().SpawnFireballPowerup();
-      roomController.FairBroadcast( MessageDefinitions.POWERUP, powerup.Serialize() );
-    }
-
   }, Powerup.SPAWN_RATE );
 
   // spawn fireball powerups
-  setInterval( function()
+  this._fireballPowerupSpawnTimer = setInterval( function()
   {
-    if ( room.GetState() !== Room.State.PLAYING )
-      return;
-
     if ( roomController.GetMap().GetFireballPowerupCount() < Powerup.MAX_FIREBALL_IN_PLAY )
     {
       var powerup = roomController.GetMap().SpawnFireballPowerup();
@@ -242,7 +231,9 @@ RoomController.prototype.EndGame = function()
 
     this._powerupQueue = {};        // holds powerup pickup requests for a short while to see if anyone picked it earlier
     this._map = new Map( 19, 15, 40, 40 );
-    clearTimeout( this._suddenDeathtimer );
+    clearTimeout( this._suddenDeathTimer );
+    clearInterval( this._powerupSpawnTimer );
+    clearInterval( this._fireballPowerupSpawnTimer );
   }
 };
 
