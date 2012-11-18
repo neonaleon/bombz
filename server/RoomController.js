@@ -149,6 +149,10 @@ RoomController.prototype.CanStartGame = function()
   //if ( room.GetPlayerCount() != Room.MAX )
   //  return false;
 
+  // at least 2 players
+  if ( room.GetPlayerCount() < 2 )
+   return false;
+
   // check that everyone has chosen their colors and all different
   var colors = {};
   var players = room.GetPlayers();
