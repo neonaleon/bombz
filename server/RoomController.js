@@ -240,7 +240,9 @@ RoomController.prototype.EndGame = function()
     for ( var i in players )
       roomController.CreatePlayerListeners( players[ i ].GetSocket() );
 
+    this._powerupQueue = {};        // holds powerup pickup requests for a short while to see if anyone picked it earlier
     this._map = new Map( 19, 15, 40, 40 );
+    clearTimeout( this._suddenDeathtimer );
   }
 };
 
