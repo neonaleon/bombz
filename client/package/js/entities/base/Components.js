@@ -780,7 +780,7 @@ Crafty.c("NetworkedPlayer", {
 	{
 		this.moveSpeed = data.speed;
 		this.direction = data.dir;
-		this.tween({x: data.x, y: data.y}, 2);
+		if (!this.dying) this.tween({ x: data.x, y: data.y }, 2);
 		this.trigger('ChangeDirection', this.direction);
 	}
 })
