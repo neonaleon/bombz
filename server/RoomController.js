@@ -179,7 +179,7 @@ RoomController.prototype.StartGame = function()
   var room = this._room;
   var roomController = this;
 
-  this.suddenDeathTimer = setTimeout( function()
+  this._suddenDeathTimer = setTimeout( function()
   {
      roomController.FairBroadcast( MessageDefinitions.SUDDEN_DEATH );
   }, Room.Settings.Timeout.TWO_HALF_MINUTES );
