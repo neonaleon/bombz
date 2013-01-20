@@ -9,4 +9,4 @@ Config.Game.HEIGHT = 600;
 
 // Server
 Config.Server = {};
-Config.Server.PORT = 8000;
+Config.Server.PORT = process.env.PORT || 8000;
