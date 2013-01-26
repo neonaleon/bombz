@@ -14,7 +14,7 @@ var Properties =
 	//MASTERSERVER_IP: "http://localhost",
 	//MASTERSERVER_IP: "http://ec2-184-73-92-233.compute-1.amazonaws.com",
 	MASTERSERVER_IP: "http://bombz.herokuapp.com"
-	MASTERSERVER_PORT: 80,
+	MASTERSERVER_PORT: 24118,
 	
 	// game properties
 	SPLASH_DURATION: 2000,
