@@ -13,7 +13,7 @@ var Properties =
 	//MASTERSERVER_IP: "192.168.1.100",
 	//MASTERSERVER_IP: "http://localhost",
 	//MASTERSERVER_IP: "http://ec2-184-73-92-233.compute-1.amazonaws.com",
-	MASTERSERVER_IP: "http://bombz.herokuapp.com/"
+	MASTERSERVER_IP: "http://bombz.herokuapp.com"
 	MASTERSERVER_PORT: process.env.PORT || 8000,
 	
 	// game properties
